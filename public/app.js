@@ -41,19 +41,21 @@ const STATUS={'Above modeled value':['neg','Above modeled value'],'Below modeled
 const tone=x=>!Number.isFinite(x)?'':x>=0?'positive':'negative';
 function niceStep(range,count=4) {const raw=range/count,mag=10**Math.floor(Math.log10(raw)),n=raw/mag;return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag;}
 function fairValueScale(r) {
-  const v=r.valued?.price,price=r.marketPrice,prices=r.cases.map(c=>c.price).filter(Number.isFinite);
+  const v=r.valued?.price,price=r.marketPrice,prices=r.cases.map(c=>c.price).filter(Number.isFinite),cv=r.consensusCase?.price;
   if(!Number.isFinite(v)||!Number.isFinite(price)) return '';
-  const lo=Math.min(0,...prices),step=niceStep(Math.max(price,v,...prices)*1.08-lo),hi=Math.ceil(Math.max(price,v,...prices)*1.08/step)*step;
+  const all=[price,v,...prices,...(Number.isFinite(cv)?[cv]:[])];
+  const lo=Math.min(0,...prices),step=niceStep(Math.max(...all)*1.08-lo),hi=Math.ceil(Math.max(...all)*1.08/step)*step;
   const x=n=>Math.max(0,Math.min(100,(n-lo)/(hi-lo)*100)),buy=Number.isFinite(r.buyBelow)?r.buyBelow:v;
   const place=p=>p<22?'start':p>78?'end':'',tickPlace=p=>p<3?'start':p>97?'end':'';
   const ticks=[];for(let t=Math.ceil(lo/step)*step;t<=hi+1e-9;t+=step)ticks.push(t);
   const bear=Math.min(...prices),bull=Math.max(...prices);
   return `<div class="fv" role="img" aria-label="Market price ${money(price)} compared with modeled value ${money(v)}, buy threshold ${money(buy)} and scenario range ${money(bear)} to ${money(bull)}">
     <div class="fv-row"><span class="fv-label accent ${place(x(price))}" style="left:${x(price)}%">Market price <b>${money(price)}</b></span></div>
-    <div class="fv-track"><span class="fv-zone pos" style="left:0;width:${x(buy)}%"></span><span class="fv-zone mid" style="left:${x(buy)}%;width:${x(v)-x(buy)}%"></span><span class="fv-zone neg" style="left:${x(v)}%;right:0"></span>${prices.length>1?`<span class="fv-range" style="left:${x(bear)}%;width:${Math.max(.4,x(bull)-x(bear))}%"></span>`:''}<span class="fv-value" style="left:${x(v)}%"></span><span class="fv-price" style="left:${x(price)}%"></span></div>
-    <div class="fv-row"><span class="fv-label ${place(x(v))}" style="left:${x(v)}%">Modeled value <b>${money(v)}</b></span></div>
+    <div class="fv-track"><span class="fv-zone pos" style="left:0;width:${x(buy)}%"></span><span class="fv-zone mid" style="left:${x(buy)}%;width:${x(v)-x(buy)}%"></span><span class="fv-zone neg" style="left:${x(v)}%;right:0"></span>${prices.length>1?`<span class="fv-range" style="left:${x(bear)}%;width:${Math.max(.4,x(bull)-x(bear))}%"></span>`:''}<span class="fv-value" style="left:${x(v)}%"></span>${Number.isFinite(cv)?`<span class="fv-consensus" style="left:${x(cv)}%"></span>`:''}<span class="fv-price" style="left:${x(price)}%"></span></div>
+    <div class="fv-row"><span class="fv-label ${place(x(v))}" style="left:${x(v)}%">Fundamental value <b>${money(v)}</b></span></div>
+    ${Number.isFinite(cv)?`<div class="fv-row"><span class="fv-label consensus ${place(x(cv))}" style="left:${x(cv)}%">Consensus case <b>${money(cv)}</b></span></div>`:''}
     <div class="fv-axis">${ticks.map(t=>`<span class="${tickPlace(x(t))}" style="left:${x(t)}%">$${num(t)}</span>`).join('')}</div>
-  </div><div class="fv-legend"><span><i class="pos"></i>Below buy threshold</span><span><i class="mid"></i>Between threshold and value</span><span><i class="neg"></i>Above modeled value</span>${prices.length>1?`<span><i class="range"></i>Bear–bull scenarios ${money(bear)}–${money(bull)}</span>`:''}</div>`;
+  </div><div class="fv-legend"><span><i class="pos"></i>Below buy threshold</span><span><i class="mid"></i>Between threshold and value</span><span><i class="neg"></i>Above fundamental value</span>${Number.isFinite(cv)?'<span><i class="consensus"></i>Analyst consensus case</span>':''}${prices.length>1?`<span><i class="range"></i>Bear–bull scenarios ${money(bear)}–${money(bull)}</span>`:''}</div>`;
 }
 function impliedRateNote(r) {
   const i=r.diagnostics?.impliedWACC,w=r.current?.wacc;
@@ -64,22 +66,37 @@ function impliedRateNote(r) {
   const edge=returnsReport?` A five-origin point-in-time backtest found no demonstrated return edge for this signal (mean rank IC ${num(returnsReport.meanRankIC,2)}); see Validation.`:'';
   return text?`<p class="verdict-copy implied-rate">${text}${edge}</p>`:'';
 }
+function lensesPanel() {
+  const r=result,ig=r.impliedGrowth,c=r.consensusCase,path=g=>g.map(x=>pct(x,0)).join(' · ');
+  const fundamental=r.rows.slice(0,5).map(x=>x.growth),basis=a.valuationForecast?'Cited company research (years 1–5)':'Measured quarterly forecast, then backtested base rate';
+  const rows=[
+    ig?.status==='solved'?{cells:['Market-implied','The constant growth today’s price requires at the model’s discount rate and fundamental margins',path(Array(5).fill(ig.growth)),pct(r.rows[4].margin),money(r.marketPrice),'—']}:{cells:['Market-implied',ig?.status==='ambiguous'?'More than one growth rate fits the price':'No growth rate between −30% and +80% fits the price','—','—',money(r.marketPrice),'—']},
+    c?{cells:['Analyst consensus',`${c.analysts} analysts’ revenue estimates for fiscal ${c.fiscalYears.map(y=>y.end.slice(0,4)).join(' and ')}, converging to ${pct(c.anchor)} by year 5${c.marginPath?`; their earnings estimates imply an operating margin of ${pct(c.marginPath[1])} (from ${pct(c.baselineMargin)}${c.shares?`, net of ${pct(Math.abs(c.shares))} annual share ${c.shares<0?'buybacks':'dilution'}`:''})`:'; margins as measured (no earnings estimates)'}`,path(c.path),pct(c.marginPath?.[4]??r.rows[4].margin),money(c.price),signed(c.price/r.marketPrice-1)]}:{cells:['Analyst consensus','Unavailable for this company','—','—','—','—']},
+    {highlight:true,cells:['Fundamental',basis+(a.rdCapitalize?'; R&D capitalized':''),path(fundamental),pct(r.rows[4].margin),money(r.valued?.price),signed(r.upside)]}
+  ];
+  return panel('Three readings of the price','Same investment ratios, discount rate and stable state. The lenses differ in revenue growth (and, for consensus, analysts’ implied margins). Years 6–10 fade to terminal growth.',table(['Lens','Basis','Revenue growth, years 1–5','Margin, year 5','Value / share','vs. price'],rows,'lenses')+`<div class="table-note">${c?esc(data.consensus.source)+'. ':''}Consensus beyond two fiscal years is not published; the path converges to the long-run rate. The fundamental case is the one whose rules were backtested; see Validation.</div>`);
+}
 function overview() {
   const r=result,v=r.valued,o=r.optimized;
   const [cls,label]=STATUS[r.status]||['neutral',r.status];
-  const headline=Number.isFinite(r.upside)?`Modeled value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the market price`:'No price comparison is available';
+  const ig=r.impliedGrowth,c=r.consensusCase,hist=a.mediumGrowthBasis,baseRate=Number.isFinite(a.mediumGrowth)?a.mediumGrowth:LONG_RUN.growthAnchor;
+  const headline=ig?.status==='solved'?`Today’s price implies ${pct(ig.growth)} annual revenue growth for five years`:Number.isFinite(r.upside)?`Fundamental value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the market price`:'No price comparison is available';
+  const readings=[c?`analysts expect ${pct(c.path[0])} and ${pct(c.path[1])} over the next two years (${c.analysts} analysts)`:null,Number.isFinite(hist?.cagr)?`the company grew ${pct(hist.cagr)} a year over the past ${hist.span} years`:null,`comparable companies sustain about ${pct(baseRate)} (backtested base rate)`].filter(Boolean);
+  const gaps=[Number.isFinite(r.upside)?`fundamental value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the price`:null,Number.isFinite(c?.price)?`the analyst consensus case is ${pct(Math.abs(c.price/r.marketPrice-1))} ${c.price<r.marketPrice?'below':'above'}`:null].filter(Boolean);
+  const perception=`<p class="verdict-copy readings">For comparison, ${readings.join('; ')}. At the model’s discount rate, ${gaps.join(' and ')}.</p>`;
   const reason=r.status==='Review required'?'This DCF scenario has unreviewed assumptions or unresolved data. The price gap alone does not establish mispricing. The audit below shows the growth and reinvestment assumptions behind it.':'This compares the price with one set of assumptions. It is not a forecast of stock returns.';
   return `<section class="verdict">
-    <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2><p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p>${impliedRateNote(r)}</div>
+    <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2>${perception}<p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p>${impliedRateNote(r)}</div>
     <div class="verdict-stats"><dl>
       <div class="verdict-stat"><dt>Market price</dt><dd>${money(r.marketPrice)}</dd></div>
-      <div class="verdict-stat"><dt>Modeled value</dt><dd>${money(v?.price)}</dd></div>
-      <div class="verdict-stat"><dt>${r.status==='Review required'?'Scenario safety threshold':'Buy below'} (${pct(a.marginOfSafety,0)} margin)</dt><dd>${money(r.buyBelow)}</dd></div>
-      <div class="verdict-stat"><dt>Value vs. market</dt><dd class="${tone(r.upside)}">${signed(r.upside)}</dd></div>
+      <div class="verdict-stat"><dt>Consensus case</dt><dd>${money(c?.price)}</dd></div>
+      <div class="verdict-stat"><dt>Fundamental value</dt><dd>${money(v?.price)}</dd></div>
+      <div class="verdict-stat"><dt>Fundamental vs. market</dt><dd class="${tone(r.upside)}">${signed(r.upside)}</dd></div>
     </dl></div></div>
     <div class="verdict-bar">${fairValueScale(r)}</div>
     <div class="panel-footer"><span>${a.quoteOverride!==null?'Manual quote entered in assumptions · review required':`Quote ${dateTime(data.quote?.asOf)}${data.quote?.exchange?' · '+esc(data.quote.exchange):''} · may be delayed`}</span><button class="link-button" id="open-error-assumptions">Edit assumptions</button></div>
   </section>
+  ${lensesPanel()}
   ${valuationAuditPanel()}
   <div class="metrics">
     ${metric('Cost of capital (WACC)',pct(r.current.wacc,2),`Cost of equity ${pct(r.current.ke)} · Cost of debt ${pct(r.current.kd)}`)}
@@ -147,10 +164,14 @@ function qualityPanel() {
 
 function cashflows() {
   const r=result;
-  const lines=[['Revenue','revenue'],['Revenue growth','growth','pct'],['Operating margin','margin','pct'],['EBIT','ebit'],['− Unlevered cash tax','cashTax'],['Net operating profit after tax','nopat'],['+ Depreciation & amortization','da'],['− Capital expenditure (after fade)','capex'],['↳ Terminal transition vs. spending-ratio scenario','transitionAdjustment'],['− Change in operating NWC','deltaNwc'],['Free cash flow to firm','fcff']];
+  const rd=a.rdCapitalize&&r.rows.some(x=>x.rd>0);
+  const lines=[['Revenue','revenue'],['Revenue growth','growth','pct'],['Operating margin','margin','pct'],['EBIT','ebit'],['− Unlevered cash tax','cashTax'],
+    ...(rd?[['NOPAT as reported','nopatReported'],['+ R&D treated as investment','rd'],['− Amortization of past R&D',' rdAmortization'.trim()],['NOPAT, R&D capitalized','nopat'],['− Net R&D investment','netRD']]:[['Net operating profit after tax','nopat']]),
+    ['+ Depreciation & amortization','da'],['− Capital expenditure (after fade)','capex'],['↳ Terminal transition vs. spending-ratio scenario','transitionAdjustment'],['− Change in operating NWC','deltaNwc'],['Free cash flow to firm','fcff']];
   const hist=data.history;
   return `${viewHeader('Cash flows','Operating performance first, financing second. Statement amounts in USD millions.','<button class="button" id="export-csv">Download CSV</button>')}
-    ${panel('Historical financials','Full fiscal years; latest filed comparative facts, with period-specific source provenance.',table(['Fiscal year end',...hist.map(h=>esc(h.end))],['revenue','ebit','da','capex','cfo'].map(k=>({cells:[({revenue:'Revenue',ebit:'EBIT',da:'D&A',capex:'Capital expenditure',cfo:'Cash from operations'})[k],...hist.map(h=>num(h[k]))]}))))}
+    ${panel('Historical financials','Full fiscal years; latest filed comparative facts, with period-specific source provenance.',table(['Fiscal year end',...hist.map(h=>esc(h.end))],['revenue','ebit','da','capex','rd','cfo'].filter(k=>k!=='rd'||hist.some(h=>h.rd>0)).map(k=>({cells:[({revenue:'Revenue',ebit:'EBIT',da:'D&A',capex:'Capital expenditure',rd:'Research & development',cfo:'Cash from operations'})[k],...hist.map(h=>num(h[k]))]}))))}
+    ${rd?panel('R&D treated as investment',`R&D is capitalized and amortized straight-line over ${a.rdLife} years (industry life). Free cash flow is unchanged; operating profit, invested capital and returns are measured on the same basis.`,`<div class="panel-body"><ul class="value-bridge"><li><span>Research asset (unamortized R&D)</span><strong>${big(a.researchCapital.asset)}</strong></li><li><span>TTM R&D</span><strong>${big(data.base.rd)}</strong></li><li><span>Amortization of past R&D</span><strong>${big(a.researchCapital.amortization)}</strong></li><li><span>Forward R&D intensity (3-year median)</span><strong>${pct(a.rdRatio)}</strong></li></ul>${a.researchCapital.smoothed?'<p class="stamp">A year above 1.5× the median R&D intensity (likely acquired in-process R&D) is capped at that level.</p>':''}${a.researchCapital.backfilled?`<p class="stamp">${a.researchCapital.backfilled} early year(s) of R&D are not disclosed and repeat the earliest known amount.</p>`:''}</div>`):''}
     ${panel('Free cash flow build','Years 1–5 use company-specific growth, margin and investment estimates when researched. Years 6–10 fade to the explicit stable state.',table(['USD millions',...r.rows.map(f=>`Year ${f.year}`)],lines.map(([name,key,format])=>({highlight:key==='fcff'||key==='nopat',cells:[name,...r.rows.map(f=>format==='pct'?pct(f[key]):num(f[key]))]})))+`<div class="table-note">FCFF = EBIT − unlevered cash tax + D&A − capex − Δoperating NWC. Stock-based compensation stays in operating expenses; it is not added back as free cash.</div>`)}
     <div class="two-columns equal">${panel('Terminal value','Terminal growth is funded by productive reinvestment.',`<div class="panel-body"><ul class="value-bridge"><li><span>Year 11 NOPAT</span><strong>${big(r.valued?.terminalNopat)}</strong></li><li><span>Reinvestment rate: g / ROIC</span><strong>${pct(a.terminalGrowth/a.terminalROIC)}</strong></li><li><span>− Terminal reinvestment</span><strong>${big(r.valued?.terminalReinvestment)}</strong></li><li><span>Year 11 FCFF</span><strong>${big(r.valued?.terminalFCFF)}</strong></li><li><span>Undiscounted terminal value</span><strong>${big(r.valued?.terminalValue)}</strong></li><li class="total"><span>PV of terminal value</span><strong>${big(r.valued?.pvTerminal)}</strong></li></ul><div class="formula">TV₁₀ = NOPAT₁₁ × (1 − g / ROIC) / (WACC − g)</div></div>`)}
     ${panel('Cash flow cross-check','Reported cash-flow statement figures.',`<div class="panel-body"><ul class="value-bridge"><li><span>Reported TTM CFO</span><strong>${big(data.base.cfo)}</strong></li><li><span>− Reported TTM capex</span><strong>${big(data.base.capex)}</strong></li><li class="total"><span>Levered CFO less capex</span><strong>${Number.isFinite(data.base.cfo)?big(data.base.cfo-data.base.capex):'Unavailable'}</strong></li><li><span>Reported interest expense</span><strong>${data.base.interest===null?'Unavailable':big(data.base.interest)}</strong></li></ul><div class="note-box">CFO less capex is not FCFF. It includes interest, reported tax timing and non-cash addbacks (including SBC). A full FCFF reconciliation requires those adjustments; missing interest is left unavailable.</div></div>`)}

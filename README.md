@@ -29,6 +29,14 @@ Five live research vintages are recorded under `reports/v04-live`. `node scripts
 
 Source checks and arithmetic checks establish functionality and internal consistency. Prospective forecast accuracy and investment-return accuracy remain unmeasured. See [live release validation](reports/v04-live/REPORT.md).
 
+## Version 0.6
+
+- **Three readings of every price:** the five-year revenue growth today's price requires; an analyst-consensus case (two fiscal years of revenue estimates, then convergence to the long-run rate; unofficial Yahoo source); and the fundamental case.
+- **R&D as investment:** capitalized over industry lives with spike capping; explicit cash flows unchanged, returns measured on all invested capital.
+- **Analyst margins:** the consensus case carries the margins analysts' EPS estimates imply (net of the issuer's buyback or dilution trend).
+- **Long-run margin rule:** years 2–10 use the midpoint of TTM and five-year median margins (backtested), so one weak quarter no longer persists forever.
+- **Return backtest re-run:** mean rank IC −0.022; still no demonstrated return edge.
+
 ## Version 0.5
 
 - **Data coverage:** standard balance-sheet lines absent from the balance-sheet filing are labeled zeros (checked against company-specific tags in the primary filing); EBIT derived from pre-tax income where no operating-income subtotal exists; D&A, cash, debt and share fallbacks; 53-week fourth quarters retained. Complete inputs on the 155-issuer archive: 13 → 125. Cover-page share counts must be current (seven issuers had been priced on 2009–2016 counts).

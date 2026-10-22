@@ -214,6 +214,10 @@ main { flex: 1; min-width: 0; max-width: 1280px; padding: 24px 32px 28px; }
 .fv-value, .fv-price { position: absolute; width: 0; }
 .fv-value { top: -3px; bottom: -3px; border-left: 2px solid var(--text); margin-left: -1px; }
 .fv-price { top: -5px; bottom: -5px; border-left: 2px solid var(--accent); margin-left: -1px; }
+.fv-consensus { position: absolute; width: 0; top: -2px; bottom: -2px; border-left: 2px dashed var(--chart-3); margin-left: -1px; }
+.fv-label.consensus, .fv-label.consensus b { color: var(--warn); }
+.fv-legend .consensus { background: none; border-left: 2px dashed var(--chart-3); width: 0; height: 12px; border-radius: 0; vertical-align: -2px; margin-right: 8px; }
+.verdict-copy.readings { color: var(--text); margin-bottom: 8px; }
 .fv-axis { position: relative; height: 18px; margin-top: 6px; border-top: 1px solid var(--border); }
 .fv-axis span { position: absolute; top: 4px; transform: translateX(-50%); font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; }
 .fv-legend { display: flex; gap: 6px 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--text-3); margin-top: 10px; }
@@ -291,6 +295,8 @@ td .subline, th .subline { font-size: 12.5px; color: var(--text-3); margin-top: 
 .highlight-row td, .highlight-row th { font-weight: 600; color: var(--text); }
 .table-note { padding: 10px 20px 14px; font-size: 13px; color: var(--text-3); line-height: 1.55; border-top: 1px solid var(--border); white-space: normal; }
 .sensitivity td { position: relative; }
+.lenses th:nth-child(2), .lenses td:nth-child(2) { text-align: left; white-space: normal; min-width: 260px; color: var(--text-2); }
+.lenses td:nth-child(3) { color: var(--text-2); }
 .sensitivity td.cell { background: color-mix(in srgb, var(--accent) calc(3% + var(--t, 0) * 22%), transparent); }
 .sensitivity td.above { color: var(--pos); font-weight: 600; }
 .sensitivity td.cell-na { color: var(--text-3); font-size: 12.5px; }

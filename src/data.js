@@ -3,6 +3,7 @@ import {financials,DataError,CONTINUITY,mergePredecessor} from './accounting.js'
 import {reportedSegments} from './segments.js';
 import {supplementFilingFacts,customLineItems} from './filing-facts.js';
 import {withDeadline} from './deadline.js';
+import {consensusEstimates} from './consensus.js';
 export {financials,pickFact,DataError} from './accounting.js';
 
 const SEC='https://data.sec.gov';
@@ -226,10 +227,12 @@ export async function loadCompany(symbol,env={},customPeers=[],{includePeers=tru
   const submission=await cachedFetch(`${SEC}/submissions/CIK${cik}.json`,env,21600);
   const sic=Number(submission.sic);
   const specialized=sic>=6000&&sic<6800;
-  let [raw,chartResult,marketResult,rates]=await Promise.all([
+  let [raw,chartResult,marketResult,rates,consensus]=await Promise.all([
     cachedFetch(`${SEC}/api/xbrl/companyfacts/CIK${cik}.json`,env,21600),
     cachedFetch(chartUrl(symbol),env,900).catch(()=>null),
-    cachedFetch(chartUrl('SPY'),env,21600).catch(()=>null),marketRates(env)
+    cachedFetch(chartUrl('SPY'),env,21600).catch(()=>null),marketRates(env),
+    // Perception only: never required, never blocks the filing-based analysis.
+    withDeadline(consensusEstimates(symbol),5000,'Consensus timed out.').catch(()=>null)
   ]);
   const continuity=CONTINUITY[Number(cik)];
   if(continuity){
@@ -304,12 +307,13 @@ export async function loadCompany(symbol,env={},customPeers=[],{includePeers=tru
   return {version:MODEL_VERSION,symbol:entry.ticker,name:submission.name||entry.title,cik,sic,industry:submission.sicDescription,
     fetchedAt:new Date().toISOString(),currency:'USD',units:'USD millions; shares in millions',
     ...extracted,reportedSegments:reportedSegments(html,extracted.history,filing?.url),quote,beta,peers,peerScreen:peerScreen.name,peerCandidates:peerScreen.symbols,peerStatus:includePeers?'loaded':'pending',rates,filing,hFactors,
-    researchFilings,filingRegistry:filingRegistry.slice(0,60),research:{status:'not_started'},modelFamily:specialized?'specialized':extracted.history.length?'fcff':'unsupported',
+    researchFilings,filingRegistry:filingRegistry.slice(0,60),research:{status:'not_started'},consensus,modelFamily:specialized?'specialized':extracted.history.length?'fcff':'unsupported',
     sources:[
       {name:'SEC company facts',url:`${SEC}/api/xbrl/companyfacts/CIK${cik}.json`,kind:'Structured financial statements'},
       {name:'SEC submissions',url:`${SEC}/submissions/CIK${cik}.json`,kind:'Filing dates and industry'},
       ...(filing?[{name:'Latest 10-K',url:filing.url,kind:`Filed ${filing.date}`}]:[]),
       {name:'Yahoo Finance',url:`https://finance.yahoo.com/quote/${symbol}/`,kind:'Unofficial quote and adjusted monthly prices; not a licensed exchange feed'},
+      ...(consensus?[{name:'Analyst consensus',url:consensus.url,kind:`${consensus.source}; revenue estimates for fiscal ${consensus.years.map(y=>y.end.slice(0,4)).join(' and ')}`}]:[]),
       {name:'10-year Treasury',url:rates.rfUrl,kind:`${rates.rfSource}, ${rates.rfDate}`},
       {name:'Implied equity risk premium',url:ERP_URL,kind:`${rates.erpMethod}, ${rates.erpDate}`},
       {name:'Synthetic rating spreads',url:'https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html',kind:'Large non-financial firms, January 2026'}

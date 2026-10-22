@@ -11,6 +11,8 @@ export const TAGS={
   da:['DepreciationDepletionAndAmortization','DepreciationAndAmortization','DepreciationAmortizationAndAccretionNet'],
   depreciation:['Depreciation','DepreciationDepletionAndAmortizationPropertyPlantAndEquipment'],amortization:['AmortizationOfIntangibleAssets'],
   capex:['PaymentsToAcquirePropertyPlantAndEquipment','PaymentsToAcquireProductiveAssets','PaymentsToAcquireOtherPropertyPlantAndEquipment','PaymentsForCapitalImprovements','PaymentsToAcquireOilAndGasPropertyAndEquipment'],
+  // Prefer R&D excluding acquired in-process R&D: acquisition charges are not recurring research.
+  rd:['ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost','ResearchAndDevelopmentExpense','ResearchAndDevelopmentExpenseSoftwareExcludingAcquiredInProcessCost'],
   interest:['InterestExpenseNonOperating','InterestAndDebtExpense','InterestExpense','InterestExpenseDebt'],
   cash:['CashAndCashEquivalentsAtCarryingValue','CashAndCashEquivalentsAtCarryingValueIncludingDiscontinuedOperations','CashCashEquivalentsAndShortTermInvestments','Cash','CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'],
   shortInvest:['ShortTermInvestments','MarketableSecuritiesCurrent','AvailableForSaleSecuritiesCurrent','DebtSecuritiesCurrent'],
@@ -140,10 +142,11 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
   const critical=(code,text)=>quality.push({code,severity:'critical',text});
   const revFacts=TAGS.revenue.flatMap(t=>facts[t]?.units?.USD||[]);
   const ends=[...new Set(revFacts.filter(f=>/^10-K/.test(f.form)&&f.start&&durationDays(f)>=330&&durationDays(f)<=380&&f.filed<=asOf).map(f=>f.end))].sort().slice(-10);
-  const flows=['revenue','ebit','da','capex','cfo','interest','sbc'];
+  const flows=['revenue','ebit','da','capex','cfo','interest','sbc','rd'];
   const history=ends.map(end=>{
     const row={end,year:Number(end.slice(0,4)),provenance:{}};
     for(const key of flows){const m=metric(facts,key,{end,annual:true,cik,asOf});row[key]=m.value;if(m.records.length)row.provenance[key]=m.records;}
+    row.dilutedShares=metric(facts,'dilutedShares',{end,annual:true,cik,asOf,unit:'shares'}).value;
     Object.assign(row,workingCapitalAt(facts,end,cik,asOf));
     return row;
   }).filter(r=>r.revenue!==null);
@@ -158,10 +161,10 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
       const candidates=revFacts.filter(f=>forms.has(f.form)&&f.filed<=asOf&&f.start&&Math.abs((Date.parse(q.end)-Date.parse(f.end))/864e5-365)<10&&Math.abs(durationDays(f)-durationDays(q))<10).sort((a,b)=>b.filed.localeCompare(a.filed));
       const p=candidates[0],prior=p?metric(facts,key,{end:p.end,start:p.start,cik,asOf}):{value:null};
       if(current.value!==null&&prior.value!==null&&annual[key]!==null){base[key]=annual[key]+current.value-prior.value;base.provenance[key]=[...annual.provenance[key].map(r=>({...r,operation:'add FY'})),...current.records.map(r=>({...r,operation:'add YTD'})),...prior.records.map(r=>({...r,operation:'subtract prior YTD'}))];}
-      else if(key==='da'&&annual.da!==null&&annual.revenue>0&&base.revenue>0) {
-        // Many issuers disclose D&A only annually. Scale the latest annual ratio to TTM revenue.
-        base.da=annual.da/annual.revenue*base.revenue;base.provenance.da=annual.provenance.da.map(r=>({...r,operation:'annual D&A / revenue × TTM revenue'}));
-        quality.push({severity:'review',code:'da-annual-ratio',text:'Interim D&A is not disclosed; TTM D&A uses the latest annual D&A-to-revenue ratio.'});
+      else if((key==='da'||key==='rd')&&annual[key]!==null&&annual.revenue>0&&base.revenue>0) {
+        // Some issuers disclose D&A or R&D only annually. Scale the latest annual ratio to TTM revenue.
+        base[key]=annual[key]/annual.revenue*base.revenue;base.provenance[key]=annual.provenance[key].map(r=>({...r,operation:`annual ${key==='da'?'D&A':'R&D'} / revenue × TTM revenue`}));
+        quality.push({severity:'review',code:key+'-annual-ratio',text:`Interim ${key==='da'?'D&A':'R&D'} is not disclosed; TTM ${key==='da'?'D&A':'R&D'} uses the latest annual ratio to revenue.`});
       }
       else {base[key]=null;delete base.provenance[key];}
     }

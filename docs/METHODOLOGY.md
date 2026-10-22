@@ -1,6 +1,6 @@
 # ValueLens valuation methodology
 
-Version 0.5.0 · October 22, 2026
+Version 0.6.0 · October 22, 2026
 
 ## Objective and scope
 
@@ -55,6 +55,20 @@ Operating NWC is a broad proxy: current assets less cash/short-term securities, 
 Stock-based compensation remains an operating expense. Do not add it back and also ignore dilution. Keep operating leases in operating expenses and out of debt unless the forecast and EBIT are consistently lease-adjusted. Review finance leases separately. Capitalized R&D, acquisitions, intangibles and maintenance capex require a researched normalization schedule for a production-quality company thesis.
 
 The 25% marginal tax rate is an editable prior. A full product should forecast cash taxes with jurisdiction mix, NOL use, limitations on interest deductions and deferred-tax effects; no immediate tax refunds on losses are assumed here.
+
+## 2b. Three readings of the price (v0.6)
+
+The summary leads with what the price requires, then sets two independent views beside it. All three share the active case's margins, investment ratios, discount rate and stable state; only the five-year revenue path differs, and years 6–10 fade to terminal growth.
+
+- **Market-implied.** The constant five-year revenue growth at which the active case, discounted at the model's WACC, equals the market price. Only crossings where value rises with growth count (deep declines can release working capital and create a spurious root); several crossings are reported as ambiguous, none as outside −30%…+80%.
+- **Analyst consensus.** Revenue estimates for the current and next fiscal years from Yahoo Finance's unofficial analyst consensus (not a licensed feed; fetched with a five-second deadline and omitted on failure). Forecast years 1–2 are time-weighted blends of the fiscal years they overlap. Analysts publish two years, so years 3–5 converge linearly from the year-2 rate to the long-run anchor (the backtested medium-term rate in the statistical case, 5% otherwise). A consensus first year that does not contain the base date, or a fiscal-year revenue more than 60% from TTM revenue, is rejected. The consensus case has no historical accuracy test here; it describes perception, not evidence.
+- **Fundamental.** The researched case or, without research, the statistical case whose rules were backtested.
+
+**Long-run margin (v0.6, statistical case).** Year 1 keeps the measured quarterly margin; years 2–10 use the midpoint of the TTM operating margin and the five-year median annual margin. On the SEC archive (898 origins), this rule's mean absolute error on margins two to five years ahead is 5.69pp, against 6.18pp for the latest annual margin; a single quarter is noisier still. Previously the near-term quarterly selection could carry one depressed quarter into perpetuity: Meta's latest quarter (20.1% margin, down from ~40%) moved its value from $391 to $126 between consecutive filings; it is now $391 and $349.
+
+**Analyst margins in the consensus case.** Analysts' EPS estimates imply margins: EBIT growth ≈ (1 + EPS growth) × (1 + share-count change) − 1, using the issuer's three-year diluted share trend (clamped −6%…+4% a year). Each consensus fiscal year's margin moves from the TTM margin by (1 + EBIT growth) / (1 + revenue growth), bounded to 0.6–1.6× the TTM margin; forecast years blend fiscal years by revenue-weighted overlap; the year-2 margin is then held, as analysts' figures imply. Without EPS estimates the consensus case keeps measured margins.
+
+**R&D as investment (v0.6, statistical case).** R&D is capitalized and amortized straight-line over an industry life: 10 years for pharmaceuticals, biotechnology and medical devices; 3 for software and IT services; 5 otherwise. The research asset is the unamortized R&D of the last `life` years (missing early years repeat the earliest disclosed amount). A year above 1.5× the five-year median R&D intensity, typically acquired in-process R&D expensed inside the line, is capped at that level; the forward ratio is the three-year median. Adjusted NOPAT = reported NOPAT + R&D − amortization; reinvestment includes the same net R&D, so explicit-year FCFF is unchanged. Invested capital includes the research asset, and terminal ROIC and the stable-state reinvestment rate use that basis. Effect on the archive's R&D-intensive issuers: measured ROIC becomes more credible (Apple 155% → 72%; AbbVie 563% → 31%), and values move modestly (typically +1% to +11%; Merck +27% because its real R&D intensity is ~28% of revenue). Researched cases keep their own stable-state ROIC and are not capitalized.
 
 ## 3. Estimate equity risk from operating peers
 

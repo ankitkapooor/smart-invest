@@ -1,7 +1,7 @@
 // Pure valuation mathematics. Money and shares are in millions; prices in USD.
 import {buildForecast} from './forecast.js';
 import {operatingForecast} from './prediction.js';
-export const MODEL_VERSION = '0.5.0';
+export const MODEL_VERSION = '0.6.0';
 // Research evidence (LLM reports, issued vintages) is keyed separately from valuation
 // arithmetic: v0.5 changed extraction and discounting, not the research contract, so
 // validated 0.4.0 research remains reusable.
@@ -72,15 +72,51 @@ export function mediumTermGrowth(history=[]) {
   }
   return {growth:LONG_RUN.growthAnchor,cagr:null,span:0};
 }
+// Long-run operating margin (years 2–10, statistical case): midpoint of the TTM margin and the
+// five-year median annual margin. SEC-archive backtest on margins two to five years ahead
+// (898 origins): mean absolute error 5.69pp vs 6.18pp for the latest margin alone.
+export function longRunMargin(b,history=[]) {
+  const ttm=Number.isFinite(b.ebit)&&b.revenue>0?b.ebit/b.revenue:null;
+  const annual=history.filter(h=>Number.isFinite(h.ebit)&&h.revenue>0).slice(-5).map(h=>h.ebit/h.revenue);
+  if(ttm===null)return null;
+  return annual.length>=3?(ttm+median(annual))/2:ttm;
+}
+// R&D as investment (Damodaran's capitalization): straight-line amortization over an
+// industry life. The research asset is the unamortized R&D of the last `life` years.
+export function rdLife(sic) {
+  sic=Number(sic);
+  if((sic>=2833&&sic<=2836)||(sic>=3841&&sic<=3851))return 10; // pharma, biotech, medical devices
+  if(sic>=7370&&sic<=7379)return 3;                              // software and IT services
+  return 5;                                                       // hardware, semis, industrials, other
+}
+export function researchCapital(data) {
+  const b=data.base,life=rdLife(data.sic);
+  if(!(b.rd>0)||!(b.revenue>0))return null;
+  // Oldest → newest annual R&D ending with TTM; missing early years repeat the earliest known.
+  // Acquired in-process R&D is often expensed inside the R&D line: a year above 1.5× the
+  // median R&D intensity is capped at that level, and the forward ratio is a 3-year median.
+  const years=[...(data.history||[]).filter(h=>h.rd>0&&h.revenue>0&&h.end<b.end).map(h=>({rd:h.rd,revenue:h.revenue})),{rd:b.rd,revenue:b.revenue}];
+  const intensity=median(years.slice(-5).map(y=>y.rd/y.revenue)),capped=years.map(y=>Math.min(y.rd,1.5*intensity*y.revenue));
+  const smoothed=capped.some((x,i)=>x<years[i].rd);
+  const series=capped.slice(-(life+1));
+  const known=series.length;
+  while(series.length<life+1)series.unshift(series[0]);
+  const current=series.at(-1),prior=series.slice(0,-1);              // prior = last `life` years before the current
+  const amortization=prior.reduce((s,x)=>s+x,0)/life;
+  const asset=series.slice(1).reduce((s,x,i)=>s+x*(i+1)/life,0);      // newest year fully unamortized
+  const ratio=median(years.slice(-3).map((y,i,arr)=>capped[capped.length-arr.length+i]/y.revenue));
+  return {life,ratio,schedule:series.slice(1),amortization,asset,net:current-amortization,backfilled:Math.max(0,life+1-known),smoothed};
+}
 // ROIC on operating invested capital excluding goodwill and acquired intangibles: the
 // return new investment earns, which is what the stable-state reinvestment rate needs.
-export function bookROIC(b,tax) {
-  const ic=[b.assets,b.cash,b.currentLiabilities,b.currentFinancing].every(Number.isFinite)?b.assets-b.cash-(b.nonOperatingInvestments??0)-(b.currentLiabilities-b.currentFinancing)-(b.goodwill??0)-(b.intangibles??0):null;
+export function bookROIC(b,tax,rd=null) {
+  const ic=[b.assets,b.cash,b.currentLiabilities,b.currentFinancing].every(Number.isFinite)?b.assets-b.cash-(b.nonOperatingInvestments??0)-(b.currentLiabilities-b.currentFinancing)-(b.goodwill??0)-(b.intangibles??0)+(rd?.asset??0):null;
   if(!Number.isFinite(b.ebit)||ic===null)return null;
-  return ic>0?b.ebit*(1-tax)/ic:Infinity;
+  const nopat=b.ebit*(1-tax)+(rd?.net??0);
+  return ic>0?nopat/ic:Infinity;
 }
-export function defaultTerminalROIC(b,tax,costOfCapital) {
-  const roic=bookROIC(b,tax);
+export function defaultTerminalROIC(b,tax,costOfCapital,rd=null) {
+  const roic=bookROIC(b,tax,rd);
   if(roic===null)return costOfCapital;
   const target=costOfCapital+LONG_RUN.roicRetention*(Math.min(roic,5)-costOfCapital);
   return clamp(target,costOfCapital-.03,LONG_RUN.roicCap);
@@ -111,15 +147,18 @@ export function defaults(data) {
   const peer=peerAssetBeta(data.peers,null,tax),operatingBeta=peer.beta,own=ownAssetBeta(data,tax);
   const costOfCapital=data.rates.rf+(operatingBeta??own??1)*data.rates.erp;
   const medium=mediumTermGrowth(hist);
+  // Capitalize R&D in the statistical case, where terminal ROIC is measured on the same basis.
+  const rd=business?null:researchCapital(data);
   // Cash flows start after the latest filed period; value them as of the quote date.
   const lag=data.quote?.asOf&&b.end?clamp((Date.parse(data.quote.asOf)-Date.parse(b.end))/864e5/365.25,0,.75):0;
   return {
-    growth:business?.years[0].growth??fitted.firstGrowth, margin:business?.terminal.margin??fitted.nearMargin, tax:research?.taxRate??.25,
+    growth:business?.years[0].growth??fitted.firstGrowth, margin:business?.terminal.margin??longRunMargin(b,hist)??fitted.nearMargin, tax:research?.taxRate??.25,
     operatingForecast:fitted,valuationForecast:business,driverForecast:null,
     capex:business?.years[0].capexRatio??fitted.ratios.capex.value, da:business?.years[0].daRatio??fitted.ratios.da.value,
     nwc:business?.years[0].nwcRatio??fitted.ratios.nwc.value, terminalGrowth:business?.terminal.growth??Math.max(0,Math.min(data.rates.terminalGrowth??.025,data.rates.rf-.005)),
     mediumGrowth:business?null:medium.growth,mediumGrowthBasis:medium,
-    terminalROIC:business?.terminal.roic??defaultTerminalROIC(b,tax,costOfCapital),
+    terminalROIC:business?.terminal.roic??defaultTerminalROIC(b,tax,costOfCapital,rd),
+    rdCapitalize:!!rd,rdRatio:rd?.ratio??null,rdLife:rd?.life??null,rdSchedule:rd?.schedule??null,researchCapital:rd,
     valuationLag:lag,
     rf:data.rates.rf, erp:data.rates.erp, assetBeta:operatingBeta ?? own,
     betaBasis:operatingBeta!==null ? `Median of ${peer.n} peer unlevered betas (Blume-adjusted)` : `Company regression, Blume-adjusted and unlevered; ${peer.n} usable peers (minimum ${LONG_RUN.minPeers})`,
@@ -191,6 +230,56 @@ export function reverseDCF(base,a,wacc,targetPrice) {
   return {...common,status:'solved',initialGrowth:growth,matchedPrice:priceAt(growth)};
 }
 
+// Consensus fiscal-year revenue → the model's forecast years. Forecast years 1–2 cover the
+// twenty-four months after the latest filed period as time-weighted blends of the fiscal
+// years they overlap. Analysts publish two fiscal years, so years 3–5 converge linearly from
+// the year-2 consensus rate to the long-run anchor (the backtested medium-term rate in the
+// statistical case), then the standard fade applies.
+// Analysts' earnings estimates also imply margins: EBIT growth ≈ (1 + EPS growth) ×
+// (1 + share-count change) − 1, so each consensus fiscal year's margin moves by
+// (1 + EBIT growth) / (1 + revenue growth) from the measured margin. Clamped to 0.6–1.6×
+// the measured margin; held after year 2.
+export function shareChange(history=[]) {
+  const s=history.filter(h=>h.dilutedShares>0).slice(-4);
+  if(s.length<2)return 0;
+  return clamp((s.at(-1).dilutedShares/s[0].dilutedShares)**(1/(s.length-1))-1,-.06,.04);
+}
+export function consensusGrowthPath(consensus,base,anchor=LONG_RUN.growthAnchor,{baselineMargin=null,shares=0}={}) {
+  const fy=[...(consensus?.years||[])].filter(y=>y.revenue>0&&/^\d{4}-\d{2}-\d{2}$/.test(y.end)).sort((a,b)=>a.end.localeCompare(b.end));
+  if(fy.length<2||!(base?.revenue>0)||!base.end)return null;
+  const year=365.25*864e5,[f0,f1]=fy,g1=f1.revenue/f0.revenue-1,start=Date.parse(base.end);
+  if(!(Math.abs(f0.revenue/base.revenue-1)<.6)||!Number.isFinite(g1)||g1<=-.9)return null; // scale or period mismatch
+  const end=k=>Date.parse(k===0?f0.end:f1.end)+(k>1?(k-1)*year:0),revenue=k=>k===0?f0.revenue:f1.revenue*(1+g1)**(k-1);
+  if(end(0)<=start||end(0)-year>start+.1*year)return null; // the first consensus year must contain the base date
+  const windowRevenue=(s,e)=>{let total=0;for(let k=0;k<12;k++){const fe=end(k),fs=fe-year,overlap=Math.max(0,Math.min(e,fe)-Math.max(s,fs));total+=revenue(k)*overlap/year;}return total;};
+  const y1=windowRevenue(start,start+year),y2=windowRevenue(start+year,start+2*year);
+  const g=[y1/base.revenue-1,y2/y1-1];
+  for(let k=3;k<=5;k++)g.push(g[1]+(anchor-g[1])*(k-2)/3);
+  let marginPath=null;
+  if(baselineMargin>0&&[f0,f1].every(y=>Number.isFinite(y.epsGrowth)&&Number.isFinite(y.growth)&&y.growth>-.9)) {
+    const bound=m=>clamp(m,.6*baselineMargin,Math.min(.8,1.6*baselineMargin));
+    const m0=bound(baselineMargin*((1+f0.epsGrowth)*(1+shares))/(1+f0.growth)),m1=bound(m0*((1+f1.epsGrowth)*(1+shares))/(1+f1.growth));
+    const marginAt=k=>k===0?m0:m1;
+    const windowMargin=(s,e)=>{let r=0,p=0;for(let k=0;k<12;k++){const fe=end(k),w=revenue(k)*Math.max(0,Math.min(e,fe)-Math.max(s,fe-year));r+=w;p+=w*marginAt(k);}return p/r;};
+    const w1=windowMargin(start,start+year),w2=windowMargin(start+year,start+2*year);
+    marginPath=[w1,w2,w2,w2,w2];
+  }
+  return {path:g,marginPath,baselineMargin,shares,anchor,fiscalYears:[f0,f1],secondYearGrowth:g1,analysts:Math.min(...fy.slice(0,2).map(y=>y.analysts||0))};
+}
+// Constant five-year revenue growth (then the standard fade) at which the active case,
+// discounted at `wacc`, reproduces the market price. Reports ambiguity instead of guessing.
+export function impliedGrowth(base,a,wacc,price) {
+  if(!(price>0)||!Number.isFinite(wacc))return {status:'unavailable'};
+  const at=g=>{const rows=forecast(base,{...a,growthPath:[g,g,g,g,g]});if(rows.some(r=>!Number.isFinite(r.fcff)||r.capex<0))return null;const v=dcf(rows,wacc,a.terminalGrowth,a.terminalROIC,base,a)?.price;return Number.isFinite(v)?v-price:null;};
+  const roots=[];let prev=null;
+  // Only crossings where value rises with growth read as a growth expectation; at deep
+  // declines, released working capital can raise value again and create a spurious root.
+  for(let i=0;i<=110;i++){const g=-.3+i*.01,e=at(g);if(e===null){prev=null;continue;}if(prev&&prev.e<0&&e>=0)roots.push([prev.g,g]);prev={g,e};}
+  if(roots.length!==1)return {status:roots.length?'ambiguous':'outside',range:[-.3,.8]};
+  let [lo,hi]=roots[0],elo=at(lo);
+  for(let i=0;i<50;i++){const m=(lo+hi)/2,e=at(m);if(e===null)break;if(elo*e<=0)hi=m;else{lo=m;elo=e;}}
+  return {status:'solved',growth:(lo+hi)/2};
+}
 // The discount rate at which this forecast reproduces the market price. A diagnostic of
 // what the price implies, never an input.
 export function impliedWACC(rows,a,base,price) {
@@ -317,12 +406,17 @@ export function analyze(data, a=defaults(data)) {
     })};
   });
   const buyBelow=valued ? valued.price*(1-a.marginOfSafety) : null;
+  // Perception lenses: analysts' revenue path on the active case, and the growth the price requires.
+  const consensus=consensusGrowthPath(data.consensus,b,Number.isFinite(a.mediumGrowth)?a.mediumGrowth:LONG_RUN.growthAnchor,
+    {baselineMargin:Number.isFinite(b.ebit)&&b.revenue>0?b.ebit/b.revenue:null,shares:shareChange(data.history)});
+  const consensusCase=consensus?{...consensus,...dcf(forecast(b,{...a,growthPath:consensus.path,marginPath:consensus.marginPath}),current.wacc,a.terminalGrowth,a.terminalROIC,b,a)}:null;
+  const implied=impliedGrowth(b,a,current.wacc,price);
   const quoteAge=data.quote?.asOf ? (Date.now()-Date.parse(data.quote.asOf))/864e5 : Infinity;
   const stale=quoteAge>5 || (Date.now()-Date.parse(b.end))/864e5>200;
   const selectedUsable=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0).length;
   const incomplete=data.quality.some(q=>q.severity==='critical') || !current.consistent || selectedUsable<3 || !a.hReviewed || (data.version&&data.research?.status!=='validated') || rows.some(r=>r.capex<0);
   const status=!valued || stale || incomplete || a.quoteOverride!==null ? 'Review required' : price<=buyBelow ? 'Below safety threshold' : price<valued.price ? 'Below modeled value' : 'Above modeled value';
-  const result={errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,
+  const result={errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,consensusCase,impliedGrowth:implied,
     equity,capital,currentWeight,marketPrice:price,buyBelow,status,stale,incomplete,recapCosts,adjustment,postRecap,
     capitalStructureUnavailable:hasHistoricalDA?null:'Historical D&A is not fully disclosed. EBITDA and optimal capital structure are withheld; the DCF uses the explicit researched forward D&A path.',
     upside:valued?valued.price/price-1:null,version:MODEL_VERSION};
