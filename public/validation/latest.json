@@ -1,0 +1,1464 @@
+{
+  "asOf": "2026-10-21",
+  "modelVersion": "0.2.0",
+  "scope": "Historical operating forecasts only; LLM disabled; no historical share-price or total-return accuracy measured.",
+  "limitations": [
+    "Current SEC facts retain original filing dates but are not immutable historical archives.",
+    "Forecasts align with fiscal years and are issued after year-end filing, partway into target fiscal year.",
+    "Current-catalog selection plus three historical issuers is not a survivorship-free market universe.",
+    "Calibration samples are pooled and correlated; 80% is a nominal interval target, not guaranteed future coverage.",
+    "Financial firms lack enterprise EBIT comparability; their data failures remain in coverage. No specialized-model accuracy claimed.",
+    "FCFF and stock-return backtests require reconciled actual FCFF and licensed point-in-time prices including delisting returns; not measured here.",
+    "LLM company-specific forecasts require prospective evaluation after key configuration; these results test the deterministic fallback only."
+  ],
+  "candidates": 154,
+  "issuersWithFolds": 113,
+  "folds": 1226,
+  "metrics": [
+    {
+      "horizon": 1,
+      "split": "calibration",
+      "n": 408,
+      "issuers": 112,
+      "revenueMAPE": 0.12996838152442547,
+      "oldRevenueMAPE": 0.12996838152442547,
+      "flatRevenueMAPE": 0.13450543369897544,
+      "repeatGrowthRevenueMAPE": 0.14038581196373964,
+      "repeatGrowthN": 408,
+      "marginMAEpp": 4.614362433901574,
+      "oldMarginMAEpp": 4.591254615838583,
+      "nominalCoverage": 0.8,
+      "observedCoverage": 0.803921568627451,
+      "calibrationN": 408,
+      "logErrorQuantile": 0.1828483509611727
+    },
+    {
+      "horizon": 1,
+      "split": "holdout",
+      "n": 310,
+      "issuers": 108,
+      "revenueMAPE": 0.09626435072622958,
+      "oldRevenueMAPE": 0.09626435072622958,
+      "flatRevenueMAPE": 0.0811409300195871,
+      "repeatGrowthRevenueMAPE": 0.10032993735258611,
+      "repeatGrowthN": 310,
+      "marginMAEpp": 4.086562385407437,
+      "oldMarginMAEpp": 4.022932332253765,
+      "nominalCoverage": 0.8,
+      "observedCoverage": 0.8806451612903226,
+      "calibrationN": 408,
+      "logErrorQuantile": 0.1828483509611727
+    },
+    {
+      "horizon": 3,
+      "split": "calibration",
+      "n": 204,
+      "issuers": 108,
+      "revenueMAPE": 0.2051242558075888,
+      "oldRevenueMAPE": 0.2051242558075888,
+      "flatRevenueMAPE": 0.2349578235877016,
+      "repeatGrowthRevenueMAPE": 0.2936128201042315,
+      "repeatGrowthN": 204,
+      "marginMAEpp": 5.5342980145005765,
+      "oldMarginMAEpp": 5.9607778331368015,
+      "nominalCoverage": 0.8,
+      "observedCoverage": 0.803921568627451,
+      "calibrationN": 204,
+      "logErrorQuantile": 0.3270233561274109
+    },
+    {
+      "horizon": 3,
+      "split": "holdout",
+      "n": 304,
+      "issuers": 108,
+      "revenueMAPE": 0.2368779489988412,
+      "oldRevenueMAPE": 0.2368779489988412,
+      "flatRevenueMAPE": 0.21494835617224906,
+      "repeatGrowthRevenueMAPE": 0.5184532744610179,
+      "repeatGrowthN": 304,
+      "marginMAEpp": 6.07060485545345,
+      "oldMarginMAEpp": 5.847656935060819,
+      "nominalCoverage": 0.8,
+      "observedCoverage": 0.7697368421052632,
+      "calibrationN": 204,
+      "logErrorQuantile": 0.3270233561274109
+    }
+  ],
+  "coverage": [
+    {
+      "symbol": "AAPL",
+      "cik": 320193,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MSFT",
+      "cik": 789019,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NVDA",
+      "cik": 1045810,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "COST",
+      "cik": 909832,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "XOM",
+      "cik": 2115436,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GOOGL",
+      "cik": 1652044,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "META",
+      "cik": 1326801,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AMZN",
+      "cik": 1018724,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ORCL",
+      "cik": 1341439,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ADBE",
+      "cik": 796343,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CRM",
+      "cik": 1108524,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "INTU",
+      "cik": 896878,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NOW",
+      "cik": 1373715,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "IBM",
+      "cik": 51143,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CSCO",
+      "cik": 858877,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HPQ",
+      "cik": 47217,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DELL",
+      "cik": 1571996,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HPE",
+      "cik": 1645590,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AMD",
+      "cik": 2488,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AVGO",
+      "cik": 1730168,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "QCOM",
+      "cik": 804328,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "INTC",
+      "cik": 50863,
+      "cohort": "current-catalog",
+      "folds": 11,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TXN",
+      "cik": 97476,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MU",
+      "cik": 723125,
+      "cohort": "current-catalog",
+      "folds": 11,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AMAT",
+      "cik": 6951,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LRCX",
+      "cik": 707549,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "KLAC",
+      "cik": 319201,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ADI",
+      "cik": 6281,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MCHP",
+      "cik": 827054,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NXPI",
+      "cik": 1413447,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "WMT",
+      "cik": 104169,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TGT",
+      "cik": 27419,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "KR",
+      "cik": 56873,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DG",
+      "cik": 29534,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DLTR",
+      "cik": 935703,
+      "cohort": "current-catalog",
+      "folds": 9,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HD",
+      "cik": 354950,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LOW",
+      "cik": 60667,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TJX",
+      "cik": 109198,
+      "cohort": "current-catalog",
+      "folds": 1,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 5,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ROST",
+      "cik": 745732,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "BBY",
+      "cik": 764478,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MCD",
+      "cik": 63908,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SBUX",
+      "cik": 829224,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "YUM",
+      "cik": 1041061,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CMG",
+      "cik": 1058090,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DRI",
+      "cik": 940944,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NKE",
+      "cik": 320187,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LULU",
+      "cik": 1397187,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DECK",
+      "cik": 910521,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CROX",
+      "cik": 1334036,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "VFC",
+      "cik": 103379,
+      "cohort": "current-catalog",
+      "folds": 9,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PG",
+      "cik": 80424,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CL",
+      "cik": 21665,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "KMB",
+      "cik": 55785,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "KO",
+      "cik": 21344,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PEP",
+      "cik": 77476,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MDLZ",
+      "cik": 1103982,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GIS",
+      "cik": 40704,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "KHC",
+      "cik": 1637459,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CPB",
+      "cik": 16732,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HSY",
+      "cik": 47111,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "JNJ",
+      "cik": 200406,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MRK",
+      "cik": 310158,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PFE",
+      "cik": 78003,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LLY",
+      "cik": 59478,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ABBV",
+      "cik": 1551152,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "BMY",
+      "cik": 14272,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AMGN",
+      "cik": 318154,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GILD",
+      "cik": 882095,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "REGN",
+      "cik": 872589,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "VRTX",
+      "cik": 875320,
+      "cohort": "current-catalog",
+      "folds": 11,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ABT",
+      "cik": 1800,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MDT",
+      "cik": 1613103,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "BSX",
+      "cik": 885725,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SYK",
+      "cik": 310764,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ISRG",
+      "cik": 1035267,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TMO",
+      "cik": 97745,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DHR",
+      "cik": 313616,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CVS",
+      "cik": 64803,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "UNH",
+      "cik": 731766,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6324
+    },
+    {
+      "symbol": "HUM",
+      "cik": 49071,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6324
+    },
+    {
+      "symbol": "CI",
+      "cik": 1739940,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6324
+    },
+    {
+      "symbol": "ELV",
+      "cik": 1156039,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6324
+    },
+    {
+      "symbol": "CAT",
+      "cik": 18230,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DE",
+      "cik": 315189,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HON",
+      "cik": 773840,
+      "cohort": "current-catalog",
+      "folds": 1,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 6,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GE",
+      "cik": 40545,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "RTX",
+      "cik": 101829,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "BA",
+      "cik": 12927,
+      "cohort": "current-catalog",
+      "folds": 2,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 6,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LMT",
+      "cik": 936468,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NOC",
+      "cik": 1133421,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GD",
+      "cik": 40533,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ETN",
+      "cik": 1551182,
+      "cohort": "current-catalog",
+      "folds": 1,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 5,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "EMR",
+      "cik": 32604,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ITW",
+      "cik": 49826,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MMM",
+      "cik": 66740,
+      "cohort": "current-catalog",
+      "folds": 11,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CVX",
+      "cik": 93410,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "COP",
+      "cik": 1163165,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "EOG",
+      "cik": 821189,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "OXY",
+      "cik": 797468,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SLB",
+      "cik": 87347,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "HAL",
+      "cik": 45012,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "VLO",
+      "cik": 1035002,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "MPC",
+      "cik": 1510295,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PSX",
+      "cik": 1534701,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NEE",
+      "cik": 753308,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DUK",
+      "cik": 1326160,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SO",
+      "cik": 92122,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AEP",
+      "cik": 4904,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "EXC",
+      "cik": 1109357,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "XEL",
+      "cik": 72903,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "ED",
+      "cik": 1047862,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SRE",
+      "cik": 1032208,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 7,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "D",
+      "cik": 715957,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TSLA",
+      "cik": 1318605,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "GM",
+      "cik": 1467858,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "F",
+      "cik": 37996,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "RIVN",
+      "cik": 1874178,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 4,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LCID",
+      "cik": 1811210,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 4,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TM",
+      "cik": 1094517,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "STLA",
+      "cik": 1605484,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "UPS",
+      "cik": 1090727,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "FDX",
+      "cik": 1048911,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DAL",
+      "cik": 27904,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "UAL",
+      "cik": 100517,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "AAL",
+      "cik": 6201,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "LUV",
+      "cik": 92380,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "UNP",
+      "cik": 100885,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CSX",
+      "cik": 277948,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NSC",
+      "cik": 702165,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "T",
+      "cik": 732717,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "VZ",
+      "cik": 732712,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "TMUS",
+      "cik": 1283699,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CHTR",
+      "cik": 1091667,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "CMCSA",
+      "cik": 1166691,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "DIS",
+      "cik": 1744489,
+      "cohort": "current-catalog",
+      "folds": 10,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "NFLX",
+      "cik": 1065280,
+      "cohort": "current-catalog",
+      "folds": 12,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 0,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "WBD",
+      "cik": 1437107,
+      "cohort": "current-catalog",
+      "folds": 8,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 3,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PARA",
+      "cik": 1826011,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "normalizationFailures": 1,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "PLD",
+      "cik": 1045609,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6798
+    },
+    {
+      "symbol": "AMT",
+      "cik": 1053507,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6798
+    },
+    {
+      "symbol": "JPM",
+      "cik": 19617,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6021
+    },
+    {
+      "symbol": "BAC",
+      "cik": 70858,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6021
+    },
+    {
+      "symbol": "WFC",
+      "cik": 72971,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6021
+    },
+    {
+      "symbol": "GS",
+      "cik": 886982,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6211
+    },
+    {
+      "symbol": "MS",
+      "cik": 895421,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6211
+    },
+    {
+      "symbol": "C",
+      "cik": 831001,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6021
+    },
+    {
+      "symbol": "AIG",
+      "cik": 5272,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6331
+    },
+    {
+      "symbol": "MET",
+      "cik": 1099219,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6311
+    },
+    {
+      "symbol": "PRU",
+      "cik": 1137774,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6311
+    },
+    {
+      "symbol": "ALL",
+      "cik": 899051,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6331
+    },
+    {
+      "symbol": "CB",
+      "cik": 896159,
+      "cohort": "current-catalog",
+      "folds": 0,
+      "error": "Specialized financial/real-estate model required",
+      "sic": 6331
+    },
+    {
+      "symbol": "BBBY-historical",
+      "cik": 886158,
+      "cohort": "historical-issuer",
+      "folds": 2,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 5,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "SHLD-historical",
+      "cik": 1310067,
+      "cohort": "historical-issuer",
+      "folds": 0,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 1,
+      "fcffScored": 0
+    },
+    {
+      "symbol": "WBA-historical",
+      "cik": 1618921,
+      "cohort": "historical-issuer",
+      "folds": 9,
+      "normalizationFailures": 0,
+      "unsupportedLossOrigins": 2,
+      "fcffScored": 0
+    }
+  ],
+  "hashes": {
+    "src/accounting.js": "e2362bfdf6125456e3231b1e860e0d550bf601a82788d27c3e47488369dd8c45",
+    "public/model.js": "49cfb019df4b80e5accd05546616737da6784404aa2b6a5c958d50d083f1c470",
+    "public/forecast.js": "5fa13a96d4957ead33b2b229d353c657b9c2c6f0754f2a39f5e4130b436a4f5e",
+    "scripts/validate.mjs": "20712cca8daecce568e13ea9d128f7ac5209875e61015e5bbe852c59c8696cef"
+  }
+}

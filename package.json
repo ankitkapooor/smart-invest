@@ -1,0 +1,19 @@
+{
+  "name": "valuelens",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Transparent, filing-backed company valuation for ankitkapoor.me",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "test": "node --test",
+    "check": "node --check public/app.js && node --check public/model.js && node --check src/data.js && node --check src/worker.js && node --check src/accounting.js && node --check src/research.js && node --check public/forecast.js",
+    "test:live": "node scripts/research-smoke.mjs",
+    "validate": "node scripts/validate.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "deploy": "wrangler deploy",
+    "deploy:check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": { "wrangler": "^4.0.0" },
+  "engines": { "node": ">=22" }
+}

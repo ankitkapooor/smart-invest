@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-22T00:48:17.921Z",
+  "deploymentVersion": "3e711356-5cc3-4ff7-9bf8-8de89100bafb",
+  "config": {
+    "http://localhost:8787": {
+      "researchConfigured": true,
+      "researchModel": "gpt-5.6-terra",
+      "researchEffort": "low",
+      "dailyResearchLimit": 10,
+      "modelVersion": "0.2.0"
+    },
+    "https://valuelens.ankitkapoor.me": {
+      "researchConfigured": true,
+      "researchModel": "gpt-5.6-terra",
+      "researchEffort": "low",
+      "dailyResearchLimit": 10,
+      "modelVersion": "0.2.0"
+    }
+  },
+  "secretPathStatus": 404,
+  "publicAssetsAndReportsContainNoKey": true
+}

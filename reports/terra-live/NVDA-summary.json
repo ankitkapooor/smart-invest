@@ -1,0 +1,39 @@
+{
+  "testedAt": "2026-10-22T00:45:11.804Z",
+  "origin": "https://valuelens.ankitkapoor.me",
+  "symbol": "NVDA",
+  "status": "validated",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "sources": 4,
+  "segments": [
+    "Data Center accelerated compute and systems",
+    "Data Center networking",
+    "Gaming and professional visualization",
+    "Automotive and edge AI"
+  ],
+  "peerSymbols": [
+    "AMD",
+    "AVGO",
+    "MRVL",
+    "INTC"
+  ],
+  "hFactors": 7,
+  "searchCalls": 4,
+  "errors": [],
+  "valuationErrors": [],
+  "price": 122.29633102569152,
+  "vintageHash": "96d0a57d98a2d5e1e0f0e8db1d737eadda95e063309d2fb66aa489c8d2e1d4e7",
+  "usage": {
+    "input_tokens": 36776,
+    "input_tokens_details": {
+      "cache_write_tokens": 11188,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4530,
+    "output_tokens_details": {
+      "reasoning_tokens": 1180
+    },
+    "total_tokens": 41306
+  }
+}

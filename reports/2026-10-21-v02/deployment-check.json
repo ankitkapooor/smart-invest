@@ -1,0 +1,261 @@
+{
+  "checkedAt": "2026-10-22T00:21:29.971Z",
+  "versionId": "7481cf35-cd38-4ab6-b439-d25ec7e78981",
+  "checks": [
+    {
+      "route": "/api/config",
+      "status": 200,
+      "researchConfigured": false,
+      "researchModel": "gpt-6-astra",
+      "dailyResearchLimit": 10,
+      "modelVersion": "0.2.0"
+    },
+    {
+      "route": "/validation/latest.json",
+      "status": 200,
+      "candidates": 154,
+      "folds": 1226
+    },
+    {
+      "symbol": "AAPL",
+      "http": 200,
+      "seconds": 1.86,
+      "version": "0.2.0",
+      "baseEnd": "2026-06-27",
+      "da": 13100,
+      "noncurrentInvestments": 84118,
+      "debt": 84344,
+      "errors": [],
+      "modeledPrice": 96.33886839534962,
+      "status": "Review required",
+      "critical": [
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research."
+      ]
+    },
+    {
+      "symbol": "MSFT",
+      "http": 200,
+      "seconds": 1.475,
+      "version": "0.2.0",
+      "baseEnd": "2026-06-30",
+      "da": 39000,
+      "noncurrentInvestments": null,
+      "debt": null,
+      "errors": [
+        "Missing required financial input: nwc.",
+        "Missing required financial input: debt.",
+        "Missing or invalid assumption: assetBeta.",
+        "Review rate, beta, reinvestment, stress, reserve, cost, and safety assumptions."
+      ],
+      "critical": [
+        "Short-term borrowing disclosure missing for 2026-06-30. No zero substituted; bridge and peer leverage are blocked.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "10-K text unavailable. The seven h scores are placeholders pending filing review.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "symbol": "NVDA",
+      "http": 200,
+      "seconds": 0.802,
+      "version": "0.2.0",
+      "baseEnd": "2026-07-26",
+      "da": 3687,
+      "noncurrentInvestments": null,
+      "debt": 33366,
+      "errors": [],
+      "modeledPrice": 129.03105974239693,
+      "status": "Review required",
+      "critical": [
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research."
+      ]
+    },
+    {
+      "symbol": "COST",
+      "http": 200,
+      "seconds": 0.743,
+      "version": "0.2.0",
+      "baseEnd": "2026-08-30",
+      "da": 2674,
+      "noncurrentInvestments": null,
+      "debt": null,
+      "errors": [
+        "Missing required financial input: nwc.",
+        "Missing required financial input: debt."
+      ],
+      "critical": [
+        "Short-term borrowing disclosure missing for 2026-08-30. No zero substituted; bridge and peer leverage are blocked.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-08-30. Custom tags or omitted disclosures require evidence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "symbol": "XOM",
+      "http": 200,
+      "seconds": 4.974,
+      "version": "0.2.0",
+      "baseEnd": "2026-06-30",
+      "da": 29650,
+      "noncurrentInvestments": null,
+      "debt": 42368,
+      "continuity": "ExxonMobil holding-company reorganization: consolidated reporting basis unchanged; one-for-one exchange.",
+      "errors": [
+        "Missing required financial input: ebit.",
+        "Missing required financial input: nwc.",
+        "Missing required financial input: cash.",
+        "Operating losses require a separate turnaround and NOL model. This edition cannot produce a defensible going-concern value for this company.",
+        "Missing or invalid assumption: stressMargin."
+      ],
+      "critical": [
+        "A period-end option/RSU/convertible dilution schedule is unverified. Basic shares remain an exploratory denominator.",
+        "Term-debt principal cannot be reconciled. No fair value, maturity schedule or borrowing capacity substituted.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "EBIT cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "NWC cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "route": "/api/research",
+      "status": 503,
+      "response": {
+        "error": "Research is awaiting your server-side OPENAI_API_KEY. See the Research tab for setup."
+      }
+    }
+  ],
+  "finalVersionId": "9b930be0-c8be-4a17-bdaa-9952203e0dd7",
+  "finalChecks": [
+    {
+      "symbol": "AAPL",
+      "http": 200,
+      "modelFamily": "fcff",
+      "debt": 84344,
+      "errors": [],
+      "critical": [
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research."
+      ]
+    },
+    {
+      "symbol": "MSFT",
+      "http": 200,
+      "modelFamily": "fcff",
+      "debt": null,
+      "errors": [
+        "Missing required financial input: nwc.",
+        "Missing required financial input: debt.",
+        "Missing or invalid assumption: assetBeta.",
+        "Review rate, beta, reinvestment, stress, reserve, cost, and safety assumptions."
+      ],
+      "critical": [
+        "Short-term borrowing disclosure missing for 2026-06-30. No zero substituted; bridge and peer leverage are blocked.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "10-K text unavailable. The seven h scores are placeholders pending filing review.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "symbol": "NVDA",
+      "http": 200,
+      "modelFamily": "fcff",
+      "debt": 33366,
+      "errors": [],
+      "critical": [
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research."
+      ]
+    },
+    {
+      "symbol": "COST",
+      "http": 200,
+      "modelFamily": "fcff",
+      "debt": null,
+      "errors": [
+        "Missing required financial input: nwc.",
+        "Missing required financial input: debt."
+      ],
+      "critical": [
+        "Short-term borrowing disclosure missing for 2026-08-30. No zero substituted; bridge and peer leverage are blocked.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-08-30. Custom tags or omitted disclosures require evidence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "symbol": "XOM",
+      "http": 200,
+      "modelFamily": "fcff",
+      "debt": 42368,
+      "errors": [
+        "Missing required financial input: ebit.",
+        "Missing required financial input: nwc.",
+        "Missing required financial input: cash.",
+        "Missing or invalid assumption: stressMargin."
+      ],
+      "critical": [
+        "A period-end option/RSU/convertible dilution schedule is unverified. Basic shares remain an exploratory denominator.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "EBIT cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "NWC cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2026-06-30. Custom tags or omitted disclosures require evidence.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    },
+    {
+      "symbol": "JPM",
+      "http": 200,
+      "modelFamily": "specialized",
+      "debt": null,
+      "errors": [
+        "A specialized accounting/valuation adapter is required; company research is available in the Research tab.",
+        "Missing required financial input: ebit.",
+        "Missing required financial input: capex.",
+        "Missing required financial input: nwc.",
+        "Missing required financial input: cash.",
+        "Missing required financial input: debt.",
+        "Missing or invalid assumption: assetBeta.",
+        "Missing or invalid assumption: stressMargin.",
+        "Review rate, beta, reinvestment, stress, reserve, cost, and safety assumptions."
+      ],
+      "critical": [
+        "Term-debt principal cannot be reconciled. No fair value, maturity schedule or borrowing capacity substituted.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "EBIT cannot be normalized for 2025-12-31. Custom tags or omitted disclosures require evidence.",
+        "CAPEX cannot be normalized for 2025-12-31. Custom tags or omitted disclosures require evidence.",
+        "NWC cannot be normalized for 2025-12-31. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2025-12-31. Custom tags or omitted disclosures require evidence.",
+        "Financial base is over 200 days old.",
+        "Financial/real-estate business: specialized valuation model required. Company research is available; enterprise FCFF is withheld.",
+        "10-K text unavailable. The seven h scores are placeholders pending filing review.",
+        "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.",
+        "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+      ]
+    }
+  ],
+  "config": {
+    "researchConfigured": false,
+    "researchModel": "gpt-6-astra",
+    "dailyResearchLimit": 10,
+    "modelVersion": "0.2.0"
+  },
+  "sourceHashChecks": {
+    "src/accounting.js": true,
+    "public/model.js": true,
+    "public/forecast.js": true,
+    "scripts/validate.mjs": true
+  },
+  "finalCheckedAt": "2026-10-22T00:25:23.725Z"
+}

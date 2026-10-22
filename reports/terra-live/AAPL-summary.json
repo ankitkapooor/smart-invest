@@ -1,0 +1,39 @@
+{
+  "testedAt": "2026-10-22T00:44:04.524Z",
+  "origin": "https://valuelens.ankitkapoor.me",
+  "symbol": "AAPL",
+  "status": "validated",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "sources": 4,
+  "segments": [
+    "iPhone",
+    "Mac",
+    "iPad",
+    "Wearables, Home and Accessories",
+    "Services"
+  ],
+  "peerSymbols": [
+    "GOOGL",
+    "MSFT",
+    "SONY"
+  ],
+  "hFactors": 7,
+  "searchCalls": 4,
+  "errors": [],
+  "valuationErrors": [],
+  "price": 123.18185572117969,
+  "vintageHash": "cb55828fba008c771c257b8381463bd0fb07692334f5f2b83eeca45a37d38458",
+  "usage": {
+    "input_tokens": 40852,
+    "input_tokens_details": {
+      "cache_write_tokens": 11233,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4126,
+    "output_tokens_details": {
+      "reasoning_tokens": 937
+    },
+    "total_tokens": 44978
+  }
+}

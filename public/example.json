@@ -1,0 +1,2019 @@
+{
+  "version": "0.2.0",
+  "symbol": "AAPL",
+  "name": "Apple Inc.",
+  "cik": "0000320193",
+  "sic": 3571,
+  "industry": "Electronic Computers",
+  "fetchedAt": "2026-10-22T00:15:43.002Z",
+  "currency": "USD",
+  "units": "USD millions; shares in millions",
+  "base": {
+    "end": "2026-06-27",
+    "year": 2025,
+    "provenance": {
+      "revenue": [
+        {
+          "value": 416161,
+          "raw": 416161000000,
+          "unit": "USD",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 364357,
+          "raw": 364357000000,
+          "unit": "USD",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 313695,
+          "raw": 313695000000,
+          "unit": "USD",
+          "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "ebit": [
+        {
+          "value": 133050,
+          "raw": 133050000000,
+          "unit": "USD",
+          "tag": "OperatingIncomeLoss",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 122432,
+          "raw": 122432000000,
+          "unit": "USD",
+          "tag": "OperatingIncomeLoss",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 100623,
+          "raw": 100623000000,
+          "unit": "USD",
+          "tag": "OperatingIncomeLoss",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "da": [
+        {
+          "value": 11698,
+          "raw": 11698000000,
+          "unit": "USD",
+          "tag": "DepreciationDepletionAndAmortization",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 9973,
+          "raw": 9973000000,
+          "unit": "USD",
+          "tag": "DepreciationDepletionAndAmortization",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 8571,
+          "raw": 8571000000,
+          "unit": "USD",
+          "tag": "DepreciationDepletionAndAmortization",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "capex": [
+        {
+          "value": 12715,
+          "raw": 12715000000,
+          "unit": "USD",
+          "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 6799,
+          "raw": 6799000000,
+          "unit": "USD",
+          "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 9473,
+          "raw": 9473000000,
+          "unit": "USD",
+          "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "cfo": [
+        {
+          "value": 111482,
+          "raw": 111482000000,
+          "unit": "USD",
+          "tag": "NetCashProvidedByUsedInOperatingActivities",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 116996,
+          "raw": 116996000000,
+          "unit": "USD",
+          "tag": "NetCashProvidedByUsedInOperatingActivities",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 81754,
+          "raw": 81754000000,
+          "unit": "USD",
+          "tag": "NetCashProvidedByUsedInOperatingActivities",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "sbc": [
+        {
+          "value": 12863,
+          "raw": 12863000000,
+          "unit": "USD",
+          "tag": "ShareBasedCompensation",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/",
+          "operation": "add FY"
+        },
+        {
+          "value": 10523,
+          "raw": 10523000000,
+          "unit": "USD",
+          "tag": "ShareBasedCompensation",
+          "start": "2025-09-28",
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "add YTD"
+        },
+        {
+          "value": 9680,
+          "raw": 9680000000,
+          "unit": "USD",
+          "tag": "ShareBasedCompensation",
+          "start": "2024-09-29",
+          "end": "2025-06-28",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/",
+          "operation": "subtract prior YTD"
+        }
+      ],
+      "cash": [
+        {
+          "value": 39544,
+          "raw": 39544000000,
+          "unit": "USD",
+          "tag": "CashAndCashEquivalentsAtCarryingValue",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "shortInvest": [
+        {
+          "value": 22855,
+          "raw": 22855000000,
+          "unit": "USD",
+          "tag": "MarketableSecuritiesCurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "longInvest": [
+        {
+          "value": 84118,
+          "raw": 84118000000,
+          "unit": "USD",
+          "tag": "MarketableSecuritiesNoncurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "currentAssets": [
+        {
+          "value": 149818,
+          "raw": 149818000000,
+          "unit": "USD",
+          "tag": "AssetsCurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "currentLiabilities": [
+        {
+          "value": 149326,
+          "raw": 149326000000,
+          "unit": "USD",
+          "tag": "LiabilitiesCurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "longDebt": [
+        {
+          "value": 71340,
+          "raw": 71340000000,
+          "unit": "USD",
+          "tag": "LongTermDebtNoncurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "currentDebt": [
+        {
+          "value": 11007,
+          "raw": 11007000000,
+          "unit": "USD",
+          "tag": "LongTermDebtCurrent",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "shortDebt": [
+        {
+          "value": 1997,
+          "raw": 1997000000,
+          "unit": "USD",
+          "tag": "CommercialPaper",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "totalTermDebt": [
+        {
+          "value": 82300,
+          "raw": 82300000000,
+          "unit": "USD",
+          "tag": "LongTermDebt",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "shares": [
+        {
+          "value": 14608.963,
+          "raw": 14608963000,
+          "unit": "shares",
+          "tag": "CommonStockSharesOutstanding",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "assets": [
+        {
+          "value": 383266,
+          "raw": 383266000000,
+          "unit": "USD",
+          "tag": "Assets",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "liabilitiesEquity": [
+        {
+          "value": 383266,
+          "raw": 383266000000,
+          "unit": "USD",
+          "tag": "LiabilitiesAndStockholdersEquity",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "ppe": [
+        {
+          "value": 51431,
+          "raw": 51431000000,
+          "unit": "USD",
+          "tag": "PropertyPlantAndEquipmentNet",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "equity": [
+        {
+          "value": 107520,
+          "raw": 107520000000,
+          "unit": "USD",
+          "tag": "StockholdersEquity",
+          "start": null,
+          "end": "2026-06-27",
+          "filed": "2026-07-31",
+          "form": "10-Q",
+          "accession": "0000320193-26-000020",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/"
+        }
+      ],
+      "dilutedShares": [
+        {
+          "value": 15004.697,
+          "raw": 15004697000,
+          "unit": "shares",
+          "tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+        }
+      ],
+      "basicShares": [
+        {
+          "value": 14948.5,
+          "raw": 14948500000,
+          "unit": "shares",
+          "tag": "WeightedAverageNumberOfSharesOutstandingBasic",
+          "start": "2024-09-29",
+          "end": "2025-09-27",
+          "filed": "2025-10-31",
+          "form": "10-K",
+          "accession": "0000320193-25-000079",
+          "cik": 320193,
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+        }
+      ]
+    },
+    "revenue": 466823,
+    "ebit": 154859,
+    "da": 13100,
+    "capex": 10041,
+    "cfo": 146724,
+    "interest": null,
+    "sbc": 13706,
+    "basis": "Trailing twelve months (FY + current YTD − comparable prior YTD)",
+    "cash": 62399,
+    "shortInvest": 22855,
+    "longInvest": 84118,
+    "currentAssets": 149818,
+    "currentLiabilities": 149326,
+    "longDebt": 71340,
+    "currentDebt": 11007,
+    "shortDebt": 1997,
+    "totalTermDebt": 82300,
+    "financeLeaseCurrent": null,
+    "financeLeaseNoncurrent": null,
+    "shares": 14608.963,
+    "assets": 383266,
+    "liabilitiesEquity": 383266,
+    "ppe": 51431,
+    "equity": 107520,
+    "preferred": null,
+    "minority": null,
+    "pension": null,
+    "dilutedShares": 15004.697,
+    "basicShares": 14948.5,
+    "dilutionIncrement": 56.197000000000116,
+    "valuationShares": 14665.16,
+    "leaseDebt": 0,
+    "debt": 84344,
+    "cashAndEquivalents": 39544,
+    "currentLiquid": 62399,
+    "nonOperatingInvestments": 84118,
+    "nwc": -48903
+  },
+  "history": [
+    {
+      "end": "2016-09-24",
+      "year": 2016,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 215639,
+            "raw": 215639000000,
+            "unit": "USD",
+            "tag": "Revenues",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 60024,
+            "raw": 60024000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "da": [
+          {
+            "value": 10505,
+            "raw": 10505000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 12734,
+            "raw": 12734000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 66231,
+            "raw": 66231000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 1456,
+            "raw": 1456000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 4210,
+            "raw": 4210000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2015-09-27",
+            "end": "2016-09-24",
+            "filed": "2018-11-05",
+            "form": "10-K",
+            "accession": "0000320193-18-000145",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/"
+          }
+        ]
+      },
+      "revenue": 215639,
+      "ebit": 60024,
+      "da": 10505,
+      "capex": 12734,
+      "cfo": 66231,
+      "interest": 1456,
+      "sbc": 4210
+    },
+    {
+      "end": "2017-09-30",
+      "year": 2017,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 229234,
+            "raw": 229234000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 61344,
+            "raw": 61344000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "da": [
+          {
+            "value": 10157,
+            "raw": 10157000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 12451,
+            "raw": 12451000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 64225,
+            "raw": 64225000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 2323,
+            "raw": 2323000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 4840,
+            "raw": 4840000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2016-09-25",
+            "end": "2017-09-30",
+            "filed": "2019-10-31",
+            "form": "10-K",
+            "accession": "0000320193-19-000119",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/"
+          }
+        ]
+      },
+      "revenue": 229234,
+      "ebit": 61344,
+      "da": 10157,
+      "capex": 12451,
+      "cfo": 64225,
+      "interest": 2323,
+      "sbc": 4840
+    },
+    {
+      "end": "2018-09-29",
+      "year": 2018,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 265595,
+            "raw": 265595000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 70898,
+            "raw": 70898000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "da": [
+          {
+            "value": 10903,
+            "raw": 10903000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 13313,
+            "raw": 13313000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 77434,
+            "raw": 77434000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 3240,
+            "raw": 3240000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 5340,
+            "raw": 5340000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2017-10-01",
+            "end": "2018-09-29",
+            "filed": "2020-10-30",
+            "form": "10-K",
+            "accession": "0000320193-20-000096",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/"
+          }
+        ]
+      },
+      "revenue": 265595,
+      "ebit": 70898,
+      "da": 10903,
+      "capex": 13313,
+      "cfo": 77434,
+      "interest": 3240,
+      "sbc": 5340
+    },
+    {
+      "end": "2019-09-28",
+      "year": 2019,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 260174,
+            "raw": 260174000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 63930,
+            "raw": 63930000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "da": [
+          {
+            "value": 12547,
+            "raw": 12547000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 10495,
+            "raw": 10495000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 69391,
+            "raw": 69391000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 3576,
+            "raw": 3576000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 6068,
+            "raw": 6068000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2018-09-30",
+            "end": "2019-09-28",
+            "filed": "2021-10-29",
+            "form": "10-K",
+            "accession": "0000320193-21-000105",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/"
+          }
+        ]
+      },
+      "revenue": 260174,
+      "ebit": 63930,
+      "da": 12547,
+      "capex": 10495,
+      "cfo": 69391,
+      "interest": 3576,
+      "sbc": 6068
+    },
+    {
+      "end": "2020-09-26",
+      "year": 2020,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 274515,
+            "raw": 274515000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 66288,
+            "raw": 66288000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11056,
+            "raw": 11056000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 7309,
+            "raw": 7309000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 80674,
+            "raw": 80674000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 2873,
+            "raw": 2873000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 6829,
+            "raw": 6829000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2019-09-29",
+            "end": "2020-09-26",
+            "filed": "2022-10-28",
+            "form": "10-K",
+            "accession": "0000320193-22-000108",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/"
+          }
+        ]
+      },
+      "revenue": 274515,
+      "ebit": 66288,
+      "da": 11056,
+      "capex": 7309,
+      "cfo": 80674,
+      "interest": 2873,
+      "sbc": 6829
+    },
+    {
+      "end": "2021-09-25",
+      "year": 2021,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 365817,
+            "raw": 365817000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 108949,
+            "raw": 108949000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11284,
+            "raw": 11284000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 11085,
+            "raw": 11085000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 104038,
+            "raw": 104038000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 2645,
+            "raw": 2645000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 7906,
+            "raw": 7906000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2020-09-27",
+            "end": "2021-09-25",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ]
+      },
+      "revenue": 365817,
+      "ebit": 108949,
+      "da": 11284,
+      "capex": 11085,
+      "cfo": 104038,
+      "interest": 2645,
+      "sbc": 7906
+    },
+    {
+      "end": "2022-09-24",
+      "year": 2022,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 394328,
+            "raw": 394328000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 119437,
+            "raw": 119437000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11104,
+            "raw": 11104000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 10708,
+            "raw": 10708000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 122151,
+            "raw": 122151000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 2931,
+            "raw": 2931000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 9038,
+            "raw": 9038000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2021-09-26",
+            "end": "2022-09-24",
+            "filed": "2024-11-01",
+            "form": "10-K",
+            "accession": "0000320193-24-000123",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/"
+          }
+        ]
+      },
+      "revenue": 394328,
+      "ebit": 119437,
+      "da": 11104,
+      "capex": 10708,
+      "cfo": 122151,
+      "interest": 2931,
+      "sbc": 9038
+    },
+    {
+      "end": "2023-09-30",
+      "year": 2023,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 383285,
+            "raw": 383285000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 114301,
+            "raw": 114301000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11519,
+            "raw": 11519000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 10959,
+            "raw": 10959000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 110543,
+            "raw": 110543000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "interest": [
+          {
+            "value": 3933,
+            "raw": 3933000000,
+            "unit": "USD",
+            "tag": "InterestExpense",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2023-11-03",
+            "form": "10-K",
+            "accession": "0000320193-23-000106",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 10833,
+            "raw": 10833000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2022-09-25",
+            "end": "2023-09-30",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ]
+      },
+      "revenue": 383285,
+      "ebit": 114301,
+      "da": 11519,
+      "capex": 10959,
+      "cfo": 110543,
+      "interest": 3933,
+      "sbc": 10833
+    },
+    {
+      "end": "2024-09-28",
+      "year": 2024,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 391035,
+            "raw": 391035000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 123216,
+            "raw": 123216000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11445,
+            "raw": 11445000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 9447,
+            "raw": 9447000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 118254,
+            "raw": 118254000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 11688,
+            "raw": 11688000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2023-10-01",
+            "end": "2024-09-28",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ]
+      },
+      "revenue": 391035,
+      "ebit": 123216,
+      "da": 11445,
+      "capex": 9447,
+      "cfo": 118254,
+      "interest": null,
+      "sbc": 11688
+    },
+    {
+      "end": "2025-09-27",
+      "year": 2025,
+      "provenance": {
+        "revenue": [
+          {
+            "value": 416161,
+            "raw": 416161000000,
+            "unit": "USD",
+            "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "ebit": [
+          {
+            "value": 133050,
+            "raw": 133050000000,
+            "unit": "USD",
+            "tag": "OperatingIncomeLoss",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "da": [
+          {
+            "value": 11698,
+            "raw": 11698000000,
+            "unit": "USD",
+            "tag": "DepreciationDepletionAndAmortization",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "capex": [
+          {
+            "value": 12715,
+            "raw": 12715000000,
+            "unit": "USD",
+            "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "cfo": [
+          {
+            "value": 111482,
+            "raw": 111482000000,
+            "unit": "USD",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ],
+        "sbc": [
+          {
+            "value": 12863,
+            "raw": 12863000000,
+            "unit": "USD",
+            "tag": "ShareBasedCompensation",
+            "start": "2024-09-29",
+            "end": "2025-09-27",
+            "filed": "2025-10-31",
+            "form": "10-K",
+            "accession": "0000320193-25-000079",
+            "cik": 320193,
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/"
+          }
+        ]
+      },
+      "revenue": 416161,
+      "ebit": 133050,
+      "da": 11698,
+      "capex": 12715,
+      "cfo": 111482,
+      "interest": null,
+      "sbc": 12863
+    }
+  ],
+  "quality": [
+    {
+      "severity": "review",
+      "code": "dilution-proxy",
+      "text": "Dilution proxy adds latest annual diluted-minus-basic weighted shares to period-end shares. Exercise-price, RSU and convertible schedules still require review."
+    },
+    {
+      "severity": "review",
+      "code": "cash-identity-missing",
+      "text": "Complete cash-flow/FX reconciliation unavailable; no omitted FX amount assumed zero."
+    },
+    {
+      "severity": "review",
+      "text": "Operating leases remain operating expenses. Debt uses carrying principal; lease interest, pensions, minority/preferred claims and restricted securities require a reconciled footnote review."
+    },
+    {
+      "severity": "critical",
+      "code": "research-pending",
+      "text": "Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research."
+    },
+    {
+      "severity": "critical",
+      "text": "Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback."
+    }
+  ],
+  "reconciliations": [
+    {
+      "name": "Assets = liabilities + equity",
+      "passed": true,
+      "difference": 0,
+      "period": "2026-06-27"
+    }
+  ],
+  "continuity": null,
+  "accountingStandard": "US-GAAP",
+  "asOf": "2026-10-22",
+  "quote": {
+    "price": 343.99,
+    "currency": "USD",
+    "asOf": "2026-10-21T20:00:01.000Z",
+    "exchange": "NMS",
+    "source": "Yahoo Finance chart (unofficial; delayed availability)",
+    "url": "https://finance.yahoo.com/quote/AAPL/"
+  },
+  "beta": {
+    "beta": 1.0970556862410545,
+    "alpha": 0.002848465051261524,
+    "n": 58,
+    "r2": 0.4839093520701031,
+    "standardError": 0.15139643412529324,
+    "from": "2021-12",
+    "to": "2026-09",
+    "benchmark": "SPY adjusted monthly returns"
+  },
+  "peers": [
+    {
+      "symbol": "DELL",
+      "name": "Dell Technologies Inc.",
+      "end": "2026-07-31",
+      "beta": {
+        "beta": 1.4013188069916498,
+        "alpha": 0.03671636021724613,
+        "n": 58,
+        "r2": 0.13850823410543722,
+        "standardError": 0.46701486729188474,
+        "from": "2021-12",
+        "to": "2026-09",
+        "benchmark": "SPY adjusted monthly returns"
+      },
+      "price": 485.88,
+      "quoteDate": "2026-10-21T20:03:58.000Z",
+      "quoteUrl": "https://finance.yahoo.com/quote/DELL/",
+      "shares": 640,
+      "equity": 310963.2,
+      "debt": null,
+      "cash": null,
+      "revenue": 151197,
+      "ebit": 14252,
+      "margin": 0.0942611295197656,
+      "ev": null,
+      "quality": [
+        "Short-term borrowing disclosure missing for 2026-07-31. No zero substituted; bridge and peer leverage are blocked.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence."
+      ],
+      "rationale": "Devices and systems candidate screen. Review business mix, geography, margins and cyclicality before inclusion."
+    },
+    {
+      "symbol": "HPQ",
+      "name": "HP INC",
+      "end": "2026-07-31",
+      "beta": {
+        "beta": 1.188416099095323,
+        "alpha": -0.0074807817560180925,
+        "n": 58,
+        "r2": 0.30048605327147504,
+        "standardError": 0.24230397680986251,
+        "from": "2021-12",
+        "to": "2026-09",
+        "benchmark": "SPY adjusted monthly returns"
+      },
+      "price": 31.32,
+      "quoteDate": "2026-10-21T20:00:02.000Z",
+      "quoteUrl": "https://finance.yahoo.com/quote/HPQ/",
+      "shares": 903,
+      "equity": 28281.96,
+      "debt": null,
+      "cash": null,
+      "revenue": 59162,
+      "ebit": 3222,
+      "margin": 0.05446063351475609,
+      "ev": null,
+      "quality": [
+        "Short-term borrowing disclosure missing for 2026-07-31. No zero substituted; bridge and peer leverage are blocked.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence."
+      ],
+      "rationale": "Devices and systems candidate screen. Review business mix, geography, margins and cyclicality before inclusion."
+    },
+    {
+      "symbol": "CSCO",
+      "name": "CISCO SYSTEMS, INC.",
+      "end": "2026-07-25",
+      "beta": {
+        "beta": 1.0094392537686234,
+        "alpha": 0.005493866411410614,
+        "n": 58,
+        "r2": 0.36130593474773565,
+        "standardError": 0.17934739303588584,
+        "from": "2021-12",
+        "to": "2026-09",
+        "benchmark": "SPY adjusted monthly returns"
+      },
+      "price": 107.26,
+      "quoteDate": "2026-10-21T20:00:01.000Z",
+      "quoteUrl": "https://finance.yahoo.com/quote/CSCO/",
+      "shares": 3946,
+      "equity": 423247.96,
+      "debt": null,
+      "cash": 15918,
+      "revenue": 63325,
+      "ebit": 15368,
+      "margin": 0.24268456375838926,
+      "ev": null,
+      "quality": [
+        "Short-term borrowing disclosure missing for 2026-07-25. No zero substituted; bridge and peer leverage are blocked.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-07-25. Custom tags or omitted disclosures require evidence."
+      ],
+      "rationale": "Devices and systems candidate screen. Review business mix, geography, margins and cyclicality before inclusion."
+    },
+    {
+      "symbol": "HPE",
+      "name": "Hewlett Packard Enterprise Co",
+      "end": "2026-07-31",
+      "beta": {
+        "beta": 1.4292498937269367,
+        "alpha": 0.018556752559672506,
+        "n": 58,
+        "r2": 0.31865560392116155,
+        "standardError": 0.27927799570200035,
+        "from": "2021-12",
+        "to": "2026-09",
+        "benchmark": "SPY adjusted monthly returns"
+      },
+      "price": 58.17,
+      "quoteDate": "2026-10-21T20:04:10.000Z",
+      "quoteUrl": "https://finance.yahoo.com/quote/HPE/",
+      "shares": 1328.115106,
+      "equity": 77256.45571602,
+      "debt": null,
+      "cash": null,
+      "revenue": 41871,
+      "ebit": 2602,
+      "margin": 0.06214324950443027,
+      "ev": null,
+      "quality": [
+        "Short-term borrowing disclosure missing for 2026-07-31. No zero substituted; bridge and peer leverage are blocked.",
+        "Current securities disclosure is missing. No zero substituted into operating working capital.",
+        "Noncurrent marketable-security balance is unverified; addback is withheld pending evidence of value or absence.",
+        "NWC cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence.",
+        "CASH cannot be normalized for 2026-07-31. Custom tags or omitted disclosures require evidence."
+      ],
+      "rationale": "Devices and systems candidate screen. Review business mix, geography, margins and cyclicality before inclusion."
+    }
+  ],
+  "peerScreen": "Devices and systems",
+  "rates": {
+    "rf": 0.0529,
+    "rfDate": "2026-10-01",
+    "rfSource": "Treasury reference quoted with the monthly implied ERP",
+    "rfUrl": "https://fred.stlouisfed.org/series/DGS10",
+    "erp": 0.042,
+    "erpDate": "2026-10-01",
+    "erpMethod": "Damodaran implied ERP, trailing 12-month adjusted payout",
+    "erpUrl": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+    "notes": [
+      "Daily Treasury feed unavailable. Risk-free rate is a monthly reference, not today’s yield."
+    ]
+  },
+  "filing": {
+    "date": "2025-10-31",
+    "end": "2025-09-27",
+    "accession": "0000320193-25-000079",
+    "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+  },
+  "hFactors": [
+    {
+      "name": "Demand drop",
+      "description": "Customer dependence and continuity of service",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Competitive attack",
+      "description": "Competitive responses when financing is constrained",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Loss of suppliers",
+      "description": "Supplier concentration and replaceability",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Loss of employees",
+      "description": "Dependence on specialized employees",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Asset fire sales",
+      "description": "Asset specificity and liquidation discounts",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Loss of dealers",
+      "description": "Distribution and dealer relationships",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    },
+    {
+      "name": "Loss of capital markets",
+      "description": "Need for external funding under stress",
+      "score": 2,
+      "evidence": null,
+      "url": null,
+      "basis": "Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment."
+    }
+  ],
+  "research": {
+    "status": "not_started"
+  },
+  "modelFamily": "fcff",
+  "sources": [
+    {
+      "name": "SEC company facts",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+      "kind": "Structured financial statements"
+    },
+    {
+      "name": "SEC submissions",
+      "url": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "kind": "Filing dates and industry"
+    },
+    {
+      "name": "Latest 10-K",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "kind": "Filed 2025-10-31"
+    },
+    {
+      "name": "Yahoo Finance",
+      "url": "https://finance.yahoo.com/quote/AAPL/",
+      "kind": "Unofficial quote and adjusted monthly prices; not a licensed exchange feed"
+    },
+    {
+      "name": "10-year Treasury",
+      "url": "https://fred.stlouisfed.org/series/DGS10",
+      "kind": "Treasury reference quoted with the monthly implied ERP, 2026-10-01"
+    },
+    {
+      "name": "Implied equity risk premium",
+      "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+      "kind": "Damodaran implied ERP, trailing 12-month adjusted payout, 2026-10-01"
+    },
+    {
+      "name": "Synthetic rating spreads",
+      "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html",
+      "kind": "Large non-financial firms, January 2026"
+    }
+  ]
+}

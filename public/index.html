@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183f35">
+  <meta name="description" content="Independent company valuation with every cash flow, assumption and source in view. A project by Ankit Kapoor.">
+  <title>ValueLens · See what a company is worth</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="/" class="brand" aria-label="ValueLens home"><span class="brand-icon">v<span>l</span></span><span>ValueLens<span class="brand-dot">.</span></span></a>
+    <div class="workspace-label">YOUR RESEARCH DESK</div>
+    <nav aria-label="Main navigation">
+      <button class="side-link active" data-view="overview"><span class="nav-icon">◫</span> Valuation workspace</button>
+      <button class="side-link" data-view="methodology"><span class="nav-icon">⌘</span> Our methodology</button>
+      <button class="side-link" data-view="sources"><span class="nav-icon">▤</span> Sources & audit trail</button>
+    </nav>
+    <div class="saved-label">SAVED COMPANIES <span id="saved-count">0</span></div>
+    <div id="saved-list" class="saved-list"><p>Your watchlist starts here.<br>Save a company to revisit it.</p></div>
+    <div class="sidebar-note"><span class="small-star">✳</span><p>A price is a number.<br><strong>Value is a set of assumptions.</strong></p><span>Make yours visible.</span></div>
+    <a class="portfolio-link" href="https://ankitkapoor.me" target="_blank" rel="noopener">An Ankit Kapoor project <span>↗</span></a>
+  </aside>
+  <div class="main-shell">
+    <header class="topbar">
+      <div class="breadcrumb">Research desk <span>/</span> <strong id="breadcrumb-name">Company valuation</strong></div>
+      <a href="https://ankitkapoor.me" target="_blank" rel="noopener" class="top-portfolio">Back to portfolio ↗</a>
+    </header>
+    <main id="main">
+      <div class="intro"><div><div class="eyebrow">INDEPENDENT THINKING. VISIBLE MATH.</div><h1>Look beyond the stock price.</h1><p>A company’s value, built from the cash it can generate.</p></div><span class="version-badge"><i></i> RESEARCH EDITION</span></div>
+      <form id="search-form" class="search-box" role="search">
+        <span class="search-icon" aria-hidden="true">⌕</span><label for="company-search" class="sr-only">Company name or ticker</label>
+        <input id="company-search" autocomplete="off" placeholder="Search a public company or ticker…" aria-controls="search-results" aria-expanded="false">
+        <span class="search-hint">US-listed companies</span><button class="primary-button" id="analyze-button" type="submit">Analyze company <span>↗</span></button>
+        <div id="search-results" class="search-results" hidden></div>
+      </form>
+      <div class="quick-picks"><span>Start exploring</span><button data-symbol="AAPL">AAPL <span>Apple</span></button><button data-symbol="MSFT">MSFT <span>Microsoft</span></button><button data-symbol="NVDA">NVDA <span>NVIDIA</span></button><button data-symbol="COST">COST <span>Costco</span></button></div>
+      <div id="message" role="status" aria-live="polite"></div>
+      <div id="loading" hidden><div class="loading-ring"></div><h2>Building a view of the business.</h2><p id="loading-step">Reading financial statements and matching public sources…</p><p class="muted">A fresh analysis can take 20–45 seconds. Cached sources are faster.</p></div>
+      <section id="workspace" hidden>
+        <div id="data-banner" class="data-banner"></div>
+        <div class="company-header"><div class="company-identity"><div id="company-monogram" class="company-monogram"></div><div><div class="company-name-line"><h2 id="company-name"></h2><span id="company-ticker" class="ticker"></span></div><p id="company-description"></p></div></div><div class="company-actions"><button id="save-company" class="text-button">☆ Save company</button><button id="export-json" class="outline-button">↓ Export analysis</button></div></div>
+        <div class="workspace-toolbar"><nav id="tabs" class="tabs" aria-label="Analysis sections"><button data-view="overview" class="active">Overview</button><button data-view="cashflows">Cash flows</button><button data-view="capital">Capital structure</button><button data-view="comps">Peer analysis</button><button data-view="research">Company research</button><button data-view="validation">Validation</button><button data-view="methodology">Methodology</button><button data-view="sources">Sources</button></nav><button id="assumptions-button" class="assumptions-button">☷ <span>Edit assumptions</span><i id="assumption-count" hidden></i></button></div>
+        <div id="view" tabindex="-1"></div>
+      </section>
+      <footer class="main-footer"><span><span class="footer-mark">vl.</span> Reason through the value.</span><span>Public evidence. Explicit judgment. No guaranteed returns.</span></footer>
+    </main>
+  </div>
+  <dialog id="assumptions-dialog" aria-labelledby="assumptions-title"><form method="dialog" class="dialog-header"><div><div class="eyebrow">MAKE THE MODEL YOURS</div><h2 id="assumptions-title">The assumptions.</h2></div><button class="icon-button" aria-label="Close assumptions">×</button></form><div class="dialog-body"><p class="muted">Changes recalculate locally. These are hypotheses to examine, not management guidance.</p><div id="assumption-fields"></div><div id="assumption-error" role="alert"></div></div><div class="dialog-footer"><button id="reset-assumptions" class="text-button">Reset to evidence baseline</button><button id="apply-assumptions" class="primary-button">Apply assumptions ↗</button></div></dialog>
+</body>
+</html>

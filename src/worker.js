@@ -1,0 +1,54 @@
+import {searchCompanies,loadCompany,DataError} from './data.js';
+import {RESEARCH_MODEL,RESEARCH_EFFORT} from './research.js';
+export {ResearchStore} from './research.js';
+
+const buckets=new Map();
+function rateLimited(ip,limit) {
+  // Best-effort isolate limiter. Use Cloudflare WAF rate limiting for a public launch.
+  const now=Date.now(),bucket=buckets.get(ip);
+  if(!bucket || now-bucket.start>60e3) {if(buckets.size>2000)buckets.clear();buckets.set(ip,{start:now,count:1});return false;}
+  return ++bucket.count>limit;
+}
+function json(value,status=200) {
+  return Response.json(value,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin'}});
+}
+export default {
+  async fetch(request,env,ctx) {
+    const url=new URL(request.url);
+    if(!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(request);
+    if(!['GET','POST'].includes(request.method)||request.method==='POST'&&url.pathname!=='/api/research') return json({error:'Method not allowed.'},405);
+    if(request.method==='POST' && request.headers.get('Origin')!==url.origin)return json({error:'Same-origin research requests only.'},403);
+    const client=(request.headers.get('CF-Connecting-IP') || 'local')+'|'+url.pathname;
+    if(rateLimited(client,url.pathname==='/api/search'?60:12)) return json({error:'Too many requests. Please wait one minute.'},429);
+    try {
+      if(url.pathname==='/api/config')return json({researchConfigured:!!env.OPENAI_API_KEY,researchModel:env.OPENAI_MODEL||RESEARCH_MODEL,researchEffort:RESEARCH_EFFORT,dailyResearchLimit:Number(env.RESEARCH_DAILY_LIMIT)||10,modelVersion:'0.2.0'});
+      if(url.pathname==='/api/research') {
+        if(!env.OPENAI_API_KEY)return json({error:'Research is awaiting your server-side OPENAI_API_KEY. See the Research tab for setup.'},503);
+        if(!env.RESEARCH)return json({error:'Research storage is unavailable.'},503);
+        const store=env.RESEARCH.get(env.RESEARCH.idFromName('global-research-v1'));
+        if(request.method==='GET') {
+          const key=url.searchParams.get('key')||'';
+          if(!/^[A-Z0-9.\-]{1,12}:\d{4}-\d{2}-\d{2}:0\.2\.0:research-3:[a-zA-Z0-9._-]{1,80}$/.test(key))throw new DataError('Invalid research job key.');
+          const response=await store.fetch(new Request('https://research.internal/?key='+encodeURIComponent(key)));return json(await response.json(),response.status);
+        }
+        if(Number(request.headers.get('Content-Length'))>2048)throw new DataError('Research request too large.',413);
+        const body=await request.text();if(body.length>2048)throw new DataError('Research request too large.',413);
+        let input;try{input=JSON.parse(body);}catch{throw new DataError('Invalid JSON research request.');}
+        if(typeof input.symbol!=='string')throw new DataError('A ticker string is required.');
+        const data=await loadCompany(input.symbol,env);
+        const response=await store.fetch(new Request('https://research.internal/',{method:'POST',body:JSON.stringify(data)}));return json(await response.json(),response.status);
+      }
+      if(url.pathname==='/api/search') return json({companies:await searchCompanies(url.searchParams.get('q')||'',env)});
+      if(url.pathname==='/api/company') {
+        const symbol=url.searchParams.get('symbol')||'';
+        const peers=(url.searchParams.get('peers')||'').split(',').map(x=>x.trim().toUpperCase()).filter(Boolean);
+        if(peers.length>4) throw new DataError('Choose up to four peers.');
+        return json(await loadCompany(symbol,env,peers));
+      }
+      return json({error:'API route not found.'},404);
+    } catch(e) {
+      console.error(e.name,e.message);
+      return json({error:e instanceof DataError?e.message:'The analysis could not be completed. Please try again.',details:e.details||[]},e.status||500);
+    }
+  }
+};
