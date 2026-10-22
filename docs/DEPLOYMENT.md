@@ -27,7 +27,7 @@ Refresh the site, open **Company research**, then select **Research [ticker]**. 
 
 ## Automatic production deployment
 
-A Git push updates the live site only after **Cloudflare Workers Builds** is connected to the existing `valuelens` Worker. Manual Wrangler uploads do not establish a Git connection. Configure the existing Worker, not a second Pages project:
+**Cloudflare Workers Builds** was connected to the existing `valuelens` Worker on October 21, 2026. Pushes to `main` now trigger the pipeline below. Manual Wrangler uploads did not establish this Git connection. The configuration lives on the existing Worker:
 
 | Setting | Value |
 |---|---|
