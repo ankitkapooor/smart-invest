@@ -1,13 +1,13 @@
 {
   "name": "valuelens",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Transparent, filing-backed company valuation for ankitkapoor.me",
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "test": "node --test",
-    "check": "node --check public/app.js && node --check public/model.js && node --check src/data.js && node --check src/worker.js && node --check src/accounting.js && node --check src/research.js && node --check public/forecast.js && node --check public/prediction.js && node --check src/segments.js && node --check src/filing-facts.js",
+    "check": "node --check public/app.js && node --check public/model.js && node --check src/data.js && node --check src/worker.js && node --check src/accounting.js && node --check src/research.js && node --check public/forecast.js && node --check public/valuation-case.js && node --check src/forecast-seeds.js && node --check public/prediction.js && node --check src/segments.js && node --check src/filing-facts.js",
     "test:live": "node scripts/research-smoke.mjs",
     "validate": "node scripts/validate.mjs",
     "validate:quarterly": "node scripts/validate-quarterly.mjs",

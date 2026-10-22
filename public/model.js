@@ -1,7 +1,7 @@
 // Pure valuation mathematics. Money and shares are in millions; prices in USD.
 import {buildForecast} from './forecast.js';
 import {operatingForecast} from './prediction.js';
-export const MODEL_VERSION = '0.3.0';
+export const MODEL_VERSION = '0.4.0';
 export const RATINGS_SOURCE = 'https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html';
 // January 2026, large non-financial firms. Lower bounds inclusive, descending.
 export const RATINGS = [
@@ -53,17 +53,18 @@ export function defaults(data) {
   const research=data.research?.status==='validated'?data.research.report:null;
   const risk=research?.risk,tax=research?.taxRate??.25;
   const fitted=operatingForecast(data);
+  const business=research?.forecast?.basis==='analyst_estimate'?research.forecast:null;
   const margins=hist.filter(r=>Number.isFinite(r.ebit)).map(r=>r.ebit/r.revenue);
   const operatingBeta=median(data.peers.filter(p=>p.beta && p.debt!==null && p.equity>0 && !p.quality?.some(q=>/debt|borrowing|lease/i.test(q)))
     .map(p=>unlever(p.beta.beta,p.debt,p.equity,tax)));
   const own=data.beta && b.debt!==null && data.quote?.price>0 && b.shares>0
     ? unlever(data.beta.beta,b.debt,data.quote.price*b.shares,tax) : null;
   return {
-    growth:fitted.firstGrowth, margin:fitted.nearMargin, tax:research?.taxRate??.25,
-    operatingForecast:fitted,driverForecast:null,
-    capex:fitted.ratios.capex.value, da:fitted.ratios.da.value,
-    nwc:fitted.ratios.nwc.value, terminalGrowth:.025,
-    terminalROIC:clamp(data.rates.rf+(operatingBeta??own??1)*data.rates.erp,.06,.2),
+    growth:business?.years[0].growth??fitted.firstGrowth, margin:business?.terminal.margin??fitted.nearMargin, tax:research?.taxRate??.25,
+    operatingForecast:fitted,valuationForecast:business,driverForecast:null,
+    capex:business?.years[0].capexRatio??fitted.ratios.capex.value, da:business?.years[0].daRatio??fitted.ratios.da.value,
+    nwc:business?.years[0].nwcRatio??fitted.ratios.nwc.value, terminalGrowth:business?.terminal.growth??.025,
+    terminalROIC:business?.terminal.roic??clamp(data.rates.rf+(operatingBeta??own??1)*data.rates.erp,.06,.2),
     rf:data.rates.rf, erp:data.rates.erp, assetBeta:operatingBeta ?? own,
     betaBasis:operatingBeta!==null ? 'Median of available peer unlevered betas' : 'Company regression, unlevered; peer beta unavailable',
     stressDrop:risk?.revenueDecline??.1, stressMargin:risk?.stressMargin??Math.min(...margins),
@@ -115,7 +116,7 @@ export function reverseDCF(base,a,wacc,targetPrice) {
     previous={growth,error};
   }
   const common={bounds,targetPrice,wacc,terminalROIC:a.terminalROIC,terminalGrowth:a.terminalGrowth,
-    heldFixed:'Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.'};
+    heldFixed:'Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. The initial-growth control is solved; a researched case shifts its five-year growth curve in parallel before the stable-state fade.'};
   if(exact.length+brackets.length!==1)return {...common,status:exact.length+brackets.length?'ambiguous':'unbracketed',priceRange:prices.length?[Math.min(...prices),Math.max(...prices)]:null};
   let growth=exact[0];
   if(brackets.length) {
@@ -137,7 +138,7 @@ export function valuationDiagnostics(data,a,r) {
   const aligned=quarters.length===8&&quarters.at(-1).end===b.end&&quarters.every((q,i)=>q.revenue>0&&(!i||((Date.parse(q.end)-Date.parse(quarters[i-1].end))/864e5>=60&&(Date.parse(q.end)-Date.parse(quarters[i-1].end))/864e5<=120)));
   const sum=xs=>xs.reduce((s,q)=>s+q.revenue,0);
   const reportedGrowth=aligned?sum(quarters.slice(-4))/sum(quarters.slice(0,4))-1:null;
-  const method=a.operatingForecast?(a.operatingForecast.quarters?.length?a.operatingForecast.quarterly?.fit?.method:a.operatingForecast.annual?.fit?.method):'manual';
+  const method=a.valuationForecast?'business-case':a.operatingForecast?(a.operatingForecast.quarters?.length?a.operatingForecast.quarterly?.fit?.method:a.operatingForecast.annual?.fit?.method):'manual';
   const flatBenchmark=!!a.operatingForecast&&['seasonal','flat'].includes(method)&&Math.abs(a.growth)<1e-9;
   let recentGrowthScenario=null;
   if(Number.isFinite(reportedGrowth)) {
@@ -162,7 +163,11 @@ export function analyze(data, a=defaults(data)) {
   const b=data.base, errors=[];
   if(data.modelFamily==='specialized'||data.modelFamily==='unsupported')errors.push('A specialized accounting/valuation adapter is required; company research is available in the Research tab.');
   if(data.research?.status==='validated'&&data.research.report.modelFamily!=='fcff')errors.push('The researched business requires a specialized '+data.research.report.modelFamily+' model; enterprise FCFF is withheld.');
-  for(const key of ['revenue','ebit','da','capex','nwc','cash','debt','shares'])
+  // Historical D&A is required for EBITDA/debt capacity. A sourced forward D&A
+  // path can support FCFF without inventing an undisclosed historical balance.
+  const hasHistoricalDA=Number.isFinite(b.da);
+  const required=['revenue','ebit','capex','nwc','cash','debt','shares',...(!a.valuationForecast?['da']:[])];
+  for(const key of required)
     if(!Number.isFinite(b[key])) errors.push(`Missing required financial input: ${key}.`);
   if(!(b.revenue>0 && b.shares>0) || b.debt<0 || b.cash<0) errors.push('Revenue and shares must be positive; debt and cash cannot be negative.');
   if(Number.isFinite(b.ebit)&&b.ebit<=0) errors.push('Operating losses require a separate turnaround and NOL model. This edition cannot produce a defensible going-concern value for this company.');
@@ -193,9 +198,9 @@ export function analyze(data, a=defaults(data)) {
     const cost=weight===currentWeight&&observed?observed:credit.cost;
     const wacc=(1-weight)*ke+weight*cost*(1-usableTax);
     const stressedCoverage=credit.interest>0 ? stressEBIT/credit.interest : null;
-    const leverage=debt/(b.ebit+b.da);
+    const leverage=hasHistoricalDA?debt/(b.ebit+b.da):null;
     const liquidity=a.maturities2y===null||Math.max(0,b.cash-(a.minimumCash??0))+Math.max(0,2*rows[0].fcff)>=a.maturities2y;
-    const feasible=(debt===0 || (credit.consistent && credit.interest<=maxInterest && credit.coverage>=a.minCoverage && leverage<=(a.maxDebtEbitda??4) && liquidity)) && wacc>a.terminalGrowth;
+    const feasible=hasHistoricalDA&&(debt===0 || (credit.consistent && credit.interest<=maxInterest && credit.coverage>=a.minCoverage && leverage<=(a.maxDebtEbitda??4) && liquidity)) && wacc>a.terminalGrowth;
     return {weight,debt,beta:be,ke,kd:cost,spread:cost-a.rf,rating:credit.rating,
       interest:credit.interest,coverage:credit.coverage,stressedCoverage,wacc,feasible,consistent:credit.consistent,
       taxShieldRate:usableTax,leverage,liquidity,observedYield:weight===currentWeight&&!!observed};
@@ -219,10 +224,11 @@ export function analyze(data, a=defaults(data)) {
   const postEquity=optimized ? optimized.ev+recapCosts+Math.max(0,b.cash-a.cashReserve)+(b.nonOperatingInvestments??0)-optimal.debt-a.otherClaims : null;
   const postRecap=optimized && postShares>0 && postEquity>0 ? {executionPrice:price,shares:postShares,equity:postEquity,price:postEquity/postShares,
     sharesRetired:valuationShares-postShares,netProceeds:netRecapProceeds} : null;
+  const marginShock=a.valuationForecast?Math.min(.03,Math.max(.005,a.margin*.15)):.03;
   const cases=[
-    {name:'Bear',growth:a.growth-.03,margin:a.margin-.03,terminalGrowth:Math.max(0,a.terminalGrowth-.01)},
+    {name:'Bear',growth:a.growth-.03,margin:Math.max(0,a.margin-marginShock),terminalGrowth:Math.max(0,a.terminalGrowth-.01)},
     {name:'Base',growth:a.growth,margin:a.margin,terminalGrowth:a.terminalGrowth},
-    {name:'Bull',growth:a.growth+.03,margin:a.margin+.03,terminalGrowth:Math.min(a.terminalGrowth+.005,a.rf-.005,a.terminalROIC-.005)}
+    {name:'Bull',growth:a.growth+.03,margin:Math.min(.8,a.margin+marginShock),terminalGrowth:Math.min(a.terminalGrowth+.005,a.rf-.005,a.terminalROIC-.005)}
   ].map(c=>{
     const d=a.driverForecast,shift=c.growth-a.growth,marginShift=c.margin-a.margin;
     const driverForecast=d?{...d,segments:d.segments.map(s=>({...s,volumeGrowth:s.volumeGrowth.map(g=>Math.max(-.95,g+shift))})),margins:d.margins.map(m=>m+marginShift)}:null;
@@ -244,6 +250,7 @@ export function analyze(data, a=defaults(data)) {
   const status=!valued || stale || incomplete || a.quoteOverride!==null ? 'Review required' : price<=buyBelow ? 'Below safety threshold' : price<valued.price ? 'Below modeled value' : 'Above modeled value';
   const result={errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,
     equity,capital,currentWeight,marketPrice:price,buyBelow,status,stale,incomplete,recapCosts,adjustment,postRecap,
+    capitalStructureUnavailable:hasHistoricalDA?null:'Historical D&A is not fully disclosed. EBITDA and optimal capital structure are withheld; the DCF uses the explicit researched forward D&A path.',
     upside:valued?valued.price/price-1:null,version:MODEL_VERSION};
   result.diagnostics=valuationDiagnostics(data,a,result);
   return result;

@@ -1,0 +1,2186 @@
+{
+  "AAPL": {
+    "periodEnd": "2026-06-27",
+    "modelVersion": "0.4.0",
+    "researchVersion": "research-5",
+    "status": "validated",
+    "model": "gpt-5.6-terra",
+    "completedAt": "2026-10-22T05:20:21.727Z",
+    "report": {
+      "businessDescription": "Apple Inc. designs, manufactures and markets smartphones, personal computers, tablets, wearables/accessories and related services. Its economics combine a large premium-device installed base with recurring services such as advertising, cloud, digital content, payments and support. The trailing operating base through June 27, 2026 reflects broad iPhone-led growth, including higher Pro-model sales, alongside double-digit Services growth; this was partly offset by sharply higher infrastructure and headcount expense associated with artificial-intelligence investments. The principal forecasting tension is whether Services mix, premium hardware positioning and new product cycles can absorb supply-cost, tariff, regulatory and AI-infrastructure pressure without a material long-run margin reset.",
+      "uncertainties": [
+        "The October 22, 2026 cutoff precedes Apple's fiscal 2026 Form 10-K. The latest supplied issuer filing is the Form 10-Q for the quarter ended June 27, 2026; fourth-quarter actual results are not incorporated.",
+        "Apple does not report unit volumes, selling prices, installed-base monetization by service, or product-category operating margins. The forecast therefore uses reported category and geographic revenue direction rather than unreported unit, price or ARPU assumptions.",
+        "No explicit numerical future-quarter revenue range was located in an issuer SEC earnings exhibit available through the cutoff; guidance is therefore empty rather than inferred from management commentary or analyst estimates.",
+        "The supplied base does not include a verified recurring interest-expense figure, detailed individual-note principal maturity amounts, finance-lease principal balances, operating-lease commitments or a contemporaneous public yield for a USD senior unsecured Apple bond with 7–13 years remaining. These constrain precision on coverage, 24-month maturities and debt-market pricing.",
+        "The June 27, 2026 filing identifies current term debt and commercial paper, but does not provide enough maturity-by-note detail to measure all debt due within the following 24 months. The 2027 notes are identified as outstanding but their balance is not separately disclosed.",
+        "Reported cash and marketable securities include investments with different liquidity and duration characteristics; the forecast and liquidity policy do not assume all non-current marketable securities are immediately deployable without market or tax considerations.",
+        "Substantial repurchases, dividends, equity-award withholding and restricted stock units affect common-share count and cash deployment. No dilution schedule sufficient to forecast net dilution was disclosed in the supplied base.",
+        "Product availability, component costs, tariff outcomes, App Store/payment-rule changes, DMA implementation, search-licensing economics and artificial-intelligence compute demand are material variables outside the reported revenue base."
+      ],
+      "accountingEvidence": [
+        {
+          "value": 1997,
+          "period": "2026-06-27",
+          "quotation": "Commercial paper | $ | 1,997",
+          "field": "shortDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 11007,
+          "period": "2026-06-27",
+          "quotation": "Term debt | 11,007",
+          "field": "currentDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 84118,
+          "period": "2026-06-27",
+          "quotation": "Marketable securities | 84,118",
+          "field": "longInvest",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 9973,
+          "period": "2025-09-28 to 2026-06-27",
+          "quotation": "Depreciation and amortization | 9,973",
+          "field": "da",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        }
+      ],
+      "company": "AAPL",
+      "risk": {
+        "maxDebtEbitda": 0.75,
+        "minCoverage": 5,
+        "stressMargin": 0.25,
+        "stressRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "A downside case assumes a 0.15 revenue decline and a 0.25 EBIT margin, reflecting the filing’s warnings that component shortages, memory and advanced-semiconductor cost inflation, tariffs, pricing actions and regulatory changes can reduce demand and compress gross margin. The stress margin remains above a commodity-hardware outcome because Apple retains a broad services business and premium ecosystem, but is materially below the trailing base margin due to operating leverage and elevated AI-related operating expense."
+        },
+        "revenueDecline": 0.15,
+        "maturities2y": null,
+        "bondRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "No sufficiently reliable, recent primary-source observation of the yield—not coupon—on an Apple USD senior unsecured bond with 7–13 years remaining was available through the cutoff. Apple disclosed $82.3 billion of fixed-rate notes and $2.0 billion of commercial paper at June 27, 2026, but the filing does not publish an individual-bond yield."
+        },
+        "bondYearsToMaturity": null,
+        "liquidityRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "The minimum-cash policy is set at $40.0 billion. At June 27, 2026, Apple reported $39.5 billion of cash and cash equivalents, $22.9 billion of current marketable securities and $84.1 billion of non-current marketable securities; management stated that cash, marketable securities, operating cash generation and access to debt markets should meet requirements over the next 12 months and beyond. The policy preserves cash coverage while recognizing continued dividends and discretionary buybacks."
+        },
+        "observedDebtYield": null,
+        "hFactors": [
+          {
+            "explanation": "Consumer discretionary device demand is exposed to macroeconomic conditions, inflation, interest rates, currency movements, product-cycle timing and potentially demand-reducing price increases; diversified products, Services and geographies moderate the risk.",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "name": "Demand drop"
+          },
+          {
+            "explanation": "The filing identifies competition from Android, Windows and gaming ecosystems for developer support; regulatory changes can also weaken platform differentiation. Premium positioning and the integrated hardware-software-services ecosystem partially offset this threat.",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Competitive attack"
+          },
+          {
+            "explanation": "Apple reports single- or limited-source components, current advanced-semiconductor, NAND and DRAM constraints, longer lead times and rising compute costs. This is a material supply and input-cost exposure despite supplier scale and purchasing power.",
+            "score": 3,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of suppliers"
+          },
+          {
+            "explanation": "Apple identifies its culture and ability to recruit and retain highly skilled personnel as important, while the latest quarter reports higher headcount-related R&D expense. The company does not report a broad workforce disruption or retention failure.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Loss of employees"
+          },
+          {
+            "explanation": "The business is asset-light relative to revenue, has substantial liquid investments and reported no condition suggesting distressed asset disposals. Inventory, supplier prepayments and specialized infrastructure remain possible but limited fire-sale risks.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Asset fire sales"
+          },
+          {
+            "explanation": "Indirect channels can reduce ordering and marketing when demand is uncertain, and reseller financial condition can weaken. Direct retail, online distribution and carrier relationships reduce, but do not remove, channel dependency.",
+            "score": 2,
+            "sourceIds": [
+              "S3"
+            ],
+            "name": "Loss of dealers"
+          },
+          {
+            "explanation": "Apple reported substantial cash and marketable securities, ongoing operating cash generation, modest commercial paper and stated continued access to debt markets. Capital-market access risk is low, although capital returns use significant cash.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of capital markets"
+          }
+        ],
+        "bondObservationDate": null,
+        "minimumCash": 40000
+      },
+      "businessDrivers": [
+        {
+          "observability": "reported",
+          "description": "iPhone is the largest reported category; fiscal Q3 2026 iPhone growth was attributed primarily to higher sales of Pro models, supporting the near-term premium-device mix assumption.",
+          "name": "iPhone premium mix",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Services revenue increased 12% in fiscal Q3 2026 and 14% in the first nine months, with reported contribution from advertising, the App Store and cloud services.",
+          "name": "Services monetization",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Mac revenue increased because of laptops, while iPad and Wearables, Home and Accessories had more modest or mixed category trends; these categories provide incremental but less dependable growth than iPhone and Services.",
+          "name": "Adjacent device categories",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "America, Europe, Greater China, Japan and Rest of Asia Pacific all showed reported growth in the June 2026 quarter, with Greater China growth primarily driven by iPhone and currency also affecting several regions.",
+          "name": "Geographic demand and foreign exchange",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Fiscal first-quarter holiday demand and the timing of product launches affect channel fill, inventory and customer purchase timing, making quarterly growth seasonal rather than linear.",
+          "name": "Seasonality and launch cadence",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Research and development expense grew 32% in fiscal Q3 2026, primarily from AI infrastructure investment and headcount; this raises near-term operating-cost intensity.",
+          "name": "AI infrastructure and R&D",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Management disclosed supply constraints and rising advanced-semiconductor, NAND and DRAM costs, and expects these trends to intensify; pricing actions may not fully offset costs and may reduce demand.",
+          "name": "Component availability and input costs",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Tariffs and other trade measures can affect supply chain availability, raw-material and component costs, pricing and gross margin.",
+          "name": "Tariff and trade exposure",
+          "sourceIds": [
+            "S1",
+            "S3"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "Long-run operating margin depends on the mix shift toward Services and premium hardware being sufficient to offset AI, regulatory-compliance and component-cost pressure. Apple does not report category operating margins.",
+          "name": "Mix-driven operating leverage",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "undisclosed",
+          "description": "Apple does not disclose units, average selling prices, service ARPU, App Store commission revenue, Google licensing revenue, channel inventory targets or product-category profitability; these are not modeled as precise inputs.",
+          "name": "Unreported unit, pricing and platform economics",
+          "sourceIds": [
+            "S1",
+            "S3"
+          ]
+        }
+      ],
+      "forecast": {
+        "marginRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "The estimate initially reduces EBIT margin from the trailing base because fiscal Q3 2026 R&D rose 32% on AI infrastructure and headcount, while management expects component-cost pressure to intensify and says gross margins face volatility and downward pressure. Modest recovery thereafter assumes continued Services growth and premium iPhone mix, but does not assume full pass-through of tariffs, memory/semiconductor costs or regulatory costs."
+        },
+        "periodEnd": "2026-06-27",
+        "terminal": {
+          "growth": 0.03,
+          "nwcRatio": -0.1,
+          "roic": 0.35,
+          "daRatio": 0.027,
+          "margin": 0.32
+        },
+        "terminalRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "The terminal case assumes growth above inflation but below the forecast period because Apple has durable ecosystem, brand, software and services advantages, while global device markets are mature and regulation, developer alternatives and hardware competition limit indefinite outgrowth. A 0.32 EBIT margin and 0.35 ROIC retain meaningful excess returns supported by the integrated platform and negative operating working capital, but normalize below the recent trailing margin to reflect component, AI-infrastructure, trade and regulatory pressure. Cash capex is treated separately from finance-lease principal and undiscounted operating-lease commitments, which are not assumed to be cash capex."
+        },
+        "years": [
+          {
+            "growth": 0.075,
+            "daRatio": 0.028,
+            "year": 1,
+            "nwcRatio": -0.105,
+            "margin": 0.326,
+            "capexRatio": 0.025
+          },
+          {
+            "growth": 0.065,
+            "daRatio": 0.028,
+            "year": 2,
+            "nwcRatio": -0.104,
+            "margin": 0.328,
+            "capexRatio": 0.026
+          },
+          {
+            "growth": 0.055,
+            "daRatio": 0.028,
+            "year": 3,
+            "nwcRatio": -0.103,
+            "margin": 0.329,
+            "capexRatio": 0.025
+          },
+          {
+            "growth": 0.05,
+            "daRatio": 0.027,
+            "year": 4,
+            "nwcRatio": -0.102,
+            "margin": 0.327,
+            "capexRatio": 0.024
+          },
+          {
+            "growth": 0.045,
+            "daRatio": 0.027,
+            "year": 5,
+            "nwcRatio": -0.1,
+            "margin": 0.324,
+            "capexRatio": 0.023
+          }
+        ],
+        "basis": "analyst_estimate",
+        "growthRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "Year 1 growth is anchored to the trailing revenue acceleration through June 2026, higher iPhone Pro-model sales, 12% fiscal-Q3 Services growth, launch cadence and broad geographic growth. Growth declines each year as the unusually strong iPhone comparison base, mature device markets, launch timing, potential price sensitivity, tariffs and input constraints reduce the ability to sustain the current pace. Services, laptops and AI-enabled platform additions support positive growth through year 5 without assuming undisclosed units, price or ARPU."
+        },
+        "investmentRationale": {
+          "sourceIds": [
+            "S1",
+            "S2"
+          ],
+          "explanation": "Cash capex/revenue rises above the trailing base in years 1–2 to reflect higher AI infrastructure-related spending and the need to support computing capacity, then normalizes as infrastructure is deployed. The filing identifies AI-related infrastructure costs and constrained computing resources, but does not quantify a committed capex program; estimates therefore remain moderate and distinguish PP&E cash capex from lease obligations."
+        }
+      },
+      "guidance": [],
+      "modelFamily": "fcff",
+      "modelRationale": {
+        "sourceIds": [
+          "S1",
+          "S3"
+        ],
+        "explanation": "FCFF is appropriate because Apple is a diversified operating company with reported revenue, operating income, depreciation and cash capital expenditures, rather than a bank, insurer or REIT. Its material debt is conventional commercial paper and fixed-rate notes, while operations generate substantial cash before discretionary financing and shareholder-return decisions."
+      },
+      "taxRate": 0.176,
+      "asOf": "2026-10-22",
+      "sources": [
+        {
+          "publishedAt": "2026-07-31",
+          "id": "S1",
+          "title": "Apple Inc. Form 10-Q for the quarter ended June 27, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "publishedAt": "2026-05-01",
+          "id": "S2",
+          "title": "Apple Inc. Form 10-Q for the quarter ended March 28, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm"
+        },
+        {
+          "publishedAt": "2025-10-31",
+          "id": "S3",
+          "title": "Apple Inc. Form 10-K for the fiscal year ended September 27, 2025",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+        }
+      ],
+      "peers": [
+        {
+          "symbol": "MSFT",
+          "rationale": {
+            "sourceIds": [
+              "S3"
+            ],
+            "explanation": "Microsoft is a large global platform peer with operating-system, developer, cloud and AI ecosystem overlap. It is more enterprise/software and cloud weighted and less consumer-device dependent than Apple, so it is a comparable platform economics reference rather than a direct hardware-match peer."
+          }
+        },
+        {
+          "symbol": "GOOGL",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Alphabet is a global digital-platform peer relevant to Apple’s advertising, search-licensing, mobile ecosystem, developer and regulatory exposure. Its advertising and cloud mix is materially less hardware intensive, and it is included to frame platform and services competition rather than device economics alone."
+          }
+        },
+        {
+          "symbol": "005930.KS",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Samsung Electronics is a global smartphone, tablet, wearables and component competitor with meaningful geographic overlap and greater semiconductor exposure. Its component manufacturing and broader hardware portfolio make it more capital intensive and cyclical than Apple."
+          }
+        },
+        {
+          "symbol": "SONY",
+          "rationale": {
+            "sourceIds": [
+              "S3"
+            ],
+            "explanation": "Sony Group has consumer electronics, gaming/content and device-ecosystem exposure that is economically relevant to Apple’s premium hardware and services model. It is included as a diversified consumer-technology peer; its entertainment and image-sensor businesses make it less directly comparable than smartphone-focused competitors."
+          }
+        }
+      ]
+    },
+    "accounting": {
+      "accepted": [],
+      "rejected": [
+        {
+          "field": "shortDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "currentDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "longInvest",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "da",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        }
+      ]
+    },
+    "guidance": {
+      "accepted": [],
+      "rejected": []
+    },
+    "researchTrace": {
+      "searchCalls": 4,
+      "observedSourceCount": 3,
+      "observedUrls": [
+        "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm",
+        "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+        "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+      ],
+      "verifiedFilingDocuments": []
+    }
+  },
+  "MSFT": {
+    "periodEnd": "2026-06-30",
+    "modelVersion": "0.4.0",
+    "researchVersion": "research-5",
+    "status": "validated",
+    "model": "gpt-5.6-terra",
+    "completedAt": "2026-10-22T05:24:04.026Z",
+    "report": {
+      "businessDescription": "Microsoft is a global software, cloud-infrastructure, productivity, business-application, developer-tool, gaming, search-advertising, device, and AI platform company. FY2026 revenue was $331,839 million, split among Productivity and Business Processes ($139,996 million), Intelligent Cloud ($137,791 million), and More Personal Computing ($54,052 million). The central economic change is the rapid expansion of AI/cloud capacity: commercial remaining performance obligations were $678 billion at June 30, 2026, with a weighted-average duration of about 2.3 years, while construction commitments were $34,566 million. This supports contracted demand visibility but makes near-term cash conversion unusually dependent on datacenter build-out, useful lives, component supply, electricity, and customer consumption ramp. [S1][S3]",
+      "uncertainties": [
+        "The FY2027 Q1 earnings release had not occurred as of October 22, 2026; Microsoft had announced release for October 28, 2026. The FY2026 10-K is therefore the latest reported annual financial base used here. [S5]",
+        "The July 29, 2026 earnings-call revenue outlook is not included in guidance because the supplied SEC earnings exhibit did not itself contain an explicit future-quarter consolidated-revenue range; the issuer press release instead states that outlook would be supplied on the call. [S3][S4]",
+        "Finance-lease liabilities were material at June 30, 2026. Cash capital expenditures, finance-lease principal, operating-lease expense, and undiscounted construction commitments are economically different and should not be treated interchangeably. [S1]",
+        "The precise maturity schedule within the next 24 months, debt covenants, noncurrent investments, restricted cash, pension obligations, and full dilution schedule require a reconciled debt, investment, and equity-footnote review beyond the standardized base data supplied.",
+        "The recent senior-unsecured secondary-market yield could not be independently verified from a primary market-data source as of October 22, 2026; observedDebtYield and bondYearsToMaturity are therefore null."
+      ],
+      "accountingEvidence": [
+        {
+          "value": 55908,
+          "period": "2026-06-30",
+          "quotation": "Short-term investments | $ 55,908",
+          "field": "shortInvest",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 9227,
+          "period": "2026-06-30",
+          "quotation": "Current portion of long-term debt | $ 9,227",
+          "field": "currentDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        }
+      ],
+      "company": "MSFT",
+      "risk": {
+        "maxDebtEbitda": 1.5,
+        "minCoverage": 5,
+        "stressMargin": 0.37,
+        "stressRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "A 12% revenue contraction and 37% EBIT margin are a stress policy assumption, not a reported forecast. The stress reflects meaningful recurring commercial contracts and a diversified three-segment revenue base, offset by substantial fixed datacenter, lease, construction, and AI-infrastructure commitments. FY2026 operating margin was 46.8%, so the stress case assumes a substantial but not catastrophic deleveraging of cloud utilization and gross margin. [S1][S2][S3]"
+        },
+        "revenueDecline": 0.12,
+        "maturities2y": null,
+        "bondRationale": {
+          "sourceIds": [
+            "S1",
+            "S6"
+          ],
+          "explanation": "Microsoft reports senior unsecured notes and term debt, but a recent 7-13-year USD senior-unsecured yield from a primary market-data source was not available for independent verification. A third-party bond monitor showed secondary indications, but it is not used as an observed yield input. [S1][S6]"
+        },
+        "bondYearsToMaturity": null,
+        "liquidityRationale": {
+          "sourceIds": [
+            "S1",
+            "S2"
+          ],
+          "explanation": "At June 30, 2026 Microsoft reported $20,935 million of cash and cash equivalents and $55,908 million of short-term investments. Liquidity is partly offset by $34,566 million of construction commitments and ongoing datacenter investment. The minimum-cash policy retains $20,000 million rather than assuming all liquid assets are distributable. [S1][S2]"
+        },
+        "observedDebtYield": null,
+        "hFactors": [
+          {
+            "explanation": "Score 1: Commercial remaining performance obligations of $678 billion and a roughly 2.3-year weighted-average duration provide substantial contracted-demand visibility, although consumption-based cloud usage can still slow. [S1]",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Demand drop"
+          },
+          {
+            "explanation": "Score 2: Microsoft competes for cloud and AI workloads against hyperscale platforms and software vendors; management identifies competition and continued investment in cloud and AI capacity as material operating considerations. [S1][S2]",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "name": "Competitive attack"
+          },
+          {
+            "explanation": "Score 2: Datacenter expansion relies on construction, computer systems, and component procurement; the March 2026 10-Q cites increased investing partly to facilitate component purchases. [S2]",
+            "score": 2,
+            "sourceIds": [
+              "S2"
+            ],
+            "name": "Loss of suppliers"
+          },
+          {
+            "explanation": "Score 1: Microsoft reported total company headcount declined 2% year over year while continuing targeted investment in AI engineering and talent, indicating some operating leverage but no disclosed broad workforce disruption. [S4]",
+            "score": 1,
+            "sourceIds": [
+              "S4"
+            ],
+            "name": "Loss of employees"
+          },
+          {
+            "explanation": "Score 1: The company had $76,843 million of cash plus short-term investments at year end and large recurring software and cloud revenue; asset-fire-sale dependence is low despite the capital intensity of AI infrastructure. [S1]",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Asset fire sales"
+          },
+          {
+            "explanation": "Score 1: Revenue is principally delivered directly through cloud services, subscriptions, enterprise sales, digital stores, and OEM relationships rather than a concentrated dealer network; channel concentration remains an unquantified limitation. [S1]",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of dealers"
+          },
+          {
+            "explanation": "Score 1: Microsoft generated $182,935 million of FY2026 operating cash flow and held substantial liquid assets. Capital-market access risk is low under normal conditions, but financing needs can rise as AI datacenter construction and lease commitments expand. [S1]",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of capital markets"
+          }
+        ],
+        "bondObservationDate": null,
+        "minimumCash": 20000
+      },
+      "businessDrivers": [
+        {
+          "observability": "reported",
+          "description": "Intelligent Cloud was $137,791 million of FY2026 revenue, approximately 41.5% of consolidated revenue; Azure and related cloud services are the key infrastructure and AI-demand engine. [S1]",
+          "name": "Azure and cloud consumption growth",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Productivity and Business Processes was $139,996 million of FY2026 revenue, approximately 42.2% of consolidated revenue, anchoring recurring Microsoft 365, LinkedIn, Dynamics, and business-process demand. [S1]",
+          "name": "Commercial software subscriptions",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Commercial remaining performance obligations were $678 billion at June 30, 2026, with a weighted-average duration of approximately 2.3 years; this is revenue visibility, not revenue recognized in the next fiscal year. [S1]",
+          "name": "Contracted commercial backlog",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "AI Copilot and usage-based monetization can raise revenue per workload and software attachment, but Microsoft does not disclose a consolidated AI price-volume bridge; forecast contribution is therefore estimated rather than separately modeled as reported units or ARPU. [S4]",
+          "name": "AI application monetization",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "FY2026 property-and-equipment cash additions were $115,948 million and construction commitments were $34,566 million, making datacenter deployment pace and asset utilization key determinants of free-cash-flow conversion. [S1]",
+          "name": "AI datacenter investment and utilization",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Management noted expected acceleration in M365 Commercial cloud revenue growth from premium-SKU momentum and usage-based billing products, while PC-market dynamics and declining Xbox hardware/content trends constrain More Personal Computing. [S4]",
+          "name": "Portfolio mix and consumer-PC cyclicality",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "observability": "undisclosed",
+          "description": "Microsoft does not disclose consolidated AI workload units, realized GPU utilization, Azure price per workload, or a complete segment-level cash-capex allocation; those drivers cannot be quantified precisely. [S1][S4]",
+          "name": "AI capacity pricing and unit economics",
+          "sourceIds": [
+            "S1",
+            "S4"
+          ]
+        }
+      ],
+      "forecast": {
+        "marginRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S4"
+          ],
+          "explanation": "FY2026 EBIT margin was 46.8%. The estimate first allows gross-margin and depreciation pressure from accelerated AI infrastructure deployment and R&D, then gradual operating leverage as contracted cloud demand, Microsoft 365 monetization, and capacity utilization scale. It does not assume that FY2026's margin expansion continues uninterrupted; the margin path remains below the FY2026 level in years 1-3 before partial recovery. [S1][S2][S4]"
+        },
+        "periodEnd": "2026-06-30",
+        "terminal": {
+          "growth": 0.04,
+          "nwcRatio": -0.07,
+          "roic": 0.22,
+          "daRatio": 0.12,
+          "margin": 0.44
+        },
+        "terminalRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S4"
+          ],
+          "explanation": "The terminal case assumes mature but still above-economy growth because Microsoft retains a broad installed base, recurring commercial subscriptions, hyperscale cloud infrastructure, and sizable contracted commercial obligations. It nevertheless reduces operating margin and return on invested capital from near-term levels to reflect persistent hyperscaler competition, continual infrastructure reinvestment, and depreciation from AI assets. Negative operating working capital remains sustainable because deferred revenue and payables structurally offset receivables and inventory, but is moderated from the FY2026 base rather than extrapolated mechanically. [S1][S2][S4]"
+        },
+        "years": [
+          {
+            "growth": 0.16,
+            "daRatio": 0.16,
+            "year": 1,
+            "nwcRatio": -0.075,
+            "margin": 0.45,
+            "capexRatio": 0.34
+          },
+          {
+            "growth": 0.14,
+            "daRatio": 0.18,
+            "year": 2,
+            "nwcRatio": -0.075,
+            "margin": 0.455,
+            "capexRatio": 0.28
+          },
+          {
+            "growth": 0.12,
+            "daRatio": 0.19,
+            "year": 3,
+            "nwcRatio": -0.073,
+            "margin": 0.46,
+            "capexRatio": 0.22
+          },
+          {
+            "growth": 0.1,
+            "daRatio": 0.18,
+            "year": 4,
+            "nwcRatio": -0.072,
+            "margin": 0.465,
+            "capexRatio": 0.18
+          },
+          {
+            "growth": 0.08,
+            "daRatio": 0.16,
+            "year": 5,
+            "nwcRatio": -0.07,
+            "margin": 0.47,
+            "capexRatio": 0.15
+          }
+        ],
+        "basis": "analyst_estimate",
+        "growthRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S4"
+          ],
+          "explanation": "The five-year revenue path begins below FY2026's 18% reported growth, supported by Intelligent Cloud, the $678 billion commercial remaining-performance-obligation balance, and commercial-software monetization. Growth decelerates annually as the revenue base becomes larger, capacity constraints ease, and PC/gaming and enterprise spending cyclicality remain offsets. This is an analyst estimate; it does not convert RPO directly into revenue or assume undisclosed AI units, pricing, or ARPU. [S1][S2][S4]"
+        },
+        "investmentRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S4"
+          ],
+          "explanation": "Cash capex/revenue is elevated in years 1-2 because FY2026 cash additions to property and equipment reached $115,948 million and management continued to describe major AI/cloud capacity investment. The estimate then normalizes cash capex as newly deployed datacenters contribute capacity. D&A/revenue rises initially because the investment boom enters service, then declines as investment intensity normalizes. Finance-lease principal and undiscounted lease commitments are not included in cash capex. [S1][S2][S4]"
+        }
+      },
+      "guidance": [],
+      "modelFamily": "fcff",
+      "modelRationale": {
+        "sourceIds": [
+          "S1",
+          "S2"
+        ],
+        "explanation": "FCFF is appropriate because Microsoft is a non-financial operating company with reported revenue, operating income, operating cash flow, cash capital expenditures, working-capital components, and material but separable debt and finance-lease obligations. [S1][S2]"
+      },
+      "taxRate": 0.19,
+      "asOf": "2026-10-22",
+      "sources": [
+        {
+          "publishedAt": "2026-07-29",
+          "id": "S1",
+          "title": "Microsoft Corporation Form 10-K for fiscal year ended June 30, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        },
+        {
+          "publishedAt": "2026-04-29",
+          "id": "S2",
+          "title": "Microsoft Corporation Form 10-Q for quarter ended March 31, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm"
+        },
+        {
+          "publishedAt": "2026-07-29",
+          "id": "S3",
+          "title": "Microsoft FY2026 Q4 earnings release",
+          "url": "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast"
+        },
+        {
+          "publishedAt": "2026-07-29",
+          "id": "S4",
+          "title": "Microsoft FY2026 Q4 earnings conference call",
+          "url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4"
+        },
+        {
+          "publishedAt": "2026-10-07",
+          "id": "S5",
+          "title": "Microsoft announces FY2027 Q1 quarterly earnings release date",
+          "url": "https://news.microsoft.com/source/2026/10/07/microsoft-announces-quarterly-earnings-release-date-69/"
+        },
+        {
+          "publishedAt": "2026-10-20",
+          "id": "S6",
+          "title": "Microsoft USD bond secondary-market monitor",
+          "url": "https://bondterminal.com/issuers/microsoft-corporation"
+        }
+      ],
+      "peers": [
+        {
+          "symbol": "ORCL",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "explanation": "Oracle is a comparable enterprise-software and cloud-infrastructure provider with database, applications, and cloud workload exposure. It is more concentrated in enterprise technology and its current infrastructure build differs from Microsoft's broader consumer, gaming, and advertising mix. [S1][S2]"
+          }
+        },
+        {
+          "symbol": "AMZN",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "explanation": "Amazon is comparable principally through hyperscale cloud infrastructure and AI capacity investment. It is less directly comparable at the consolidated level because retail, logistics, and advertising create a materially different capital intensity and cash-conversion profile. [S1][S2]"
+          }
+        },
+        {
+          "symbol": "GOOGL",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "explanation": "Alphabet is comparable through cloud, AI infrastructure, developer tools, productivity software, and advertising-funded digital services. Search advertising is much more central to Alphabet, whereas Microsoft's enterprise subscription mix is larger. [S1][S2]"
+          }
+        },
+        {
+          "symbol": "CRM",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "explanation": "Salesforce is comparable in enterprise SaaS, customer-relationship applications, data, and AI-enabled software monetization. It is less comparable in infrastructure capital intensity because it does not operate Microsoft's scale of cloud and PC/gaming businesses. [S1][S2]"
+          }
+        }
+      ]
+    },
+    "accounting": {
+      "accepted": [],
+      "rejected": [
+        {
+          "field": "shortInvest",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "currentDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        }
+      ]
+    },
+    "guidance": {
+      "accepted": [],
+      "rejected": []
+    },
+    "researchTrace": {
+      "searchCalls": 3,
+      "observedSourceCount": 78,
+      "observedUrls": [
+        "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast",
+        "https://www.microsoft.com/en-us/investor/default?msockid=37aff82701ab63bb21f2eedb00286262",
+        "https://bondterminal.com/issuers/microsoft-corporation",
+        "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q1",
+        "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q1/metrics",
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q1/press-release-webcast",
+        "https://news.microsoft.com/source/2026/10/07/microsoft-announces-quarterly-earnings-release-date-69/",
+        "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4",
+        "https://www.microsoft.com/en-us/investor/faq?msockid=20ee57d7ca556a47081c4106cbdd6bd0",
+        "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q1/segment-revenues",
+        "https://ir.msci.com/static-files/27fbfc33-1f6d-4111-be58-70315cfed026",
+        "https://news.microsoft.com/source/2026/07/29/microsoft-earnings-press-release-available-on-investor-relations-website-30/",
+        "https://www.sec.gov/Archives/edgar/data/23217/000002321726000041/cag-20260531xars.pdf",
+        "https://www.microsoft.com/investor/default.aspx?t_id=1e461ea3-1273-4043-a3a1-d401ccb50926",
+        "https://www.sec.gov/Archives/edgar/data/726728/000072672826000023/a2025annualreport_brfinalp.pdf",
+        "https://s205.q4cdn.com/638877794/files/doc_financials/2025/q3/cube_Q3_2025_10Q_FINAL.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1512762/000155837025005835/chrs-20241231xars.pdf",
+        "https://microsoft.gcs-web.com/static-files/fb546cc4-2cbe-41c6-b6b0-85159ae6129e",
+        "https://www.reddit.com/r/Bogleheads/comments/1o7dnl5/got_a_10_year_bond_at_605_whats_the_catch/",
+        "https://www.reddit.com/r/thewallstreet/comments/1x4uqol/daily_discussion_october_13_2026/",
+        "https://www.reddit.com/r/investing/comments/1wu1u0u/only_1_of_the_10_biggest_us_companies_earns_more/",
+        "https://www.reddit.com/r/leanfire/comments/1x6bjfm/the_state_of_the_bond_market_october_14_2026/",
+        "https://www.reddit.com/r/MSFT/comments/1v935ph/removed/",
+        "https://www.reddit.com/r/GPFixedIncome/comments/15j50sy",
+        "https://www.reddit.com/r/investment/comments/1vvvyl9/why_microsoft_sits_above_us_sovereign_debt_on/",
+        "https://www.reddit.com/r/RILYStock/comments/1jopi98",
+        "https://www.reddit.com/r/EverHint/comments/1xb5ebz/global_business_news_october_20_2026_after_hours/",
+        "https://www.reddit.com/r/MSTR/comments/1tmeinc/could_be_very_interesting/",
+        "https://www.reddit.com/r/EverHint/comments/1x53w6x/global_business_news_october_13_2026_midday/",
+        "https://www.reddit.com/r/ValueInvesting/comments/1f8i7by",
+        "https://arxiv.org/abs/1102.2138",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-20260729.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm?aff_unique2=%2F&aff_unique3=t10tcKEC0&code=%2F&testcode=t10tcKEC0",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/0001193125-26-323632-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1651562/000165156226000059/0001651562-26-000059-index.html",
+        "https://www.sec.gov/Archives/edgar/data/1691421/000169142126000047/0001691421-26-000047-index.htm",
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q2/IRFinancialStatementsPopups?tag=us-gaap%3AEarningsPerShareTextBlock&title=Earnings+per+share%3A",
+        "https://d18rn0p25nwr6d.cloudfront.net/CIK-0001093691/bd085625-6410-4a84-99a4-193ede5812c8.html",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-ex99_1.htm",
+        "https://www.sec.gov/Archives/edgar/data/1403161/000140316126000103/0001403161-26-000103-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/d61756ddef14a1.pdf",
+        "https://s202.q4cdn.com/128013957/files/doc_financials/2026/q1/Mattr-2026-Q1-MD-A-Sedar.pdf",
+        "https://s205.q4cdn.com/395322262/files/doc_financials/2024/ar/Tt-2024-Annual-Report.pdf",
+        "https://www.youtube.com/watch?v=qWD4NHV4bOY",
+        "https://microsoft.gcs-web.com/static-files/0493db0a-54b7-4aca-87d4-1fb8f6beb456",
+        "https://materials.proxyvote.com/Approved/126638/20260406/10K_631245.PDF",
+        "https://www.reddit.com/r/MSFT/comments/1va9ygc/did_they_announce_fy27_capex_yet/",
+        "https://www.reddit.com/r/MSFT/comments/1vaamia/removed/",
+        "https://www.reddit.com/r/EarningsCalls/comments/1vbudd9/microsoft_msft_the_good_the_bad_and_the_ugly_from/",
+        "https://www.reddit.com/r/stocks/comments/1va7kxp/msft_quarterly_revenue_90_billion_up_18_yoy/",
+        "https://www.reddit.com/r/MSFT/comments/1va7f8e/msft_earnings_729_lets_talk_im_live/",
+        "https://www.reddit.com/r/StockScore/comments/1va88sc/microsoft_corporation_earnings_q4_2026/",
+        "https://www.reddit.com/r/MU_Stock/comments/1vabgqr/friendly_advice_to_everyone_listen_to_microsoft/",
+        "https://www.reddit.com/r/microsoft365/comments/1vancv0/azure_tops_100_billion_as_microsoft_reports_fy26/",
+        "https://www.reddit.com/r/TheVisualInvestors/comments/1vap4f4/microsoft_msft_surges_over_8_after_reporting/",
+        "https://www.reddit.com/r/HollowPointTrading/comments/1wy21xf/msft_nasdaqmsft_the_678_billion_contract_book_has/",
+        "https://www.reddit.com/r/MSFT/comments/1uwocxd/msft_earnings/",
+        "https://www.reddit.com/r/wallstreetbets/comments/1vabhcp/microsoft_earnings_report_going_well/",
+        "https://en.wikipedia.org/wiki/Minimum_lease_payments",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312523259254/d506673dars.pdf",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index.html",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/0001193125-26-191507-index-headers.html",
+        "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q3/press-release-webcast",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/R1.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312525256321/msft-20250930.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312524131951/d671682d424b3.htm",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312523271376/d566386dex42.htm",
+        "https://www.sec.gov/Archives/edgar/data/1050446/000119312525100763/d30923dars.pdf",
+        "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q3",
+        "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm",
+        "https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q3/press-release-webcast",
+        "https://www.sec.gov/Archives/edgar/data/1902649/000119312526149778/bdebt_ars_filing_2025.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1057058/000105705806000003/exh10-1.pdf",
+        "https://www.sec.gov/Archives/edgar/data/108772/000114420418007523/tv485791_ex2.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1045829/000104582905000026/june302005_10k.pdf"
+      ],
+      "verifiedFilingDocuments": []
+    }
+  },
+  "COST": {
+    "periodEnd": "2026-08-30",
+    "modelVersion": "0.4.0",
+    "researchVersion": "research-5",
+    "status": "validated",
+    "model": "gpt-5.6-terra",
+    "completedAt": "2026-10-22T05:21:09.302Z",
+    "report": {
+      "businessDescription": "Costco operates a global membership-warehouse and e-commerce model centered on low prices, limited SKU assortments, high sales volumes, rapid inventory turns, supplier-direct purchasing and no-frills facilities. At August 30, 2026, it operated 939 warehouses; fiscal 2026 revenue was geographically diversified across the U.S. (72.5%), Canada (13.4%) and Other International (14.1%). The membership fee stream is strategically important: fiscal-2026 membership-fee revenue was $5,907 million, paid members were 84.1 million, U.S./Canada renewal was 92.3%, and worldwide renewal was 89.8%. Fiscal-2026 reported sales growth combined 8.4% adjusted comparable sales growth and 25 net new warehouses. The economic model benefits from inventory generally being sold before supplier payment is due, supporting structurally negative operating working capital. [S1,S2]",
+      "uncertainties": [
+        "No explicit management revenue range for a future fiscal quarter was found in the reviewed issuer SEC earnings exhibits; guidance is therefore empty rather than inferred from monthly sales releases or warehouse-opening plans. [S2,S3]",
+        "The forecast separates cash capital expenditure from finance-lease liabilities. Future financing-lease principal, operating-lease commitments, land-purchase timing and warehouse construction costs are not forecast as cash capex with precision because management discloses only aggregate annual capex intent. [S1]",
+        "A recent observable USD senior-unsecured Costco bond yield with 7-13 years remaining could not be validated from a primary public source as of October 22, 2026. The 10-K discloses debt carrying values and fair value, but not market yields by CUSIP; observedDebtYield is null. [S1]",
+        "Long-term investments are resolved only to securities literally disclosed in the 10-K; the remaining composition of other non-operating assets and any restricted cash requires further footnote reconciliation. [S1]",
+        "Forecast margins remain exposed to merchandise mix, gasoline and foreign-exchange volatility, tariff policy, wage and benefit costs, competitive price investment, new-warehouse ramp losses and the uncertain return on supply-chain and delivery investments. [S1,S2]",
+        "Share-count dilution is not forecast. Fiscal-2026 stock compensation was reported, but future award issuance, forfeitures, withholding and repurchases are not determinable from current disclosures. [S1]"
+      ],
+      "accountingEvidence": [
+        {
+          "value": 0,
+          "period": "2026-08-30",
+          "quotation": "There were no short-term borrowings outstanding at the end of 2026",
+          "field": "shortDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 2248,
+          "period": "2026-08-30",
+          "quotation": "Less current portion(1) | $ | 2,248",
+          "field": "currentDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 796,
+          "period": "2026-08-30",
+          "quotation": "Investment in government and agency securities | $ | 796",
+          "field": "longInvest",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 2674,
+          "period": "2026-08-30",
+          "quotation": "Depreciation and amortization | $ | 2,674",
+          "field": "da",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        }
+      ],
+      "company": "COST",
+      "risk": {
+        "maxDebtEbitda": 1.5,
+        "minCoverage": 3,
+        "stressMargin": 0.027,
+        "stressRationale": {
+          "sourceIds": [
+            "S1",
+            "S2"
+          ],
+          "explanation": "A severe but plausible stress assumes a 15% revenue decline and EBIT margin compression to 2.7%, reflecting Costco's low-margin model, vigorous retail and warehouse-club competition, potential mix and price pressure, and the lower initial profitability/cannibalization risk of new warehouses. This is a policy stress, not a prediction."
+        },
+        "revenueDecline": 0.15,
+        "maturities2y": 2250,
+        "bondRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "No qualifying recent public USD senior-unsecured 7-13-year bond yield was validated from a primary source. Costco's disclosed U.S. senior notes mature in 2027, 2030 and 2032, while subsidiary guaranteed notes extend to 2041; accordingly no observed market yield is inserted."
+        },
+        "bondYearsToMaturity": null,
+        "liquidityRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "At August 30, 2026, Costco reported $20,207 million of cash and cash equivalents, $1,094 million of short-term investments, $15,817 million of annual operating cash flow, and $2,118 million of bank-facility capacity with no short-term borrowings outstanding. The next-two-fiscal-year disclosed debt maturity is $2,250 million in fiscal 2027 and none in fiscal 2028. This supports a minimum-cash policy of $8,000 million and conservative leverage guardrail."
+        },
+        "observedDebtYield": null,
+        "hFactors": [
+          {
+            "explanation": "The essential-goods assortment, membership model and fiscal-2026 adjusted comparable-sales growth provide resilience, but discretionary non-foods, gasoline-price effects and macroeconomic demand remain exposed.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "name": "Demand drop"
+          },
+          {
+            "explanation": "Costco identifies Walmart/Sam's Club, BJ's, Target, Kroger and Amazon as significant competitors; price competition and online alternatives can pressure traffic and merchandise margins.",
+            "score": 2,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Competitive attack"
+          },
+          {
+            "explanation": "Costco states it does not obtain a significant portion of merchandise from any one supplier and seeks alternative sources, diversification and in-country production when supply is unavailable.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of suppliers"
+          },
+          {
+            "explanation": "The company identifies labor, healthcare and energy costs as operating risks, while culture and member service are central to retention; this creates moderate execution sensitivity rather than a singular labor dependency.",
+            "score": 2,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of employees"
+          },
+          {
+            "explanation": "The asset base is largely warehouses, depots and equipment used in a profitable operating network; substantial liquidity and positive operating cash flow reduce forced-sale risk.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Asset fire sales"
+          },
+          {
+            "explanation": "Costco sells directly to members through owned/leased warehouses and e-commerce rather than a dealer network; warehouse-site availability and permitting are constraints, but dealer loss is not material.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of dealers"
+          },
+          {
+            "explanation": "Funding access risk is low given cash, operating cash generation and undrawn facilities, though the company has meaningful scheduled fiscal-2027 debt repayment and ongoing capital requirements.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of capital markets"
+          }
+        ],
+        "bondObservationDate": null,
+        "minimumCash": 8000
+      },
+      "businessDrivers": [
+        {
+          "observability": "reported",
+          "description": "Membership economics: fiscal-2026 membership fee revenue increased 11% to $5,907 million; renewal was 92.3% in the U.S./Canada and 89.8% worldwide, supporting recurring high-margin fee income alongside merchandise sales.",
+          "name": "Membership retention and Executive penetration",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Paid members rose to 84.1 million and Executive members to 42.3 million; Executive members represented approximately 75.2% of worldwide net sales.",
+          "name": "Member-base expansion",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Fiscal-2026 adjusted comparable sales increased 6.6% companywide, with adjusted growth of 6.6% in the U.S., 6.7% in Canada and 6.5% in Other International.",
+          "name": "Comparable sales",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Fiscal-2026 sales growth reflected a 5% increase in average ticket and a 3% increase in shopping frequency; the company does not disclose a more granular unit-price-volume bridge.",
+          "name": "Ticket and shopping frequency",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Costco opened 25 net new warehouses in fiscal 2026 and plans up to 33 openings including five relocations in fiscal 2027. New warehouses raise sales but initially operate at lower profitability and may cannibalize existing locations.",
+          "name": "Warehouse expansion and ramp",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Digitally-enabled sales represented 11% of fiscal-2026 net sales and digitally-enabled comparable sales rose 20.7% excluding gasoline and foreign exchange, extending member convenience and assortment.",
+          "name": "Digital and e-commerce engagement",
+          "sourceIds": [
+            "S1",
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "The operating model uses limited assortment, high volumes, rapid turns, supplier-direct distribution and no-frills facilities; Costco often sells inventory before supplier payment is due, sustaining negative operating working capital.",
+          "name": "Inventory turns and supplier financing",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "Fiscal-2027 cash capex is intended to be approximately $7,500 million, principally for land, buildings, equipment, systems, manufacturing and distribution. The forecast assumes elevated investment in year 1 and gradual normalization as the warehouse and logistics buildout matures.",
+          "name": "Investment intensity",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "undisclosed",
+          "description": "Management does not provide a numeric long-term target for merchandise gross margin, SG&A leverage, revenue growth, unit volumes, pricing or returns on each new warehouse; forecast normalization is therefore analyst-estimated.",
+          "name": "Long-term margin and unit economics",
+          "sourceIds": [
+            "S1"
+          ]
+        }
+      ],
+      "forecast": {
+        "marginRationale": {
+          "sourceIds": [
+            "S1",
+            "S2"
+          ],
+          "explanation": "Reported fiscal-2026 EBIT margin was 3.9%. The estimate allows modest operating leverage from comparable-sales growth, membership-fee growth and digital scale, but limits expansion because Costco intentionally operates at low merchandise margins, faces price competition, is adding lower-profitability new warehouses, and expects continued technology, distribution and delivery investment."
+        },
+        "periodEnd": "2026-08-30",
+        "terminal": {
+          "growth": 0.035,
+          "nwcRatio": -0.05,
+          "roic": 0.18,
+          "daRatio": 0.009,
+          "margin": 0.041
+        },
+        "terminalRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "Terminal growth is set below the near-term warehouse-expansion phase but above zero because Costco has a large global membership base, recurring membership fees, continuing international whitespace and e-commerce reach. Terminal EBIT margin is constrained near the low-margin warehouse-club model. An 18% terminal ROIC reflects durable scale, membership loyalty, rapid turns and negative working capital, while recognizing competitive pricing, maturing U.S. locations, site scarcity and the uncertain returns from logistics investments."
+        },
+        "years": [
+          {
+            "growth": 0.08,
+            "daRatio": 0.009,
+            "year": 1,
+            "nwcRatio": -0.053,
+            "margin": 0.039,
+            "capexRatio": 0.023
+          },
+          {
+            "growth": 0.07,
+            "daRatio": 0.009,
+            "year": 2,
+            "nwcRatio": -0.052,
+            "margin": 0.0395,
+            "capexRatio": 0.022
+          },
+          {
+            "growth": 0.06,
+            "daRatio": 0.009,
+            "year": 3,
+            "nwcRatio": -0.051,
+            "margin": 0.04,
+            "capexRatio": 0.02
+          },
+          {
+            "growth": 0.05,
+            "daRatio": 0.009,
+            "year": 4,
+            "nwcRatio": -0.05,
+            "margin": 0.0405,
+            "capexRatio": 0.019
+          },
+          {
+            "growth": 0.04,
+            "daRatio": 0.009,
+            "year": 5,
+            "nwcRatio": -0.05,
+            "margin": 0.041,
+            "capexRatio": 0.018
+          }
+        ],
+        "basis": "analyst_estimate",
+        "growthRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "The year-1 estimate begins with fiscal-2026 reported 10.1% net-sales growth, 6.6% adjusted comparable-sales growth, 25 net new warehouses and management's plan for up to 33 fiscal-2027 openings. Growth then steps down as the mature U.S. base becomes larger, new sites face greater location scarcity and cannibalization risk, and comparable sales normalize. International, membership, Executive penetration and digitally-enabled commerce remain positive offsets."
+        },
+        "investmentRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "Management intends approximately $7,500 million of fiscal-2027 capex versus $6,435 million in fiscal 2026, funding land, warehouses, systems, manufacturing and distribution. The estimate holds capex elevated in the first two years, then reduces capex/revenue gradually as current store, distribution and technology investments scale. Finance-lease principal is not included in cash capex."
+        }
+      },
+      "guidance": [],
+      "modelFamily": "fcff",
+      "modelRationale": {
+        "sourceIds": [
+          "S1"
+        ],
+        "explanation": "Costco is an operating retailer with reported revenue, EBIT, depreciation, cash capital expenditures and working-capital economics. FCFF is appropriate; it is neither a bank/insurer nor a REIT, and its USD reporting provides sufficient operating-accounting inputs."
+      },
+      "taxRate": 0.247,
+      "asOf": "2026-10-22",
+      "sources": [
+        {
+          "publishedAt": "2026-10-07",
+          "id": "S1",
+          "title": "Costco Wholesale Corporation Form 10-K for fiscal year ended August 30, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        },
+        {
+          "publishedAt": "2026-09-24",
+          "id": "S2",
+          "title": "Costco Wholesale Corporation Reports Fourth Quarter and Fiscal Year 2026 Operating Results",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000084/costex9918-k92426.htm"
+        },
+        {
+          "publishedAt": "2026-06-03",
+          "id": "S3",
+          "title": "Costco Wholesale Corporation Form 10-Q for quarter ended May 10, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000051/cost-20260510.htm"
+        },
+        {
+          "publishedAt": "2026-03-11",
+          "id": "S4",
+          "title": "Costco Wholesale Corporation Form 10-Q for quarter ended February 15, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000029/cost-20260215.htm"
+        }
+      ],
+      "peers": [
+        {
+          "symbol": "WMT",
+          "rationale": {
+            "sourceIds": [
+              "S1"
+            ],
+            "explanation": "Walmart is a named significant U.S. general-merchandise competitor and owns Sam's Club, making it the closest scaled U.S. warehouse-club competitive benchmark. It is broader, more international in retail formats and less membership-concentrated than Costco."
+          }
+        },
+        {
+          "symbol": "BJ",
+          "rationale": {
+            "sourceIds": [
+              "S1"
+            ],
+            "explanation": "BJ's Wholesale Club is specifically identified as a competing U.S. warehouse club. It is the closest listed domestic membership-club peer, though materially smaller and more regionally concentrated than Costco."
+          }
+        },
+        {
+          "symbol": "TGT",
+          "rationale": {
+            "sourceIds": [
+              "S1"
+            ],
+            "explanation": "Target is a named general-merchandise competitor with overlapping discretionary and consumable categories. It is included for U.S. merchandise, fulfillment and price competition, but excluded as a pure warehouse-club analogue because it lacks Costco's membership-fee model."
+          }
+        },
+        {
+          "symbol": "AMZN",
+          "rationale": {
+            "sourceIds": [
+              "S1"
+            ],
+            "explanation": "Amazon is a named competitor and is relevant to e-commerce, assortment and fulfillment competition. It is not a direct warehouse-club peer, but is economically relevant because Costco's digitally-enabled sales and e-commerce logistics are growing."
+          }
+        }
+      ]
+    },
+    "accounting": {
+      "accepted": [],
+      "rejected": [
+        {
+          "field": "shortDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "currentDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "longInvest",
+          "reason": "Quotation does not literally occur in the SEC document."
+        },
+        {
+          "field": "da",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        }
+      ]
+    },
+    "guidance": {
+      "accepted": [],
+      "rejected": []
+    },
+    "researchTrace": {
+      "searchCalls": 3,
+      "observedSourceCount": 14,
+      "observedUrls": [
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000051/cost-20260510.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000084/costex9918-k92426.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000025/cost-20260305.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000060/costex9918-k7726.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000025/costex9918-k3526.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/0000909832-26-000093-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983225000164/costex9918-k121125.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000029/cost-20260215.htm",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000046/0000909832-26-000046-index.htm",
+        "https://investor.costco.com/overview/default.aspx",
+        "https://investor.costco.com/financials/sec-filings/",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983225000157/costannualreport2025.pdf",
+        "https://www.sec.gov/Archives/edgar/data/2100805/000162828026030581/ex99303312026.pdf",
+        "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+      ],
+      "verifiedFilingDocuments": [
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000084/costex9918-k92426.htm",
+          "indexUrl": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000084/index.json",
+          "accession": "0000909832-26-000084",
+          "filed": "2026-09-24"
+        }
+      ]
+    }
+  },
+  "NVDA": {
+    "periodEnd": "2026-07-26",
+    "modelVersion": "0.4.0",
+    "researchVersion": "research-5",
+    "status": "validated",
+    "model": "gpt-5.6-terra",
+    "completedAt": "2026-10-22T05:24:57.057Z",
+    "report": {
+      "businessDescription": "NVDA designs accelerated-computing platforms spanning processors, networking, systems, software and services. The economic center is Compute & Networking, which represented 89.6% of FY2026 revenue; Graphics is the remaining reported segment. The current cycle is dominated by Data Center infrastructure: Q2 FY2027 Data Center revenue was $89.0 billion, driven by Blackwell Ultra, while Edge Computing was $7.2 billion. The model benefits from fabless economics and a broad partner ecosystem, but requires large advance supply commitments and is exposed to concentrated customers, product-transition execution, export controls, data-center power availability and third-party infrastructure financing. [S1, S2, S3]",
+      "uncertainties": [
+        "The supplied base combines audited FY2026 and unaudited FY2027 year-to-date results; it is a trailing-twelve-month analytical base rather than a reported annual period.",
+        "NVIDIA does not disclose unit volumes, realized accelerator pricing, or customer-level end demand sufficiently to decompose the forecast into reliable volume and price/ARPU assumptions.",
+        "The company reported $279 billion of supply-and-capacity commitments, $29 billion of cloud-service agreements, $25 billion of uncommenced data-center leases, $25 billion of equity-investment commitments, and additional AI-cloud and lease arrangements. The timing, utilization and recoverability of these commitments are material uncertainties. [S2]",
+        "Accounts receivable reached $63.1 billion and 60 days sales outstanding in Q2 FY2027 because of extended payment terms on large multi-quarter agreements; normalization of collections and inventory during the Vera Rubin transition can materially affect operating working capital. [S2]",
+        "No validated public secondary-market yield for a specific 7-13-year NVIDIA senior unsecured bond was obtained as of October 22, 2026. The filing supplies effective interest rates and estimated aggregate debt fair value, not an observed bond yield; observedDebtYield is therefore null.",
+        "Long-term marketable/equity investment classifications, locked-up investment liquidity, finance-lease principal, detailed customer financing exposure and future dilution from awards require more granular footnote review than the standardized base provides.",
+        "Forecast years are analyst estimates, not management guidance. They exclude any assumed Data Center compute revenue from China, consistent with management's Q3 FY2027 outlook. [S2]"
+      ],
+      "accountingEvidence": [
+        {
+          "value": 34143,
+          "period": "2026-07-26",
+          "quotation": "Marketable debt securities | 34,143",
+          "field": "shortInvest",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 1000,
+          "period": "2026-07-26",
+          "quotation": "Short-term debt | 1,000",
+          "field": "currentDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        }
+      ],
+      "company": "NVDA",
+      "risk": {
+        "maxDebtEbitda": 1.5,
+        "minCoverage": 4,
+        "stressMargin": 0.42,
+        "stressRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "A 0.42 stressed EBIT margin allows for a substantial contraction from the trailing base while remaining consistent with a fabless platform business. The stress explicitly recognizes concentrated customers, product-transition and supply-commitment risk, as well as the possibility that customer capital, power or construction constraints delay deployments. Management reported $366 billion of identified commitments and up to $108.5 billion of gross guarantee exposure, supporting a conservative margin and leverage policy despite strong current profitability and liquidity."
+        },
+        "revenueDecline": 0.35,
+        "maturities2y": 4.75,
+        "bondRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "NVIDIA had $4.75 billion of named notes due by calendar 2028 ($1.0 billion due 2026, $3.5 billion due 2028 and $1.25 billion due 2028) as of July 26, 2026. Its notes are senior unsecured; the company also reported compliance with required covenants and a $25.0 billion commercial-paper facility with no outstanding borrowings."
+        },
+        "bondYearsToMaturity": 9.9,
+        "liquidityRationale": {
+          "sourceIds": [
+            "S1",
+            "S2"
+          ],
+          "explanation": "At July 26, 2026, cash, cash equivalents and marketable debt securities were $56.6 billion, with an additional $42.8 billion of marketable equity securities reported in the 10-Q liquidity discussion. This liquidity exceeds near-term stated debt maturities, but is counterbalanced by large purchase, cloud, lease, investment and guarantee commitments."
+        },
+        "observedDebtYield": null,
+        "hFactors": [
+          {
+            "explanation": "Demand is currently strong, but management identifies uncertain demand forecasting, order changes, product transitions and customer deployment constraints as risks; customer concentration makes a demand reversal more consequential.",
+            "score": 2,
+            "sourceIds": [
+              "S2",
+              "S3"
+            ],
+            "name": "Demand drop"
+          },
+          {
+            "explanation": "NVIDIA identifies rapidly changing technology, competitive products, internal customer development and alternative cloud offerings; however, its integrated processor, networking, software and ecosystem position provides meaningful mitigation.",
+            "score": 2,
+            "sourceIds": [
+              "S2",
+              "S3"
+            ],
+            "name": "Competitive attack"
+          },
+          {
+            "explanation": "Manufacturing is concentrated in Asia and depends on foundry and assembly partners, though NVIDIA reports expanding supplier relationships and geographic redundancy.",
+            "score": 2,
+            "sourceIds": [
+              "S3"
+            ],
+            "name": "Loss of suppliers"
+          },
+          {
+            "explanation": "Specialized engineering is important, and unrecognized stock compensation was $19.4 billion at July 2026; no evidence indicates abnormal workforce attrition.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of employees"
+          },
+          {
+            "explanation": "The company is fabless and had substantial liquid resources, limiting conventional fixed-asset fire-sale exposure; inventory, prepayments and strategic commitments nevertheless could require impairments if demand changes.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Asset fire sales"
+          },
+          {
+            "explanation": "Revenue is concentrated among a limited set of direct and indirect customers, but NVIDIA uses a broad ecosystem of CSPs, OEMs, ODMs, system integrators and distributors rather than a narrow dealer network.",
+            "score": 2,
+            "sourceIds": [
+              "S2",
+              "S3"
+            ],
+            "name": "Loss of dealers"
+          },
+          {
+            "explanation": "NVIDIA issued $25.0 billion of senior unsecured notes in June 2026, had no commercial paper outstanding and significant liquidity; customer and partner financing capacity is a more material indirect risk than NVIDIA's own market access.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S2"
+            ],
+            "name": "Loss of capital markets"
+          }
+        ],
+        "bondObservationDate": null,
+        "minimumCash": 25
+      },
+      "businessDrivers": [
+        {
+          "observability": "reported",
+          "description": "Data Center revenue was $89.0 billion in Q2 FY2027, up 117% year over year and 18% sequentially, driven by the Blackwell Ultra ramp; it is the principal near-term revenue driver.",
+          "name": "Blackwell Ultra Data Center ramp",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Q2 FY2027 Edge Computing revenue was $7.2 billion, up 27% year over year and 13% sequentially; Blackwell workstations helped offset slower consumer PC demand.",
+          "name": "Edge Computing and workstation demand",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "Rubin is expected to begin shipping in the second half of FY2027. The forecast assumes the platform transition sustains growth but introduces mix, supply and timing risk.",
+          "name": "Vera Rubin product transition",
+          "sourceIds": [
+            "S4"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "The Q3 FY2027 management outlook is $108.0 billion of revenue plus or minus 2%, with no assumed Data Center compute revenue from China.",
+          "name": "Near-term management revenue outlook",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Supply-and-capacity commitments were $279 billion, primarily for memory, to support demand over the next several years.",
+          "name": "Supply capacity and memory procurement",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "NVIDIA reported $63.1 billion of accounts receivable and 60 DSO because of extended payment terms on large multi-quarter agreements; inventory was $31.6 billion ahead of Rubin.",
+          "name": "Working-capital intensity",
+          "sourceIds": [
+            "S2"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "One direct customer represented 16% of Q2 FY2027 revenue; three represented 16%, 15% and 13% for the first half. Indirect concentration is also material.",
+          "name": "Customer concentration",
+          "sourceIds": [
+            "S1",
+            "S3"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "Customer and partner ability to obtain power, land, construction capacity and financing governs the pace at which AI infrastructure can be deployed.",
+          "name": "AI infrastructure financing and power availability",
+          "sourceIds": [
+            "S2",
+            "S4"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "China and other export-control outcomes remain uncertain; management's Q3 FY2027 outlook assumes no Data Center compute revenue from China.",
+          "name": "Export-control and China exposure",
+          "sourceIds": [
+            "S2",
+            "S4"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Gross margin was approximately flat sequentially in Q2 FY2027 as Blackwell remained the majority of revenue; operating expense growth reflected compute infrastructure and compensation costs.",
+          "name": "Platform mix and operating-cost absorption",
+          "sourceIds": [
+            "S2"
+          ]
+        }
+      ],
+      "forecast": {
+        "marginRationale": {
+          "sourceIds": [
+            "S2",
+            "S3",
+            "S4"
+          ],
+          "explanation": "Analyst estimates assume EBIT margin falls gradually from the unusually high trailing level as Rubin ramps, compute infrastructure and compensation costs rise, and customer/partner financing arrangements expand. The forecast nonetheless retains structurally high margins because NVIDIA sells an integrated accelerated-computing platform and Q2 FY2027 gross margin was 75.0% with Blackwell representing the majority of revenue. Competition, supply costs, export restrictions and transition execution limit the long-run margin assumption."
+        },
+        "periodEnd": "2026-07-26",
+        "terminal": {
+          "growth": 0.04,
+          "nwcRatio": 0.18,
+          "roic": 0.5,
+          "daRatio": 0.015,
+          "margin": 0.5
+        },
+        "terminalRationale": {
+          "sourceIds": [
+            "S2",
+            "S3",
+            "S4"
+          ],
+          "explanation": "The terminal case assumes a mature but still expanding accelerated-computing market rather than perpetual hypergrowth. A 0.50 ROIC and 0.50 EBIT margin reflect durable platform IP, software/ecosystem integration and fabless capital efficiency, but below near-term margins to recognize competition, annual architecture transitions, customer vertical integration, supplier dependence and the need to support deployments through supply, infrastructure and financing commitments."
+        },
+        "years": [
+          {
+            "growth": 0.4,
+            "daRatio": 0.013,
+            "year": 1,
+            "nwcRatio": 0.26,
+            "margin": 0.63,
+            "capexRatio": 0.028
+          },
+          {
+            "growth": 0.28,
+            "daRatio": 0.014,
+            "year": 2,
+            "nwcRatio": 0.24,
+            "margin": 0.61,
+            "capexRatio": 0.025
+          },
+          {
+            "growth": 0.2,
+            "daRatio": 0.015,
+            "year": 3,
+            "nwcRatio": 0.22,
+            "margin": 0.59,
+            "capexRatio": 0.022
+          },
+          {
+            "growth": 0.15,
+            "daRatio": 0.015,
+            "year": 4,
+            "nwcRatio": 0.2,
+            "margin": 0.57,
+            "capexRatio": 0.02
+          },
+          {
+            "growth": 0.1,
+            "daRatio": 0.015,
+            "year": 5,
+            "nwcRatio": 0.19,
+            "margin": 0.55,
+            "capexRatio": 0.018
+          }
+        ],
+        "basis": "analyst_estimate",
+        "growthRationale": {
+          "sourceIds": [
+            "S2",
+            "S4"
+          ],
+          "explanation": "Year 1 is anchored by management's Q3 FY2027 $108.0 billion revenue outlook and Blackwell Ultra demand, then growth decelerates as the revenue base compounds. Years 2-5 reflect continued data-center, AI-cloud, enterprise and sovereign deployment plus the Rubin transition, offset by no assumed China Data Center compute revenue, deployment financing/power constraints, customer concentration and the normal maturation of a very large revenue base."
+        },
+        "investmentRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "Cash capex/revenue remains modest relative to revenue because NVIDIA is fabless, but stays above historical normalized levels during the forecast period due to compute infrastructure and specialized equipment. The model does not treat $279 billion of supply commitments, cloud-service commitments, lease obligations, third-party lease guarantees or finance-lease principal as cash capex; those are separate contractual, credit and operating-risk exposures. Operating NWC declines from the trailing elevated level as the Rubin inventory build and extended payment terms normalize, while remaining positive due to large receivables and inventory needs."
+        }
+      },
+      "guidance": [
+        {
+          "high": 110160,
+          "low": 105840,
+          "periodEnd": "2026-10-25",
+          "periodLabel": "third quarter of fiscal 2027",
+          "quotation": "Outlook for the third quarter of fiscal 2027 is as follows: •Revenue is expected to be $108.0 billion, plus or minus 2%.",
+          "metric": "revenue",
+          "sourceId": "S2",
+          "unit": "USD millions"
+        }
+      ],
+      "modelFamily": "fcff",
+      "modelRationale": {
+        "sourceIds": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "explanation": "FCFF is appropriate because NVIDIA is an operating semiconductor/platform company with substantial reported operating income, cash generation, identifiable operating working capital and cash capital expenditure. It is neither a bank/insurer nor a REIT. Large supply, infrastructure, lease and guarantee commitments are explicitly treated as forecast and risk considerations rather than ignored."
+      },
+      "taxRate": 0.17,
+      "asOf": "2026-10-22",
+      "sources": [
+        {
+          "publishedAt": "2026-08-26",
+          "id": "S1",
+          "title": "NVIDIA Form 10-Q for quarter ended July 26, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        },
+        {
+          "publishedAt": "2026-08-26",
+          "id": "S2",
+          "title": "NVIDIA CFO Commentary on Second Quarter Fiscal 2027 Results, Exhibit 99.2",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "publishedAt": "2026-02-25",
+          "id": "S3",
+          "title": "NVIDIA Form 10-K for fiscal year ended January 25, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+        },
+        {
+          "publishedAt": "2026-05-20",
+          "id": "S4",
+          "title": "NVIDIA Form 10-Q for quarter ended April 26, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm"
+        }
+      ],
+      "peers": [
+        {
+          "symbol": "AMD",
+          "rationale": {
+            "sourceIds": [
+              "S3",
+              "S4"
+            ],
+            "explanation": "Comparable fabless accelerated-computing supplier with data-center CPU/GPU exposure and direct relevance to NVIDIA's competitive risk. It is less comparable in scale, software ecosystem depth and current AI-infrastructure revenue concentration."
+          }
+        },
+        {
+          "symbol": "AVGO",
+          "rationale": {
+            "sourceIds": [
+              "S2",
+              "S3"
+            ],
+            "explanation": "Comparable through custom AI accelerators, networking and hyperscaler infrastructure exposure. It is diversified by infrastructure software and non-AI semiconductor franchises, so it is not a pure NVIDIA substitute."
+          }
+        },
+        {
+          "symbol": "MRVL",
+          "rationale": {
+            "sourceIds": [
+              "S2",
+              "S3"
+            ],
+            "explanation": "Comparable data-center networking and custom silicon participant, with a more communications-infrastructure-oriented mix and materially lower platform breadth than NVIDIA."
+          }
+        },
+        {
+          "symbol": "INTC",
+          "rationale": {
+            "sourceIds": [
+              "S3",
+              "S4"
+            ],
+            "explanation": "Relevant accelerator, CPU and data-center competitor, but excluded from tighter fabless comparison because its integrated manufacturing model produces distinctly higher capital intensity and different supply-chain economics."
+          }
+        }
+      ]
+    },
+    "accounting": {
+      "accepted": [],
+      "rejected": [
+        {
+          "field": "shortInvest",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "currentDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        }
+      ]
+    },
+    "guidance": {
+      "accepted": [],
+      "rejected": [
+        {
+          "periodEnd": "2026-10-25",
+          "reason": "Guidance quotation or fiscal period does not literally occur in the document."
+        }
+      ]
+    },
+    "researchTrace": {
+      "searchCalls": 4,
+      "observedSourceCount": 36,
+      "observedUrls": [
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+        "https://en.wikipedia.org/wiki/Interactive_Brokers",
+        "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/?trk=article-ssr-frontend-pulse_little-text-block",
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+        "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+        "https://investor.nvidia.com/files/doc_financials/2027/NVDA-2027-Q2-10Q-Final-including-exhibits.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1707753/000170775326000035/a27q1erex991.htm",
+        "https://www.sec.gov/Archives/edgar/data/70858/000191870425013656/form424b2.htm",
+        "https://www.sec.gov/Archives/edgar/data/1280263/000119312526381923/d88952dex991.htm",
+        "https://www.sec.gov/Archives/edgar/data/1070235/000107023526000115/bbry-20260831.htm",
+        "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000022/q227_8kx812026ex-991.htm",
+        "https://investor.nvidia.com/files/doc_financials/2026/q3/13e6981b-95ed-4aac-a602-ebc5865d0590.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1372612/000119312526365121/box-ex99_1.htm",
+        "https://www.tradingview.com/symbols/FINRA-NVDA6427659/",
+        "https://investor.bankofamerica.com/regulatory-and-other-filings/all-sec-filings/content/0001918704-25-010750/0001918704-25-010750.pdf",
+        "https://investor.bankofamerica.com/regulatory-and-other-filings/all-sec-filings/content/0001918704-25-002488/0001918704-25-002488.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1474432/000147443226000088/pstg-20260802.htm",
+        "https://investor.bankofamerica.com/regulatory-and-other-filings/all-sec-filings/content/0001918704-25-005807/0001918704-25-005807.pdf",
+        "https://www.sec.gov/Archives/edgar/data/1412408/000141240826000213/phr-ex992q2fy27stakehold.htm",
+        "https://www.reddit.com/r/HollowPointTrading/comments/1wzh2qf/rate_risk_maturity_and_duration_answer_different/",
+        "https://www.reddit.com/r/AMD_Stock/comments/1vno26b/august_13_2026_fwp_filing_under_securities_act/",
+        "https://www.reddit.com/r/NVDA_Stock/comments/1x1biaq/daily_thread_and_discussion_20261009_friday/",
+        "https://www.reddit.com/r/bonds/comments/1x6thlv/so_high_inflation_is_good_for_bonds_who_knew/",
+        "https://www.reddit.com/r/amd_fundamentals/comments/1uce343/nvidia_to_raise_25_billion_in_first_corporate/",
+        "https://en.wikipedia.org/wiki/Nvidia",
+        "https://www.reddit.com/r/NVDA_Stock/comments/1sxgwoo/removed/",
+        "https://www.reddit.com/r/EverHint/comments/1xb5ebz/global_business_news_october_20_2026_after_hours/",
+        "https://en.wikipedia.org/wiki/Financial_Industry_Regulatory_Authority",
+        "https://www.reddit.com/r/CitizenWatchNews/comments/1vfytjj/hyperscaler_bond_yields_climb_while_nvidia/",
+        "https://www.kiplinger.com/investing/live/nvidia-earnings-live-updates-and-commentary-august-2026",
+        "https://arxiv.org/abs/1910.11333",
+        "https://www.reddit.com/r/Daytrading/comments/1p15qxj/all_the_market_moving_news_from_premarket_1911/",
+        "https://arxiv.org/abs/1102.2138",
+        "https://arxiv.org/abs/2405.08284"
+      ],
+      "verifiedFilingDocuments": [
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+          "indexUrl": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/index.json",
+          "accession": "0001045810-26-000073",
+          "filed": "2026-08-26"
+        }
+      ]
+    }
+  },
+  "GOOGL": {
+    "periodEnd": "2026-06-30",
+    "modelVersion": "0.4.0",
+    "researchVersion": "research-5",
+    "status": "validated",
+    "model": "gpt-5.6-terra",
+    "completedAt": "2026-10-22T05:28:43.338Z",
+    "report": {
+      "businessDescription": "Alphabet’s principal earnings engine is Google Services (advertising plus subscriptions, platforms and devices), supplemented by Google Cloud’s consumption/subscription infrastructure and platform offerings; Other Bets remains immaterial and loss-making. In the six months ended June 30, 2026, Google Services generated $184,177 million of revenue and $80,133 million of operating income, while Google Cloud generated $44,796 million of revenue and $15,412 million of operating income. Cloud growth was driven primarily by infrastructure and platform services, with TPU-system revenue beginning in Q2 2026. The economic trade-off is an unusually large AI-compute buildout: cash capital expenditures were $80,598 million in the first half of 2026, principally technical infrastructure, while depreciation on property and equipment was $13,600 million. The company also uses committed and uncommenced data-center leases alongside cash capex. [S1]",
+      "uncertainties": [
+        "The forecast uses the June 30, 2026 trailing-twelve-month base supplied by the user; Alphabet had not filed a September 30, 2026 Form 10-Q as of October 22, 2026 in the supplied filing set.",
+        "Management said it expects a significant 2026 increase in technical-infrastructure investment, but did not disclose an annual cash-capex dollar target or a dated revenue-growth outlook; forecast capex and revenue assumptions are analyst estimates. [S1, S3]",
+        "Depreciation is rising behind the AI infrastructure deployment, but the useful lives, placement-in-service timing, and mix of servers versus data-center construction make the future D&A/revenue path uncertain. [S1]",
+        "Google Cloud’s reported 2026 growth includes newly recognized TPU-system sales; the recurring versus hardware component, unit volumes, pricing, customer concentration, and contract duration are undisclosed. [S1]",
+        "The June 2026 equity, mandatory-convertible preferred, and potential $40,000 million ATM issuance create material uncertainty around future dilution; the forecast does not model share count. [S1]",
+        "The company has $85,200 million of leases not yet commenced, primarily data centers, plus a $5,800 million short-term lease commitment commencing in Q3 2026. These are not treated as cash capex in the forecast’s capex ratio. [S1]",
+        "A recent observable USD senior-unsecured bond yield with 7-13 years remaining could not be independently verified from a primary market source; observedDebtYield and bond maturity fields are therefore null."
+      ],
+      "accountingEvidence": [
+        {
+          "value": 0,
+          "period": "2026-06-30",
+          "quotation": "As of June 30, 2026, we had no commercial paper outstanding.",
+          "field": "shortDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        },
+        {
+          "value": 1999,
+          "period": "2026-06-30",
+          "quotation": "Less: current portion of long-term notes ... (1,999)",
+          "field": "currentDebt",
+          "sourceId": "S1",
+          "unit": "USD millions"
+        }
+      ],
+      "company": "GOOGL",
+      "risk": {
+        "maxDebtEbitda": 1.5,
+        "minCoverage": 5,
+        "stressMargin": 0.23,
+        "stressRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "The stress case assumes advertising and Cloud demand slow while AI infrastructure depreciation, technical-infrastructure usage costs, content acquisition costs and TAC remain comparatively sticky. A 23.0% EBIT margin is substantially below the 33.1% trailing base, but remains above a severe break-even outcome because Google Services and Cloud were both profitable in the latest reported half-year."
+        },
+        "revenueDecline": 0.15,
+        "maturities2y": null,
+        "bondRationale": {
+          "sourceIds": [
+            "S1"
+          ],
+          "explanation": "No qualifying recent USD senior-unsecured 7-13-year secondary-market yield was verified from a primary source. The latest 10-Q does establish that Alphabet’s notes are senior unsecured and rank equally, and that USD notes issued in 2026 mature from 2029 to 2066, but it does not report market yields."
+        },
+        "bondYearsToMaturity": null,
+        "liquidityRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "At June 30, 2026, cash and short-term marketable securities were substantial, the company stated those resources plus operating cash flow and financing activities should fund commitments for at least 12 months and thereafter for the foreseeable future, and it had $11,700 million of credit facilities through April 2030. Offsetting factors are exceptionally high AI capex, lease commitments, $101,085 million face value of long-term debt, and announced potential ATM issuance."
+        },
+        "observedDebtYield": null,
+        "hFactors": [
+          {
+            "explanation": "Advertising is cyclical and Cloud consumption can soften with customer usage; however, Q2 2026 revenue growth was broad-based and the company has diversified advertising, subscription, cloud, and hardware-related revenue streams.",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Demand drop"
+          },
+          {
+            "explanation": "Alphabet identifies intense competition, including from developers and providers of AI products and services. Search, AI assistants, digital advertising, hyperscale cloud, and enterprise AI all face credible well-capitalized competitors.",
+            "score": 2,
+            "sourceIds": [
+              "S3"
+            ],
+            "name": "Competitive attack"
+          },
+          {
+            "explanation": "Technical infrastructure depends on servers, networking equipment, data-center construction and leased capacity. Alphabet is scaling these inputs rapidly, but reports no singular supplier dependency that would imply acute supplier-loss risk.",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Loss of suppliers"
+          },
+          {
+            "explanation": "The AI buildout requires scarce technical and research talent, but Alphabet had 198,933 employees at June 30, 2026 and a large global recruiting and compensation base; loss-of-employee risk is meaningful rather than existential.",
+            "score": 2,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Loss of employees"
+          },
+          {
+            "explanation": "Data centers, servers and network equipment are specialized long-lived assets. Their resale value could be impaired by technology change, but Alphabet has high ongoing internal demand and substantial liquidity, lowering forced-sale likelihood.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Asset fire sales"
+          },
+          {
+            "explanation": "Alphabet’s direct digital products are distributed online rather than through a concentrated physical dealer network. Traffic-acquisition partners and device/platform relationships matter, but classic dealer loss is limited.",
+            "score": 1,
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "name": "Loss of dealers"
+          },
+          {
+            "explanation": "Alphabet accessed public debt, equity, a private placement, mandatory convertible preferred funding, credit facilities and an ATM program during 2026. Capital-market access is therefore strong, although the breadth of financing highlights the scale of AI infrastructure commitments.",
+            "score": 1,
+            "sourceIds": [
+              "S1"
+            ],
+            "name": "Loss of capital markets"
+          }
+        ],
+        "bondObservationDate": null,
+        "minimumCash": 50000
+      },
+      "businessDrivers": [
+        {
+          "observability": "reported",
+          "description": "Google advertising remains the largest revenue pool within Google Services; its results depend on user engagement, advertiser demand, query/product quality, pricing and traffic-acquisition economics. Alphabet does not report a single consolidated advertising unit-volume or price metric.",
+          "name": "Google advertising demand and monetization",
+          "sourceIds": [
+            "S1",
+            "S3"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Paid subscriptions across YouTube services and Google One drove subscriptions, platforms and devices growth in the latest reported half-year; subscriber counts and ARPU are not disclosed in the filing.",
+          "name": "Subscription expansion",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Google Cloud growth was led by infrastructure and platform services, including enterprise AI infrastructure, Vertex AI, Gemini Enterprise, cybersecurity, and data and analytics offerings.",
+          "name": "Cloud infrastructure and AI consumption",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Q2 2026 was the first quarter in which Alphabet recognized revenue from sales of TPU systems; the future contribution is uncertain because customer volumes, pricing and recurrence are undisclosed.",
+          "name": "TPU-system product sales",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Cash capex is predominantly servers, networking equipment, data-center land and construction. Management expects 2026 technical-infrastructure investment to increase significantly from 2025.",
+          "name": "AI technical-infrastructure investment",
+          "sourceIds": [
+            "S1",
+            "S3"
+          ]
+        },
+        {
+          "observability": "estimated",
+          "description": "New infrastructure raises depreciation after assets enter service; construction and assembly can span months to years, so the P&L burden lags cash capex.",
+          "name": "Depreciation ramp and asset utilization",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Google Services profitability benefits from revenue growth but is partly offset by TAC; Cloud profitability is partly offset by technical-infrastructure usage costs and employee compensation.",
+          "name": "Revenue mix, TAC, and infrastructure operating costs",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Alphabet-level activities include centralized AI research and development, which is not allocated to operating segments and can constrain consolidated margin as frontier-model investment continues.",
+          "name": "Central AI research expense",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Capacity is supplemented by operating and finance leases, including large uncommenced data-center leases; lease commitments are distinct from cash purchases of property and equipment.",
+          "name": "Data-center lease capacity",
+          "sourceIds": [
+            "S1"
+          ]
+        },
+        {
+          "observability": "reported",
+          "description": "Competition from AI product and service developers, platform regulation, and legal settlements can affect traffic, distribution, billing practices, fees, and business models.",
+          "name": "Competition and regulation",
+          "sourceIds": [
+            "S3"
+          ]
+        }
+      ],
+      "forecast": {
+        "marginRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "The estimate begins below the trailing 33.1% EBIT margin because the ongoing AI buildout increases depreciation, technical-infrastructure usage costs and centralized AI research. Margin then stabilizes near 31.5%-32.0% as Cloud scale, Google Services monetization and higher utilization offset part of the cost burden. This does not assume that the current TTM margin fully persists: Google Cloud’s latest operating-profit growth was accompanied by higher infrastructure and compensation costs, and Alphabet disclosed rising TAC in Google Services."
+        },
+        "periodEnd": "2026-06-30",
+        "terminal": {
+          "growth": 0.04,
+          "nwcRatio": -0.045,
+          "roic": 0.25,
+          "daRatio": 0.13,
+          "margin": 0.31
+        },
+        "terminalRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "A 4.0% terminal growth assumption reflects a mature global advertising and enterprise-compute franchise, not perpetual AI hypergrowth. The 31.0% terminal margin and 25.0% ROIC allow for durable advantages from distribution, search/ads data and software platforms, while recognizing persistent AI infrastructure reinvestment, depreciation and intense competition. Negative operating working capital is retained but moderated because advertising and subscriptions generate favorable cash timing, whereas a larger enterprise-cloud and hardware mix requires more receivables, inventory and support commitments."
+        },
+        "years": [
+          {
+            "growth": 0.2,
+            "daRatio": 0.08,
+            "year": 1,
+            "nwcRatio": -0.05,
+            "margin": 0.325,
+            "capexRatio": 0.31
+          },
+          {
+            "growth": 0.16,
+            "daRatio": 0.105,
+            "year": 2,
+            "nwcRatio": -0.048,
+            "margin": 0.32,
+            "capexRatio": 0.28
+          },
+          {
+            "growth": 0.14,
+            "daRatio": 0.125,
+            "year": 3,
+            "nwcRatio": -0.047,
+            "margin": 0.318,
+            "capexRatio": 0.23
+          },
+          {
+            "growth": 0.12,
+            "daRatio": 0.135,
+            "year": 4,
+            "nwcRatio": -0.046,
+            "margin": 0.317,
+            "capexRatio": 0.18
+          },
+          {
+            "growth": 0.09,
+            "daRatio": 0.14,
+            "year": 5,
+            "nwcRatio": -0.045,
+            "margin": 0.315,
+            "capexRatio": 0.15
+          }
+        ],
+        "basis": "analyst_estimate",
+        "growthRationale": {
+          "sourceIds": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "explanation": "Year 1 retains elevated growth because the TTM base includes strong Cloud infrastructure/platform demand, rising paid subscriptions, and initial TPU-system revenue. Growth decelerates each year as the revenue base expands and the TPU introduction annualizes. The forecast does not assign unreported Cloud units, AI query volumes, advertising price, or subscription ARPU; it is anchored instead in disclosed revenue streams, Cloud demand drivers, and management’s continuing infrastructure commitment."
+        },
+        "investmentRationale": {
+          "sourceIds": [
+            "S1",
+            "S3"
+          ],
+          "explanation": "Cash capex/revenue remains very high in years 1-2 because management expects a significant 2026 increase versus 2025 and reported $80,598 million of first-half 2026 cash capex. It declines thereafter as the initial AI capacity wave is placed in service and utilization rises, but remains above Alphabet’s pre-2025 pattern because Cloud and AI workloads require continuing server, network and data-center investment. Finance-lease principal and undiscounted operating-lease commitments are not included in cash capex."
+        }
+      },
+      "guidance": [],
+      "modelFamily": "fcff",
+      "modelRationale": {
+        "sourceIds": [
+          "S1",
+          "S3"
+        ],
+        "explanation": "FCFF is appropriate because Alphabet is a non-financial operating company with material operating income, cash flow from operations, technical-infrastructure capex, working-capital balances and conventional senior unsecured debt. Its 2026 financing activity and data-center lease commitments require separate financing review, but do not make it a bank, insurer, or REIT."
+      },
+      "taxRate": 0.18,
+      "asOf": "2026-10-22",
+      "sources": [
+        {
+          "publishedAt": "2026-07-23",
+          "id": "S1",
+          "title": "Alphabet Inc. Form 10-Q for the quarter ended June 30, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "publishedAt": "2026-04-30",
+          "id": "S2",
+          "title": "Alphabet Inc. Form 10-Q for the quarter ended March 31, 2026",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+        },
+        {
+          "publishedAt": "2026-02-05",
+          "id": "S3",
+          "title": "Alphabet Inc. Form 10-K for the year ended December 31, 2025",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+        }
+      ],
+      "peers": [
+        {
+          "symbol": "MSFT",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Microsoft is a close comparator for enterprise cloud, AI infrastructure, productivity software and global platform economics. It is more software/subscription weighted and less advertising dependent than Alphabet, so it is not a direct consolidated substitute."
+          }
+        },
+        {
+          "symbol": "AMZN",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Amazon is comparable through hyperscale cloud capacity, AI infrastructure and a meaningful advertising business. Its first-party retail, logistics and inventory intensity make its consolidated margin and working-capital profile materially different."
+          }
+        },
+        {
+          "symbol": "META",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Meta is a comparable global digital-advertising and AI-infrastructure spender with similar dependence on user engagement and advertiser monetization. It lacks Alphabet’s scaled enterprise cloud and has a more concentrated social-media revenue mix."
+          }
+        },
+        {
+          "symbol": "ORCL",
+          "rationale": {
+            "sourceIds": [
+              "S1",
+              "S3"
+            ],
+            "explanation": "Oracle is a relevant enterprise-cloud and AI-compute comparator, particularly for data-center capacity and enterprise workloads. It has less consumer advertising exposure and a different legacy software/support revenue base."
+          }
+        }
+      ]
+    },
+    "accounting": {
+      "accepted": [],
+      "rejected": [
+        {
+          "field": "shortDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        },
+        {
+          "field": "currentDebt",
+          "reason": "Field is reported, period mismatches, or value is invalid."
+        }
+      ]
+    },
+    "guidance": {
+      "accepted": [],
+      "rejected": []
+    },
+    "researchTrace": {
+      "searchCalls": 3,
+      "observedSourceCount": 3,
+      "observedUrls": [
+        "https://abc.xyz/investor/",
+        "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+        "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+      ],
+      "verifiedFilingDocuments": []
+    }
+  }
+}

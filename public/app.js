@@ -14,7 +14,7 @@ const signed=x=>Number.isFinite(x)?`${x>=0?'+':''}${pct(x)}`:'—';
 const link=(url,label)=>url?`<a class="ext" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:'Unavailable';
 let data=null,a=null,result=null,currentView='overview',isExample=false,changes=0,loadController=null,searchTimer=null,searchController=null;
 let researchConfig={researchConfigured:false},researchJob=null,researchBusy=false,validationReport=null,quarterlyReport=null;
-fetch('/api/config').then(r=>r.json()).then(c=>{researchConfig=c;if(data&&currentView==='research')render();}).catch(()=>{});
+const configReady=requestJSON('/api/config',{timeoutMs:5000}).then(c=>{researchConfig=c;if(data)render();}).catch(()=>{});
 fetch('/validation/quarterly.json').then(r=>r.json()).then(v=>{quarterlyReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
 fetch('/validation/latest.json').then(r=>r.json()).then(v=>{validationReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
 let saved=[];try{saved=JSON.parse(localStorage.getItem('valuelens.saved')||'[]').filter(x=>typeof x==='string').slice(0,20);}catch{}
@@ -78,7 +78,7 @@ function overview() {
     ${metric('Value at constrained OCS',money(o?.price),`Conditional recap scenario · ${a.hReviewed?'h factors reviewed':'h factors in draft'}`)}
   </div>
   <div class="two-columns">
-    ${panel('Free cash flow forecast','Ten-year operating forecast · USD billions',`<div class="panel-body">${fcfChart(r.rows)}<div class="legend"><span><i></i>Free cash flow to firm</span><span><i class="line"></i>Operating profit after tax</span></div></div><div class="panel-footer"><span>Growth fades toward ${pct(a.terminalGrowth)} from year 2</span><button class="link-button" data-view="cashflows">Cash flow detail</button></div>`)}
+    ${panel('Free cash flow forecast','Ten-year operating forecast · USD billions',`<div class="panel-body">${fcfChart(r.rows)}<div class="legend"><span><i></i>Free cash flow to firm</span><span><i class="line"></i>Operating profit after tax</span></div></div><div class="panel-footer"><span>${a.valuationForecast?'Company estimates through year 5; stable-state fade in years 6–10':'Scenario growth fades to '+pct(a.terminalGrowth)}</span><button class="link-button" data-view="cashflows">Cash flow detail</button></div>`)}
     ${panel('Enterprise to equity bridge','Current capital structure',`<div class="panel-body"><ul class="value-bridge"><li><span>PV of forecast cash flows</span><strong>${big(v?.pvFlows)}</strong></li><li><span>PV of terminal value</span><strong>${big(v?.pvTerminal)}</strong></li><li class="total"><span>Enterprise value</span><strong>${big(v?.ev)}</strong></li><li><span>+ Cash &amp; current securities</span><strong>${big(Math.max(0,data.base.cash-a.cashReserve))}</strong></li><li><span>+ Noncurrent marketable securities</span><strong>${big(data.base.nonOperatingInvestments)}</strong></li><li><span>− Gross financial debt</span><strong>${big(data.base.debt)}</strong></li><li><span>− Other claims / adjustments</span><strong>${big(a.otherClaims)}</strong></li><li class="total"><span>Common equity value</span><strong>${big(v?.equity)}</strong></li></ul><div class="bridge-bar"><span>÷ ${num(data.base.valuationShares??data.base.shares,0)}M diluted shares (proxy)</span><strong>${money(v?.price)}</strong></div></div>`)}
   </div>
   ${panel('Scenarios','Bear, base and bull are explicit assumption sets, not probability estimates. WACC is held at the current structure.',`<div class="panel-body"><div class="scenario-grid">${r.cases.map((c,i)=>{const d=Number.isFinite(c.price)&&Number.isFinite(r.marketPrice)?c.price/r.marketPrice-1:null;return `<div class="scenario-card ${i===1?'base':''}"><div class="section-kicker">${esc(c.name)} <span class="vs-price ${tone(d)}">${signed(d)} vs. price</span></div><strong>${money(c.price)}</strong><dl><dt>Initial growth</dt><dd>${pct(c.growth)}</dd><dt>Target EBIT margin</dt><dd>${pct(c.margin)}</dd><dt>Terminal growth</dt><dd>${pct(c.terminalGrowth)}</dd></dl></div>`;}).join('')}</div><p class="stamp">A full recession case may also require a higher business-risk premium.</p></div>`)}
@@ -95,7 +95,7 @@ function overview() {
 
 function valuationAuditPanel() {
   const d=result.diagnostics;if(!d)return '';
-  const reverse=d.reverse,method=({seasonal:'Seasonal benchmark',flat:'Flat annual benchmark','damped-trend':'Damped issuer trend','recent-trend':'Recent issuer trend',manual:'Manual scenario'})[d.method]||'Fitted issuer forecast';
+  const reverse=d.reverse,method=({seasonal:'Seasonal benchmark',flat:'Flat annual benchmark','damped-trend':'Damped issuer trend','recent-trend':'Recent issuer trend',manual:'Manual scenario','business-case':'Company-specific researched analyst estimate'})[d.method]||'Fitted issuer forecast';
   const rows=[
     {cells:['First-year revenue growth',pct(d.initialGrowth),esc(method)]},
     {cells:['Reported trailing revenue growth',pct(d.reportedGrowth),d.reportedGrowth===null?'Eight aligned quarters unavailable':'Latest four reported quarters vs. previous four; historical observation']},
@@ -105,7 +105,7 @@ function valuationAuditPanel() {
   return panel('Why this value differs from the market','Audit the assumptions before interpreting the price gap.',
     (d.flatBenchmark?'<div class="panel-body"><div class="note-box"><strong>The selected revenue benchmark assumes 0% growth in year one.</strong> Historical selection favored repeating the latest four quarters. This is a statistical benchmark; it does not establish that the business has stopped growing.</div></div>':'')+
     table(['Driver','Current assumption','Basis'],rows)+
-    `<div class="panel-body"><p><strong>Conditional reverse DCF:</strong> ${reverse.status==='solved'?`Matching the ${money(result.marketPrice)} quote requires <strong>${pct(reverse.initialGrowth)} first-year revenue growth</strong>, fading to ${pct(a.terminalGrowth)} in year 10, with all other assumptions held fixed.`:'No unique valid growth solution was found within the −50% to +100% initial-growth search range.'}</p><p class="stamp">This is one conditional combination of assumptions, not a market forecast. Different margins, investment returns or growth durations can support the same price.</p>${Number.isFinite(d.recentGrowthScenario?.price)?`<p>For comparison, a scenario starting with the reported ${pct(d.reportedGrowth)} trailing growth rate gives <strong>${money(d.recentGrowthScenario.price)}</strong> per share under the same fade. This illustration has not passed a forecast evaluation and does not replace the selected model.</p>`:''}<p class="stamp">Arithmetic reconciliation: ${d.arithmetic.passed?'passed':'failed'}. Quarterly revenue/margin evaluation does not establish accuracy of FCFF or share value. Terminal ROIC and the ten-year fade remain scenario assumptions.</p></div>`);
+    `<div class="panel-body"><p><strong>Conditional reverse DCF:</strong> ${reverse.status==='solved'?`Matching the ${money(result.marketPrice)} quote requires <strong>${pct(reverse.initialGrowth)} first-year revenue growth</strong>, fading to ${pct(a.terminalGrowth)} in year 10, ${a.valuationForecast?'by shifting the five-year growth path in parallel before its stable-state fade':'with all other assumptions held fixed'}.`:'No unique valid growth solution was found within the −50% to +100% initial-growth search range.'}</p><p class="stamp">This is one conditional combination of assumptions, not a market forecast. Different margins, investment returns or growth durations can support the same price.</p>${Number.isFinite(d.recentGrowthScenario?.price)?`<p>For comparison, a scenario starting with the reported ${pct(d.reportedGrowth)} trailing growth rate gives <strong>${money(d.recentGrowthScenario.price)}</strong> per share under the same fade. This illustration has not passed a forecast evaluation and does not replace the selected model.</p>`:''}<p class="stamp">Arithmetic reconciliation: ${d.arithmetic.passed?'passed':'failed'}. Quarterly revenue/margin evaluation does not establish accuracy of FCFF or share value. Terminal ROIC and the ten-year fade remain scenario assumptions.</p></div>`);
 }
 
 function fcfChart(rows) {
@@ -141,7 +141,7 @@ function cashflows() {
   const hist=data.history;
   return `${viewHeader('Cash flows','Operating performance first, financing second. Statement amounts in USD millions.','<button class="button" id="export-csv">Download CSV</button>')}
     ${panel('Historical financials','Full fiscal years; latest filed comparative facts, with period-specific source provenance.',table(['Fiscal year end',...hist.map(h=>esc(h.end))],['revenue','ebit','da','capex','cfo'].map(k=>({cells:[({revenue:'Revenue',ebit:'EBIT',da:'D&A',capex:'Capital expenditure',cfo:'Cash from operations'})[k],...hist.map(h=>num(h[k]))]}))))}
-    ${panel('Free cash flow build','Year 1 aggregates the next four fiscal quarters after the latest report when available. Later years are explicit fade scenarios; the reporting lag is not filled with invented results.',table(['USD millions',...r.rows.map(f=>`Year ${f.year}`)],lines.map(([name,key,format])=>({highlight:key==='fcff'||key==='nopat',cells:[name,...r.rows.map(f=>format==='pct'?pct(f[key]):num(f[key]))]})))+`<div class="table-note">FCFF = EBIT − unlevered cash tax + D&A − capex − Δoperating NWC. Stock-based compensation stays in operating expenses; it is not added back as free cash.</div>`)}
+    ${panel('Free cash flow build','Years 1–5 use company-specific growth, margin and investment estimates when researched. Years 6–10 fade to the explicit stable state.',table(['USD millions',...r.rows.map(f=>`Year ${f.year}`)],lines.map(([name,key,format])=>({highlight:key==='fcff'||key==='nopat',cells:[name,...r.rows.map(f=>format==='pct'?pct(f[key]):num(f[key]))]})))+`<div class="table-note">FCFF = EBIT − unlevered cash tax + D&A − capex − Δoperating NWC. Stock-based compensation stays in operating expenses; it is not added back as free cash.</div>`)}
     <div class="two-columns equal">${panel('Terminal value','Terminal growth is funded by productive reinvestment.',`<div class="panel-body"><ul class="value-bridge"><li><span>Year 11 NOPAT</span><strong>${big(r.valued?.terminalNopat)}</strong></li><li><span>Reinvestment rate: g / ROIC</span><strong>${pct(a.terminalGrowth/a.terminalROIC)}</strong></li><li><span>− Terminal reinvestment</span><strong>${big(r.valued?.terminalReinvestment)}</strong></li><li><span>Year 11 FCFF</span><strong>${big(r.valued?.terminalFCFF)}</strong></li><li><span>Undiscounted terminal value</span><strong>${big(r.valued?.terminalValue)}</strong></li><li class="total"><span>PV of terminal value</span><strong>${big(r.valued?.pvTerminal)}</strong></li></ul><div class="formula">TV₁₀ = NOPAT₁₁ × (1 − g / ROIC) / (WACC − g)</div></div>`)}
     ${panel('Cash flow cross-check','Reported cash-flow statement figures.',`<div class="panel-body"><ul class="value-bridge"><li><span>Reported TTM CFO</span><strong>${big(data.base.cfo)}</strong></li><li><span>− Reported TTM capex</span><strong>${big(data.base.capex)}</strong></li><li class="total"><span>Levered CFO less capex</span><strong>${Number.isFinite(data.base.cfo)?big(data.base.cfo-data.base.capex):'Unavailable'}</strong></li><li><span>Reported interest expense</span><strong>${data.base.interest===null?'Unavailable':big(data.base.interest)}</strong></li></ul><div class="note-box">CFO less capex is not FCFF. It includes interest, reported tax timing and non-cash addbacks (including SBC). A full FCFF reconciliation requires those adjustments; missing interest is left unavailable.</div></div>`)}
     </div>${sensitivityPanel()}`;
@@ -172,7 +172,7 @@ function capital() {
       {cells:['Post-recap common equity',big(r.postRecap?.equity)]},
       {highlight:true,cells:['Conditional post-recap value / share',money(r.postRecap?.price)]}
     ])+`<div class="table-note">Fees reduce buyback proceeds or increase issuance needed. Buying back above intrinsic value can hurt remaining shareholders even if modeled WACC falls. This illustration assumes immediate refinancing, no execution slippage, no covenants, and constant operating cash flows.</div>`)}
-    ${panel('Value under each structure','Each terminal case uses the same operating forecast and a matching discount rate.',table(['Scenario','g = 0','g = '+pct(a.terminalGrowth)],[{cells:['Current structure · per share',money(r.zero?.price),money(r.valued?.price)]},{highlight:true,cells:['Conditional OCS · value / existing share',money(r.optimizedZero?.price),money(r.optimized?.price)]}]))}
+    ${r.capitalStructureUnavailable?'<div class="note-box">'+esc(r.capitalStructureUnavailable)+'</div>':''}${panel('Value under each structure','Each terminal case uses the same operating forecast and a matching discount rate.',table(['Scenario','g = 0','g = '+pct(a.terminalGrowth)],[{cells:['Current structure · per share',money(r.zero?.price),money(r.valued?.price)]},{highlight:true,cells:['Conditional OCS · value / existing share',money(r.optimizedZero?.price),money(r.optimized?.price)]}]))}
     ${panel('Distress cost factors (h)','Company-specific scores come from cited LLM research. Pending research uses visible placeholders; h remains an uncalibrated policy heuristic.',data.hFactors.map((f,i)=>`<div class="factor"><div class="factor-head"><h4><span class="idx">0${i+1}</span>${esc(f.name)}</h4><label><span class="sr-only">${esc(f.name)} score</span><select data-h-index="${i}">${[...new Set([1,1.5,2,2.5,3,a.hScores[i]])].sort((x,y)=>x-y).map(s=>`<option value="${s}" ${a.hScores[i]===s?'selected':''}>${num(s,1)} / 3</option>`).join('')}</select></label></div><p>${esc(f.description)}. ${esc(f.basis)}</p>${f.sources?f.sources.map(s=>link(s.url,esc(s.title))).join(' · '):''}${f.sources?'':f.evidence?`<blockquote>Matched filing wording: “${esc(f.evidence)}”</blockquote>${link(f.url,'Review Risk Factors in the 10-K')}`:'<div class="note-box">Research pending. This score is a policy placeholder. Run company research to obtain evidence and review the judgment.</div>'}</div>`).join('')+`<div class="review-bar"><label class="checkbox-label"><input id="h-reviewed" type="checkbox" ${a.hReviewed?'checked':''}> I reviewed the seven scores and the source risk factors.</label></div>`,'1 = NEGLIGIBLE · 3 = HIGH')}
     <details class="disclosure"><summary>All 81 leverage candidates and the rating table</summary>${table(['D / capital','Debt $M','Rating','Coverage','Stress cover','WACC','Feasible'],r.sweep.map(x=>({highlight:x===o,cells:[pct(x.weight,0),num(x.debt),esc(x.rating),x.coverage===null?'Debt-free':num(x.coverage,2)+'×',x.stressedCoverage===null?'Debt-free':num(x.stressedCoverage,2)+'×',pct(x.wacc,2),x.feasible?'Yes':x.consistent?'Coverage / rate constraint':'Rating cliff']})))}<div class="panel-body"><p class="muted">${link(RATINGS_SOURCE,'January 2026 large-firm rating table')}. These are synthetic ratings, not agency credit ratings. A traded bond yield of comparable maturity is preferable when available.</p></div>${table(['Minimum ICR','Synthetic rating','Spread above Rf'],RATINGS.map(x=>({cells:[Number.isFinite(x.min)?num(x.min,2)+'×':'Below 0.20×',esc(x.rating),pct(x.spread,2)]})))}</details>`;
 }
@@ -193,7 +193,7 @@ function comps() {
 function methodology() {
   const steps=[
     ['Collect reported financials','Match the SEC ticker and CIK. Normalize full fiscal years and TTM financials from SEC XBRL. Keep period, unit, tag, accession and filing date for every source value. Foreign accounting standards, banks and other specialized models are routed out.','TTM = latest FY + current YTD − prior YTD'],
-    ['Forecast operations','Fit next-four-quarter revenue and margins using issuer history and rolling model comparisons. The LLM extracts business evidence and explicit guidance; it cannot supply growth paths. Use reconciled reported segments where available. Later years are long-run scenarios, with growth fading from year 2.','FCFF = EBIT(1 − cash tax rate) + D&A − capex − ΔNWC'],
+    ['Forecast operations','Build a cited, company-specific five-year analyst case for growth, margins, cash capex, depreciation and working capital. Fade to a separately researched stable state in years 6–10. Retain issuer-history statistical forecasts as an independent short-term benchmark.','FCFF = EBIT(1 − cash tax rate) + D&A − capex − ΔNWC'],
     ['Estimate business risk','Use an industry-screened peer median of unlevered betas. Relever at each debt ratio. Show a company regression cross-check and expose peer quality. CAPM uses a dated 10-year USD Treasury reference and implied ERP.','Ke = Rf + βe × ERP'],
     ['Stress-test financing','Average the seven h scores from the class framework. Apply a revenue shock and a stressed margin. Limit interest to stressed EBIT / h. Enumerate rating bands at each leverage point to ensure cost of debt and coverage agree.','Kd = 10-year Treasury reference + synthetic default spread'],
     ['Set the terminal value','A ten-year explicit forecast enters a stable state with a separately chosen ROIC. Reinvestment funds growth. Require g below WACC, terminal ROIC and the nominal risk-free-rate assumption. Evaluate g = 0 separately.','TV = NOPAT₁₁ × (1 − g / ROIC) / (WACC − g)'],
@@ -227,8 +227,8 @@ function sources() {
 
 function research() {
   const report=data.research?.report,job=researchJob||data.research,state=job?.status||'not_started';
-  return `${viewHeader('Company research','An LLM extracts business drivers, management guidance, peer evidence and financing judgments. Statistical models fit revenue and margins independently; no LLM growth curves enter the valuation.')}
-  ${panel('Company research',researchConfig.researchConfigured?esc(researchConfig.researchModel)+' · '+esc(researchConfig.researchEffort||'low')+' reasoning · Up to '+researchConfig.dailyResearchLimit+' new reports per UTC day.':'Awaiting your server-side API key.',`<div class="panel-body"><div class="research-status"><div><span class="status ${state==='validated'?'pos':state==='failed'?'neg':['starting','running'].includes(state)?'warn':'neutral'}">${esc(state.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase()))}</span><p style="margin-top:8px">Reports use the latest financial base and are cached by company, reporting period and research version. Forecasts are estimates, even when citations pass verification.</p></div><button class="button primary" id="run-research" ${researchBusy||!researchConfig.researchConfigured?'disabled':''}>${researchBusy?'Researching…':report?'Load cached research':'Research '+esc(data.symbol)}</button></div>${job?.errors?.length?'<div class="error-box">'+job.errors.map(esc).join('<br>')+'</div>':''}</div>`)}
+  return `${viewHeader('Company research','An LLM extracts business drivers, management guidance, peer evidence and financing judgments. Company-specific analyst estimates drive the five-year valuation path. A separate statistical benchmark measures short-term forecast performance.')}
+  ${panel('Company research',researchConfig.researchConfigured?esc(researchConfig.researchModel)+' · '+esc(researchConfig.researchEffort||'low')+' reasoning · Up to '+researchConfig.dailyResearchLimit+' new reports per UTC day.':'Awaiting your server-side API key.',`<div class="panel-body"><div class="research-status"><div><span class="status ${state==='validated'?'pos':state==='failed'?'neg':['starting','running'].includes(state)?'warn':'neutral'}">${esc(state.replaceAll('_',' ').replace(/^./,c=>c.toUpperCase()))}</span><p style="margin-top:8px">Reports use the latest financial base and are cached by company, reporting period and research version. Forecasts are estimates, even when citations pass verification.</p></div><button class="button primary" id="run-research" ${researchBusy||!researchConfig.researchConfigured?'disabled':''}>${researchBusy?'Researching…':report?'View issued research':'Research '+esc(data.symbol)}</button></div>${job?.errors?.length?'<div class="error-box">'+job.errors.map(esc).join('<br>')+'</div>':''}</div>`)}
   ${!researchConfig.researchConfigured?panel('Configure the research key','Credentials stay on the server.',`<div class="panel-body"><p>Local development: put your key after <code>OPENAI_API_KEY=</code> in the ignored <code>.dev.vars</code> file, then restart the dev server.</p><p>Hosted app: Cloudflare Dashboard → Workers & Pages → valuelens → Settings → Variables and Secrets → Add secret named <code>OPENAI_API_KEY</code>. Or run <code>npx wrangler secret put OPENAI_API_KEY</code> from this project.</p><p class="muted">Refresh this page after saving. The key is never sent to browser code. The configured model is ${esc(researchConfig.researchModel||'gpt-5.6-terra')}; you can change OPENAI_MODEL in Wrangler configuration.</p></div>`):''}
   ${report?panel('Business evidence',esc(report.businessDescription),report.businessDrivers?table(['Business driver','Observable in disclosures?','Evidence'],report.businessDrivers.map(d=>({cells:[esc(d.name),esc(d.observability),esc(d.description)+'<br>'+d.sourceIds.map(id=>{const src=report.sources.find(s=>s.id===id);return src?link(src.url,esc(id)):esc(id);}).join(' · ')]}))):'<div class="panel-body">'+esc(report.modelRationale.explanation)+'</div>')+panel('Guidance extraction','Only literal SEC guidance with matched fiscal period, units and numerical bounds can anchor a forecast.',table(['Period end','Verified range ($M)','Source'],(data.research?.guidance?.accepted||[]).map(g=>({cells:[esc(g.periodEnd),num(g.low)+' – '+num(g.high),link(g.url,'Guidance')]})))+'<div class="panel-body"><p class="muted">'+(data.research?.guidance?.accepted?.length?'Management guidance is an observable anchor; its forecasting performance remains unmeasured.':'No mechanically verified quarterly guidance. The statistical forecast is retained.')+'</p>'+(data.research?.guidance?.rejected||[]).map(g=>'<p class="muted">Withheld: '+esc(g.reason)+'</p>').join('')+'</div>')+panel('Uncertainty and sources','Evidence validation does not establish predictive accuracy.','<div class="panel-body"><ul>'+report.uncertainties.map(u=>'<li>'+esc(u)+'</li>').join('')+'</ul></div>'+report.sources.map(src=>'<div class="source-row"><div><strong>'+esc(src.title)+'</strong><p>'+esc(src.publishedAt)+'</p></div>'+link(src.url,'Primary source')+'</div>').join('')):''}
   ${panel('Accounting reconciliation','Missing disclosures remain missing until verified.',table(['Check','Period','Result','Difference $M'],(data.reconciliations||[]).map(c=>({cells:[esc(c.name),esc(c.period),c.passed?'<span class="status-text-pass">Passed</span>':'<span class="status-text-fail">Failed</span>',num(c.difference,3)]})))+(data.continuity?'<div class="panel-body">'+esc(data.continuity.basis)+' '+link(data.continuity.source,'Continuity disclosure')+'</div>':''))}
@@ -241,32 +241,53 @@ function validation() {
 }
 function predictions() {
   const f=a.operatingForecast,q=f?.quarterly,quarters=f?.quarters||[],segments=data.reportedSegments;
-  return `${viewHeader('Forecast',`${esc(f?.basis||'Manual operating scenario. Reset assumptions to restore fitted forecasts.')}. Price and valuation targets do not enter model selection.`)}
+  return `${valuationCasePanel()}${viewHeader('Statistical benchmark',`${esc(f?.basis||'Manual operating scenario. Reset assumptions to restore fitted forecasts.')}. Price and valuation targets do not enter model selection.`)}
   ${panel('Next four reported quarters','USD millions. Fiscal end dates are estimated; the interval starts after the latest filed quarter, not today.',(quarters.length?table(['Estimated period end','Revenue','EBIT margin','EBIT','Historical-error revenue range¹','Method'],quarters.map(r=>({cells:[esc(r.end),num(r.revenue),pct(r.margin),num(r.ebit),r.low===null?'Not calibrated':num(r.low)+' – '+num(r.high),esc(r.basis)]}))):'<div class="panel-body">Eight consecutive quarters ending at the current financial base are required. Annual flat-revenue benchmark used where quarterly coverage is insufficient.</div>')+`<div class="table-note">¹ Nominal 80% ranges need at least 12 prequential residuals for that horizon. These are marginal revenue ranges, not joint paths, share-price confidence intervals or a guarantee. Guidance overlays do not inherit statistical ranges.</div>`)}
   ${f?.guidanceComparison?.length?panel('Management guidance comparison','Statistical forecasts stay the default. Guidance is an optional scenario until its prospective accuracy is measured.',table(['Quarter','Statistical revenue $M','Guidance range $M','Source'],f.guidanceComparison.map(g=>({cells:[esc(g.periodEnd),num(g.statisticalRevenue),num(g.low)+' – '+num(g.high),link(g.url,'SEC guidance')]})))+`<div class="panel-body"><button class="button" id="toggle-guidance">${f.appliedGuidance.length?'Restore statistical default':'Use guidance scenario'}</button></div>`):''}
   ${q?.status==='fitted'?panel('Why this model?','Selection uses this issuer’s historical rolling folds. Challenger needs four completed folds and 5% lower aggregate revenue error.',table(['Candidate','Completed four-quarter folds','Historical selection MAPE','Chosen'],q.fit.scores.map(s=>({cells:[esc(s.method),num(s.n),pct(s.mape,2),s.method===q.fit.method?'Yes':'—']})))+`<div class="panel-body"><p>Margin model: <strong>${esc(q.marginFit.method)}</strong>. ${num(q.historyCount)} consecutive quarters available through ${esc(q.through)}.</p><p class="muted">These company diagnostics helped select the model and are not an independent test. Use the Validation tab for the reserved 2026 evaluation.</p></div>`):''}
   ${segments?.status==='reconciled'?panel('Reported revenue segments','Single-axis inline-XBRL partition reconciled to consolidated annual revenue. Historical amounts, not estimated weights.',table(['Segment','Period','Revenue $M','Reported weight'],segments.latest.members.map(s=>({cells:[esc(s.name),esc(segments.latest.end),num(s.revenue),pct(s.weight)]})))+`<div class="panel-body">Difference from consolidated revenue: ${num(segments.latest.difference,3)} million. ${link(segments.latest.source,'SEC source')}<br><p class="muted">Segment quantities, prices and future growth are not invented when undisclosed. Forecasting currently selects on consolidated issuer history; segment-specific operating adapters remain future work.</p></div>`):panel('Reported revenue segments','Custom or unsupported segment tables remain unavailable.','<div class="panel-body">'+esc(segments?.reason||'No reconciled inline-XBRL partition attached to this snapshot.')+'</div>')}
   ${panel('Quarterly source history','Discrete periods; Q2/Q3 cash-flow YTD and Q4 annual figures are differenced before use.',table(['Period start','Period end','Revenue $M','EBIT $M','Capex $M','Basis','Revenue source'],(data.quarterly||[]).slice(-12).map(r=>({cells:[esc(r.start),esc(r.end),num(r.revenue),num(r.ebit),num(r.capex),esc(r.basis),link(r.provenance?.revenue?.[0]?.url,'Filing')]}))))}
-  ${panel('Investment and working capital','Ratios are fitted to historical disclosures. These inputs have not yet passed an FCFF forecast evaluation.',table(['Input','Ratio','Basis'],Object.entries(f?.ratios||{}).map(([key,r])=>({cells:[esc(key),pct(r.value),esc(r.method)]})))+`<div class="panel-body"><p class="muted">Years 2–10 are valuation scenarios. Terminal ROIC defaults to estimated business cost of capital, so perpetual excess returns require an explicit user assumption. Capital-expenditure transition adjustments, tax simplifications and dilution remain visible in the cash-flow audit.</p></div>`)}
+  ${panel('Investment and working capital','Ratios are fitted to historical disclosures. These inputs have not yet passed an FCFF forecast evaluation.',table(['Input','Ratio','Basis'],Object.entries(f?.ratios||{}).map(([key,r])=>({cells:[esc(key),pct(r.value),esc(r.method)]})))+`<div class="panel-body"><p class="muted">The valuation uses separate company research for years 1–5 and fades toward its explicit stable state in years 6–10. The statistical benchmark above remains an independent comparison. Capital-expenditure transition adjustments, tax simplifications and dilution remain visible in the cash-flow audit.</p></div>`)}
   <button class="button" data-view="validation">View reserved evaluation</button>`;
 }
-async function runResearch() {
+function valuationCasePanel() {
+  const c=a.valuationForecast;if(!c)return '';
+  const report=data.research.report;
+  const evidence=key=>{const r=c[key];return '<p>'+esc(r.explanation)+'</p><p>'+r.sourceIds.map(id=>{const source=report.sources.find(s=>s.id===id);return source?link(source.url,esc(source.title)):esc(id);}).join(' · ')+'</p>';};
+  return panel('Company-specific valuation forecast','Source-checked analyst estimates · issued '+dateTime(data.research.completedAt)+' · separate from the statistical benchmark.',table(['Year','Revenue growth','EBIT margin','Cash capex / sales','D&A / sales','Operating NWC / sales'],c.years.map(y=>({cells:[y.year,pct(y.growth),pct(y.margin),pct(y.capexRatio),pct(y.daRatio),pct(y.nwcRatio)]})))+'<div class="panel-body"><h4>Growth</h4>'+evidence('growthRationale')+'<h4>Margins</h4>'+evidence('marginRationale')+'<h4>Investment</h4>'+evidence('investmentRationale')+'<h4>Stable state · growth '+pct(a.terminalGrowth)+' · ROIC '+pct(a.terminalROIC)+'</h4>'+evidence('terminalRationale')+'</div>');
+}
+function forecastPending() {
+  const failed=['failed','rejected'].includes(researchJob?.status);
+  return viewHeader('Company valuation forecast',failed?'The forecast could not be completed.':'Financial statements are loaded. Building the company-specific growth, margin and investment estimates…')+
+    panel(failed?'Forecast needs attention':researchBusy?'Research in progress':'Company forecast required','The financials and statistical benchmark are available in the other tabs.',`<div class="panel-body"><p>${researchJob?.errors?.map(esc).join('<br>')||'The valuation will appear here when its cited assumptions pass source and accounting checks.'}</p><p class="muted">Research runs in the background and is cached for this financial period.</p><button class="button primary" id="run-research" ${researchBusy?'disabled':''}>${researchBusy?'Researching '+esc(data.symbol)+'…':'Build company forecast'}</button></div>`);
+}
+async function runResearch(background=false) {
   if(researchBusy||!data)return;
-  const symbol=data.symbol;researchBusy=true;currentView='research';render();
+  if(data.research?.status==='validated'&&data.research.report?.forecast){if(!background)currentView='research';render();return;}
+  const symbol=data.symbol,controller=loadController;
+  const current=()=>controller===loadController&&data?.symbol===symbol;
+  researchBusy=true;researchJob={status:'starting'};if(!background)currentView='research';render();
+  const get=(url,options={})=>requestJSON(url,{signal:controller.signal,timeoutMs:60000,...options});
   try {
-    let response=await fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol})});
-    let job=await response.json();if(!response.ok)throw Error(job.error);
-    for(let i=0;i<80;i++) {
-      if(data.symbol!==symbol)return;researchJob=job;render();
+    let job=await get('/api/forecast?symbol='+encodeURIComponent(symbol)+'&period='+data.base.end);
+    if(['not_started','failed','rejected'].includes(job.status))job=await get('/api/research',{method:'POST',body:{symbol}});
+    for(let i=0;i<40;i++) {
+      if(!current())return;researchJob=job;render();
       if(!['starting','running'].includes(job.status))break;
-      await new Promise(resolve=>setTimeout(resolve,15000));
-      if(data.symbol!==symbol)return;
-      response=await fetch('/api/research?key='+encodeURIComponent(job.key));job=await response.json();if(!response.ok)throw Error(job.error);
+      await new Promise(resolve=>setTimeout(resolve,7000));
+      if(!current())return;
+      job=await get('/api/research?key='+encodeURIComponent(job.key));
     }
+    if(!current())return;
+    if(['starting','running'].includes(job.status))throw Error('Research is still running. Retry to resume the cached job.');
     researchJob=job;
-    if(job.analysis){data=job.analysis;a=defaults(data);isExample=false;changes=0;}
-  }catch(e){researchJob={status:'failed',errors:[e.message]};}
-  finally{researchBusy=false;if(data.symbol===symbol)render();}
+    if(job.analysis){
+      if(job.analysis.base.end!==data.base.end)throw Error('The financial period changed. Refresh company data.');
+      data={...job.analysis,quote:data.quote,rates:data.rates,fetchedAt:data.fetchedAt};
+      if(changes===0)a=defaults(data);isExample=false;
+    }
+  }catch(e){if(current()&&e.name!=='AbortError')researchJob={status:'failed',errors:[e.message]};}
+  finally{if(current()){researchBusy=false;render();}}
 }
 
 function render() {
@@ -286,7 +307,8 @@ function render() {
   $('#assumption-count').textContent=changes;
   document.querySelectorAll('.nav-item[data-view]').forEach(b=>{const on=b.dataset.view===currentView;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   const error=result.errors.length && !['methodology','sources','comps','research','validation','predictions'].includes(currentView);
-  $('#view').innerHTML=error?`<div class="error-box"><strong>The model needs complete inputs.</strong><br>${result.errors.map(esc).join('<br>')}</div><div class="error-actions"><button class="button" data-view="research">Research missing inputs</button><button class="button" id="open-error-assumptions">Review assumptions</button></div>${qualityPanel()}`:({overview,cashflows,capital,comps,methodology,sources,research,validation,predictions}[currentView]||overview)();
+  const pending=!a.valuationForecast&&changes===0&&data.modelFamily!=='specialized'&&['overview','cashflows','capital'].includes(currentView);
+  $('#view').innerHTML=pending?forecastPending():error?`<div class="error-box"><strong>The model needs complete inputs.</strong><br>${result.errors.map(esc).join('<br>')}</div><div class="error-actions"><button class="button" data-view="research">Research missing inputs</button><button class="button" id="open-error-assumptions">Review assumptions</button></div>${qualityPanel()}`:({overview,cashflows,capital,comps,methodology,sources,research,validation,predictions}[currentView]||overview)();
   $('#workspace').hidden=false;
   renderSaved();
 }
@@ -301,9 +323,10 @@ async function loadCompany(symbol,peers=[]) {
   try {
     const body=await requestJSON(`/api/company?symbol=${encodeURIComponent(symbol)}&includePeers=0`,{signal:controller.signal});
     if(controller!==loadController)return;
-    data=body;researchJob=null;a=defaults(data);isExample=false;changes=0;currentView='overview';$('#search-results').hidden=true;$('#company-search').value='';$('#company-search').blur();render();
+    data=body;researchBusy=false;researchJob=null;a=defaults(data);isExample=false;changes=0;currentView='overview';$('#search-results').hidden=true;$('#company-search').value='';$('#company-search').blur();render();
     history.replaceState(null,'',`?symbol=${encodeURIComponent(data.symbol)}`);
-    void loadPeerComparison(data.symbol,peers.length?peers:data.peerCandidates||[],controller);
+    void loadPeerComparison(data.symbol,peers.length?peers:data.research?.report?.peers?.map(p=>p.symbol)||data.peerCandidates||[],controller);
+    void configReady.then(()=>{if(controller===loadController&&researchConfig.researchConfigured&&!a.valuationForecast)void runResearch(true);});
   } catch(e) {
     if(controller!==loadController||e.name==='AbortError')return;
     $('#message').innerHTML=`<div class="error-box" role="alert"><strong>${esc(symbol.toUpperCase())} did not load.</strong><p>${esc(e.message)}</p><button class="button" data-symbol="${esc(symbol)}">Retry ${esc(symbol.toUpperCase())}</button></div>`;
@@ -316,7 +339,7 @@ async function loadCompany(symbol,peers=[]) {
 async function loadPeerComparison(symbol,peers,controller) {
   try {
     const comparison=await requestJSON(`/api/peers?symbol=${encodeURIComponent(symbol)}${peers.length?'&peers='+encodeURIComponent(peers.join(',')):''}`,{signal:controller.signal,timeoutMs:30000});
-    if(controller!==loadController||data?.symbol!==symbol||researchBusy||data.research?.status==='validated')return;
+    if(controller!==loadController||data?.symbol!==symbol||researchBusy)return;
     data={...data,peers:comparison.peers,peerScreen:comparison.peerScreen,peerStatus:'loaded',quality:[...data.quality.filter(q=>!['peer-coverage','peer-debt'].includes(q.code)),...comparison.quality]};
     if(changes===0)a=defaults(data);
     render();
@@ -333,17 +356,17 @@ function renderSaved() {
 }
 
 const FIELDS=[
-  ['Operating forecast','growth','Initial revenue growth','pct','Fitted next-four-quarter growth where available. Editing operating inputs creates an explicit manual scenario.'],
-  ['', 'margin','Target EBIT margin','pct','Fitted issuer margin. An override creates a manual margin scenario.'],
-  ['', 'capex','Capex / revenue','pct','Latest or three-year median reported ratio, chosen on historical ratio errors. No LLM capex path.'],
-  ['', 'da','D&A / revenue','pct','Current reported D&A, with separately reported intangible amortization included.'],
-  ['', 'nwc','Operating NWC / revenue','pct','Current broad non-cash working-capital proxy. Negative ratios can be valid.'],
+  ['Operating forecast','growth','Initial revenue growth','pct','First year of the company-specific forecast when available. Editing operating inputs creates an explicit manual scenario.'],
+  ['', 'margin','Target EBIT margin','pct','Terminal EBIT margin in the company-specific forecast. An override creates a manual margin scenario.'],
+  ['', 'capex','Capex / revenue','pct','Year-one cash capex estimate from company research; later years are shown in Forecast. Editing creates a manual spending-ratio scenario.'],
+  ['', 'da','D&A / revenue','pct','Year-one company forecast of depreciation and amortization. Historical reported amounts remain in Sources.'],
+  ['', 'nwc','Operating NWC / revenue','pct','Year-one company estimate for non-cash operating working capital. Negative ratios can be valid.'],
   ['Discount rate','rf','10-year Treasury / risk-free rate','pct','Dated USD Treasury reference. Match the currency and duration of the cash flows.'],
   ['', 'erp','Equity risk premium','pct','Dated implied US ERP; use geography-weighted country risk for material international exposure.'],
   ['', 'assetBeta','Active unlevered beta','number','Median unlevered candidate-peer beta, with company regression fallback. Override with a researched value.'],
   ['', 'tax','Marginal tax rate','pct','25% is an analyst prior. Review jurisdiction, NOLs and interest deductibility.'],
-  ['Stable state','terminalGrowth','Terminal growth g','pct','2.5% prior; must be below WACC, terminal ROIC and nominal risk-free rate.'],
-  ['', 'terminalROIC','Terminal ROIC','pct','Cost-of-capital proxy by default; persistent excess returns require an explicit analyst assumption. Reinvestment fades to g/ROIC.'],
+  ['Stable state','terminalGrowth','Terminal growth g','pct','Company-researched stable growth; must be below WACC, terminal ROIC and nominal risk-free rate.'],
+  ['', 'terminalROIC','Terminal ROIC','pct','Company-specific sustainable return on invested capital with cited economic reasoning. Reinvestment fades to g/ROIC.'],
   ['Debt capacity','stressDrop','Stress revenue decline','pct','10% prior. It combines with the stress EBIT margin.'],
   ['', 'stressMargin','Stressed EBIT margin','pct','Lowest annual historical EBIT margin; negative stress EBIT gives no debt capacity.'],
   ['', 'minCoverage','Minimum normal EBIT / interest','number','2.5× prior, in addition to the h-based stressed coverage constraint.'],
@@ -361,7 +384,7 @@ function openAssumptions() {
 }
 function exportData() {
   if(!data)return;
-  const payload={...data,isSavedExample:isExample,assumptions:a,analysis:result,exportedAt:new Date().toISOString(),modelVersion:MODEL_VERSION};
+  const payload={...data,isSavedExample:isExample,assumptions:a,analysis:a.valuationForecast||changes>0?result:null,forecastStatus:a.valuationForecast?'company_case':changes>0?'manual':'pending',exportedAt:new Date().toISOString(),modelVersion:MODEL_VERSION};
   download(`${data.symbol}-valuelens.json`,JSON.stringify(payload,null,2),'application/json');
 }
 function download(name,content,type) {
@@ -375,14 +398,14 @@ document.addEventListener('click',e=>{
   if(button.id==='theme-toggle'){const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=dark?'light':'dark';try{localStorage.setItem('valuelens.theme',document.documentElement.dataset.theme);}catch{}return;}
   if(button.dataset.symbol) {loadCompany(button.dataset.symbol);return;}
   if(button.dataset.remove) {saved=saved.filter(s=>s!==button.dataset.remove);renderSaved();if(data)render();return;}
-  if(button.id==='toggle-guidance'){const f=operatingForecast(data,{useGuidance:!a.operatingForecast.appliedGuidance.length});a={...a,operatingForecast:f,growth:f.firstGrowth,margin:f.nearMargin};changes++;render();return;}
+  if(button.id==='toggle-guidance'){const f=operatingForecast(data,{useGuidance:!a.operatingForecast.appliedGuidance.length});a={...a,valuationForecast:null,operatingForecast:f,growth:f.firstGrowth,margin:f.nearMargin};changes++;render();return;}
   if(button.id==='run-research'){runResearch();return;}
   if(button.id==='refresh-live')loadCompany(data.symbol,data.peers.map(p=>p.symbol));
   if(button.id==='assumptions-button'||button.id==='open-error-assumptions')openAssumptions();
   if(button.id==='save-company' && data) {saved=saved.includes(data.symbol)?saved.filter(s=>s!==data.symbol):[...saved,data.symbol].slice(-20);render();}
   if(button.id==='export-json')exportData();
   if(button.id==='export-csv') {
-    if(result.errors.length){$('#message').textContent='Forecast export is unavailable until the financial inputs are complete.';return;}
+    if(result.errors.length||(!a.valuationForecast&&changes===0)){$('#message').textContent='Forecast export is unavailable until the financial inputs are complete.';return;}
     const keys=['year','revenue','growth','margin','ebit','cashTax','nopat','da','capex','nwc','deltaNwc','fcff'];
     download(`${data.symbol}-forecast-usd-millions.csv`,keys.join(',')+'\n'+result.rows.map(r=>keys.map(k=>r[k]).join(',')).join('\n'),'text/csv');
   }
@@ -391,7 +414,7 @@ document.addEventListener('click',e=>{
     const next={...a};
     const edited=new Set();
     document.querySelectorAll('[data-assumption]').forEach(input=>{if(input.value!==input.dataset.initial){edited.add(input.dataset.assumption);next[input.dataset.assumption]=input.value.trim()===''?null:Number(input.value)/(input.dataset.type==='pct'?100:1);}});
-    if([...edited].some(k=>['growth','margin','capex','da','nwc'].includes(k))){next.driverForecast=null;next.operatingForecast=null;}
+    if([...edited].some(k=>['growth','margin','capex','da','nwc'].includes(k))){next.driverForecast=null;next.operatingForecast=null;next.valuationForecast=null;}
     if(edited.has('assetBeta'))next.betaBasis='Analyst override';
     else if(edited.has('tax') && a.betaBasis!=='Analyst override') {
       const peers=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0);

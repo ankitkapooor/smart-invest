@@ -1,0 +1,127 @@
+{
+  "testedAt": "2026-10-22T16:36:07.864Z",
+  "baselineCommit": "25a29121215484bdce79ef3c8e50729198aaa4e2",
+  "comparisonBasis": "Same filed financials, researched financing judgments, peers, rates and quote. Compare the old numerical forecast engine with the researched business case. Market closeness is not an accuracy metric.",
+  "companies": [
+    {
+      "symbol": "AAPL",
+      "period": "2026-06-27",
+      "sourceCount": 3,
+      "searchCalls": 4,
+      "issuedAt": "2026-10-22T05:20:21.727Z",
+      "marketQuote": 343.99,
+      "previousValue": 89.54218239110554,
+      "currentValue": 134.93447014222482,
+      "currentWacc": 0.10181894011229815,
+      "growth": 0.075,
+      "terminalROIC": 0.35,
+      "arithmetic": {
+        "cashFlowMaxResidual": 2.9103830456733704e-11,
+        "discountingResidual": 0,
+        "equityBridgeResidual": 0,
+        "sharePriceResidual": 0,
+        "passed": true
+      },
+      "errors": [],
+      "ocsAvailable": true,
+      "capitalStructureUnavailable": null,
+      "quarterlyStatisticalModelUnchanged": true
+    },
+    {
+      "symbol": "MSFT",
+      "period": "2026-06-30",
+      "sourceCount": 6,
+      "searchCalls": 3,
+      "issuedAt": "2026-10-22T05:24:04.026Z",
+      "marketQuote": 532.95,
+      "previousValue": 235.65117998772556,
+      "currentValue": 304.1331696815872,
+      "currentWacc": 0.10722860331609667,
+      "growth": 0.16,
+      "terminalROIC": 0.22,
+      "arithmetic": {
+        "cashFlowMaxResidual": 5.820766091346741e-11,
+        "discountingResidual": 0,
+        "equityBridgeResidual": 0,
+        "sharePriceResidual": 0,
+        "passed": true
+      },
+      "errors": [],
+      "ocsAvailable": true,
+      "capitalStructureUnavailable": null,
+      "quarterlyStatisticalModelUnchanged": true
+    },
+    {
+      "symbol": "COST",
+      "period": "2026-08-30",
+      "sourceCount": 4,
+      "searchCalls": 3,
+      "issuedAt": "2026-10-22T05:21:09.302Z",
+      "marketQuote": 998.31,
+      "previousValue": 258.1699279112774,
+      "currentValue": 498.68877730255866,
+      "currentWacc": 0.07464754602129765,
+      "growth": 0.08,
+      "terminalROIC": 0.18,
+      "arithmetic": {
+        "cashFlowMaxResidual": 1.8189894035458565e-12,
+        "discountingResidual": 0,
+        "equityBridgeResidual": 0,
+        "sharePriceResidual": 0,
+        "passed": true
+      },
+      "errors": [],
+      "ocsAvailable": true,
+      "capitalStructureUnavailable": null,
+      "quarterlyStatisticalModelUnchanged": true
+    },
+    {
+      "symbol": "NVDA",
+      "period": "2026-07-26",
+      "sourceCount": 4,
+      "searchCalls": 4,
+      "issuedAt": "2026-10-22T05:24:57.057Z",
+      "marketQuote": 221.97,
+      "previousValue": 154.77174828768042,
+      "currentValue": 115.63306292069747,
+      "currentWacc": 0.14332224786487716,
+      "growth": 0.4,
+      "terminalROIC": 0.5,
+      "arithmetic": {
+        "cashFlowMaxResidual": 5.820766091346741e-11,
+        "discountingResidual": 0,
+        "equityBridgeResidual": 0,
+        "sharePriceResidual": 0,
+        "passed": true
+      },
+      "errors": [],
+      "ocsAvailable": true,
+      "capitalStructureUnavailable": null,
+      "quarterlyStatisticalModelUnchanged": true
+    },
+    {
+      "symbol": "GOOGL",
+      "period": "2026-06-30",
+      "sourceCount": 3,
+      "searchCalls": 3,
+      "issuedAt": "2026-10-22T05:28:43.338Z",
+      "marketQuote": 334.76,
+      "previousValue": null,
+      "currentValue": 177.04719176944803,
+      "currentWacc": 0.11283601266700413,
+      "growth": 0.2,
+      "terminalROIC": 0.25,
+      "arithmetic": {
+        "cashFlowMaxResidual": 5.820766091346741e-11,
+        "discountingResidual": 0,
+        "equityBridgeResidual": 0,
+        "sharePriceResidual": 0,
+        "passed": true
+      },
+      "errors": [],
+      "ocsAvailable": false,
+      "capitalStructureUnavailable": "Historical D&A is not fully disclosed. EBITDA and optimal capital structure are withheld; the DCF uses the explicit researched forward D&A path.",
+      "quarterlyStatisticalModelUnchanged": true
+    }
+  ]
+}

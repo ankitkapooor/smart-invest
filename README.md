@@ -19,7 +19,17 @@ Production is the existing Cloudflare Worker `valuelens`. Its Git integration mu
 
 The public `/build.json` endpoint identifies the exact deployed commit. Build and post-deploy verification never invoke paid LLM research. `.node-version` pins CI to Node 22; the OpenAI secret stays on the Worker.
 
-## Version 0.3
+## Version 0.4
+
+Company-specific, source-checked analyst estimates now drive the DCF: five explicit annual growth, EBIT margin, cash capex, D&A and working-capital assumptions, then a five-year fade toward researched terminal growth, margin and ROIC. Terra researches public filings without receiving a quote or valuation target. The existing quarterly statistical forecast remains a separately evaluated benchmark; its short-run error rates do not validate the new DCF.
+
+Company loading automatically applies a current issued case or starts/resumes cached background research. The app withholds the default DCF until that forecast is ready instead of displaying the old flat-growth fallback. Every research request and body transfer has a deadline; changing companies cancels stale UI updates. Manual operating overrides explicitly clear the researched path.
+
+Five live research vintages are recorded under `reports/v04-live`. `node scripts/refresh-issued-forecasts.mjs` validates and packages their reports for fast first loads. They expire after seven days or a change in financial period/model/research version. Fresh statements, prices and rates are still fetched; no saved DCF price is used. Other issuers use the same research pipeline, subject to the existing daily quota. Specialized businesses still require their appropriate accounting model. Missing historical D&A no longer prevents a researched forward-D&A DCF, but EBITDA and OCS are withheld rather than treating the missing balance as zero.
+
+Source checks and arithmetic checks establish functionality and internal consistency. Prospective forecast accuracy and investment-return accuracy remain unmeasured. See [live release validation](reports/v04-live/REPORT.md).
+
+## Version 0.3 (archived statistical benchmark)
 
 - **Quarterly accounting:** up to 64 discrete fiscal quarters, with Q2/Q3 YTD and Q4 annual amounts differenced and source provenance retained. Filing-date filters apply before subtraction. Reporting gaps prevent calendar misalignment.
 - **Fitted forecasts:** seasonal, damped-trend and recent-trend candidates. Issuer-specific rolling comparisons select revenue and margin models. A challenger requires four completed folds and at least 5% lower selection error. The production challenger is enabled only after the preregistered aggregate evaluation gate passes. Insufficient quarterly data uses annual flat revenue.

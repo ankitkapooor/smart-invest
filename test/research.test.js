@@ -26,12 +26,12 @@ test('strict research contract rejects invented citations, future evidence and g
   assert.deepEqual(validateResearch(report(),data,urls),[]);
   const forged=report();forged.sources[0].url='https://invented.example/';assert.ok(validateResearch(forged,data,urls).length);
   const future=report();future.sources[0].publishedAt='2099-01-01';assert.ok(validateResearch(future,data,urls).length);
-  const invented=report();invented.forecast={growth:.9};assert.ok(validateResearch(invented,data,urls).some(e=>e.includes('forbidden')));
+  const invented=report();invented.forecast={growth:.9};assert.ok(validateResearch(invented,data,urls).some(e=>e.includes('forecast contract')));
   const h=report();h.risk.hFactors[0].sourceIds=['absent'];assert.ok(validateResearch(h,data,urls).length);
   const driver=report();driver.businessDrivers[0].sourceIds=['absent'];assert.ok(validateResearch(driver,data,urls).some(e=>e.includes('Business driver')));
   assert.equal(SCHEMA.additionalProperties,false);
 });
-test('evidence-only research cannot change the fitted growth path and terminal growth remains funded',()=>{
+test('legacy evidence-only research cannot change the fitted growth path and terminal growth remains funded',()=>{
   const r=applyResearch(data,{status:'validated',report:report(),accounting:{accepted:[]}}),a=defaults(r),rows=forecast(r.base,a);
   assert.equal(rows[0].revenue,forecast(data.base,defaults(data))[0].revenue);assert.equal(a.driverForecast,null);
   for(const row of rows)assert.ok(Math.abs(row.fcff-(row.nopat+row.da-row.capex-row.deltaNwc))<1e-9);
@@ -104,6 +104,13 @@ test('model selection separates cached research and configuration defaults to Te
   assert.equal(RESEARCH_MODEL,'gpt-5.6-terra');
   assert.notEqual(researchKey(data,{OPENAI_MODEL:'gpt-5.6-terra'}),researchKey(data,{OPENAI_MODEL:'gpt-6-astra'}));
   const response=await worker.fetch(new Request('https://example.com/api/config'),{},{});const config=await response.json();assert.equal(config.researchModel,'gpt-5.6-terra');assert.equal(config.researchEffort,'low');
+});
+test('forecast lookup only reads the current issuer-period-version cache; it cannot create a paid job',async()=>{
+  let requested;
+  const env={RESEARCH:{idFromName:n=>n,get:()=>({fetch:async request=>{requested=request;return Response.json({error:'Not found'},{status:404});}})}};
+  const response=await worker.fetch(new Request('https://example.com/api/forecast?symbol=TEST&period=2026-06-30'),env,{});
+  const body=await response.json();assert.equal(body.status,'not_started');
+  assert.equal(requested.method,'GET');assert.equal(new URL(requested.url).searchParams.get('key'),'TEST:2026-06-30:0.4.0:research-5:gpt-5.6-terra');
 });
 test('directory citations resolve only to indexed issuer documents with matching filed dates',async()=>{
   const folder='https://www.sec.gov/Archives/edgar/data/1/000000000126000001';
