@@ -68,13 +68,155 @@
     <main id="main">
       <div id="release-status" role="status" aria-live="polite" hidden></div>
       <div id="message" role="status" aria-live="polite"></div>
-      <div id="loading" hidden>
-        <div class="spinner" aria-hidden="true"></div>
-        <div>
-          <h2>Building the analysis</h2>
-          <p id="loading-step">Reading financial statements…</p>
-          <p class="loading-note">Company financials load first. Peer comparisons load separately. Each attempt ends within 35 seconds.</p>
+      <section id="landing" class="landing" hidden>
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="kicker">Filing-backed company valuation</p>
+            <h1>What is a stock price betting on?</h1>
+            <p class="lead">ValueLens reads a company’s SEC filings, rebuilds its cash flows, and shows three readings of today’s price: the growth it requires, what analysts expect, and what the fundamentals support.</p>
+            <div class="hero-actions">
+              <button class="button primary large" id="landing-search" type="button">Analyze a company</button>
+              <span class="hero-hint">or press <kbd>/</kbd> anywhere</span>
+            </div>
+            <div class="quick-picks" aria-label="Example companies">
+              <button class="pick" data-symbol="AAPL"><b>AAPL</b> Apple</button>
+              <button class="pick" data-symbol="MSFT"><b>MSFT</b> Microsoft</button>
+              <button class="pick" data-symbol="NVDA"><b>NVDA</b> NVIDIA</button>
+              <button class="pick" data-symbol="COST"><b>COST</b> Costco</button>
+            </div>
+          </div>
+          <figure class="demo" id="demo" data-step="1" aria-label="Animated example of a ValueLens analysis of Apple">
+            <div class="demo-head">
+              <span class="demo-title">Example · Apple (AAPL) · Oct 22, 2026</span>
+              <ol class="demo-steps">
+                <li data-for="1">Read filings</li><li data-for="2">Forecast</li><li data-for="3">Read the price</li>
+              </ol>
+            </div>
+            <div class="demo-panel" data-panel="1">
+              <p class="demo-caption">Extracting facts from 10-K and 10-Q filings, each with its source</p>
+              <ul class="facts">
+                <li><span>Revenue, trailing 12 months</span><b>$466.8B</b><em>10-Q · Jun 27, 2026</em></li>
+                <li><span>Operating income</span><b>$154.9B</b><em>10-Q · Jun 27, 2026</em></li>
+                <li><span>Research &amp; development</span><b>$42.9B</b><em>treated as investment</em></li>
+                <li><span>Capital expenditure</span><b>$10.0B</b><em>cash-flow statement</em></li>
+                <li><span>Cash and securities</span><b>$146.5B</b><em>balance sheet</em></li>
+                <li><span>Gross debt</span><b>$84.3B</b><em>balance sheet</em></li>
+              </ul>
+              <div class="scanline" aria-hidden="true"></div>
+            </div>
+            <div class="demo-panel" data-panel="2">
+              <p class="demo-caption">Forecasting ten years of free cash flow, then a stable state</p>
+              <div class="bars" aria-hidden="true">
+                <i style="--h:56%;--d:0"></i><i style="--h:60%;--d:1"></i><i style="--h:64%;--d:2"></i><i style="--h:67%;--d:3"></i><i style="--h:70%;--d:4"></i><i style="--h:72%;--d:5"></i><i style="--h:74%;--d:6"></i><i style="--h:75%;--d:7"></i><i style="--h:77%;--d:8"></i><i style="--h:78%;--d:9"></i><i class="terminal" style="--h:92%;--d:10"></i>
+              </div>
+              <div class="bar-axis" aria-hidden="true"><span>Year 1</span><span>Year 10</span><span>Stable state</span></div>
+              <ul class="assumptions">
+                <li><span>Years 1–5 revenue growth</span><b>8% → 5%</b></li>
+                <li><span>Operating margin</span><b>32%</b></li>
+                <li><span>Discount rate (CAPM)</span><b>9.7%</b></li>
+              </ul>
+            </div>
+            <div class="demo-panel" data-panel="3">
+              <p class="demo-caption">Three readings of the same price</p>
+              <p class="implied">Today’s price implies <b><span class="count" data-to="20.6">0.0</span>%</b> annual revenue growth for five years</p>
+              <div class="readings-scale" aria-hidden="true">
+                <div class="scale-track"></div>
+                <span class="marker fundamental" style="--x:39%"><i></i><em>Fundamental<br><b>$156</b></em></span>
+                <span class="marker consensus" style="--x:43%"><i></i><em>Analysts<br><b>$172</b></em></span>
+                <span class="marker price" style="--x:87%"><i></i><em>Price<br><b>$347</b></em></span>
+              </div>
+              <p class="demo-foot">Analysts expect about 10% a year. The price asks for roughly twice that.</p>
+            </div>
+            <div class="demo-progress" aria-hidden="true"><span></span></div>
+          </figure>
         </div>
+
+        <section class="landing-section">
+          <h2 class="reveal">How it works</h2>
+          <ol class="how">
+            <li class="reveal" style="--i:0">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+              <h3>Read the filings</h3>
+              <p>Structured facts straight from SEC filings, each traced to its source. A line a company doesn’t report is labeled, never guessed.</p>
+            </li>
+            <li class="reveal" style="--i:1">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M6 16V11M10 16V8M14 16V10M18 16V5"/></svg>
+              <h3>Forecast the business</h3>
+              <p>A measured near-term forecast, then growth, margins and returns set by rules tested on 137 companies’ history. R&amp;D counts as investment.</p>
+            </li>
+            <li class="reveal" style="--i:2">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
+              <h3>Price the risk</h3>
+              <p>Discount the cash flows at a required return built from today’s Treasury yield, a published equity premium and peer-based risk.</p>
+            </li>
+            <li class="reveal" style="--i:3">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8v8M12 6v12M17 9v6"/></svg>
+              <h3>Read the price three ways</h3>
+              <p>See what growth the price requires, what analysts expect, and what the fundamentals support, side by side.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="landing-section">
+          <h2 class="reveal">Three readings of every price</h2>
+          <div class="lenses-cards">
+            <article class="lens-card reveal" style="--i:0">
+              <span class="lens-tag implied">Market-implied</span>
+              <h3>What the price requires</h3>
+              <p>The constant revenue growth over five years that makes today’s price add up. A quick test of how much optimism is already paid for.</p>
+            </article>
+            <article class="lens-card reveal" style="--i:1">
+              <span class="lens-tag consensus">Analyst consensus</span>
+              <h3>How the market sees it</h3>
+              <p>Analysts’ revenue estimates and the margins their earnings forecasts imply, net of buybacks. Perception, clearly labeled as such.</p>
+            </article>
+            <article class="lens-card reveal" style="--i:2">
+              <span class="lens-tag fundamental">Fundamental</span>
+              <h3>What history supports</h3>
+              <p>Cash flows built from the company’s filings and from what comparable businesses have actually sustained. Every assumption is visible and editable.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="landing-section measured reveal">
+          <div>
+            <h2>Measured, not promised</h2>
+            <p>Every rule is tested on point-in-time SEC data. Where the evidence is weak, the app says so.</p>
+          </div>
+          <dl class="stats">
+            <div><dt>Companies with complete filing data</dt><dd><span class="count" data-to="125">0</span> of 155</dd></div>
+            <div><dt>Five-year revenue forecast error</dt><dd>30% <small>vs 40% before</small></dd></div>
+            <div><dt>Did “undervalued” calls beat the market, 2020–2026?</dt><dd id="landing-ic">No demonstrated edge</dd></div>
+          </dl>
+        </section>
+
+        <section class="landing-cta reveal">
+          <h2>Start with a company you know</h2>
+          <div class="quick-picks">
+            <button class="pick" data-symbol="AAPL"><b>AAPL</b> Apple</button>
+            <button class="pick" data-symbol="CAT"><b>CAT</b> Caterpillar</button>
+            <button class="pick" data-symbol="XOM"><b>XOM</b> Exxon Mobil</button>
+            <button class="pick" data-symbol="WMT"><b>WMT</b> Walmart</button>
+          </div>
+          <p class="fine">Public SEC filings and delayed market data. Values are conditional on visible assumptions. Not investment advice.</p>
+        </section>
+      </section>
+      <div id="loading" hidden>
+        <div class="loading-head">
+          <div class="spinner" aria-hidden="true"></div>
+          <div>
+            <h2>Building the analysis</h2>
+            <p id="loading-step">Reading financial statements…</p>
+          </div>
+        </div>
+        <ol class="load-steps" id="load-steps" data-stage="0">
+          <li><b>Reading SEC filings</b><span>Revenue, operating income, R&amp;D, cash, debt and shares, each traced to its filing</span></li>
+          <li><b>Checking the balance sheet</b><span>Reconciling debt and working capital; labeling lines the company does not report</span></li>
+          <li><b>Gathering market data</b><span>Price, five years of returns, the Treasury yield and analyst estimates</span></li>
+          <li><b>Building the forecast</b><span>Ten years of cash flow and three readings of the price</span></li>
+        </ol>
+        <div class="skeleton" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <p class="loading-note">Company financials load first; peer comparisons follow separately. Each attempt ends within 35 seconds.</p>
       </div>
       <section id="workspace" hidden>
         <div id="data-banner" class="data-banner"></div>

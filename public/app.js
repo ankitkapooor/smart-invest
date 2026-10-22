@@ -352,9 +352,14 @@ function render() {
 async function loadCompany(symbol,peers=[]) {
   clearTimeout(searchTimer);searchController?.abort();
   loadController?.abort();loadController=new AbortController();const controller=loadController;
+  hideLanding();
   $('#loading').hidden=false;$('#workspace').hidden=true;$('#message').textContent='';$('#search-results').hidden=true;$('#analyze-button').disabled=true;
   const started=Date.now();
-  const progress=()=>{$('#loading-step').textContent=`Loading ${symbol.toUpperCase()} from public sources… ${Math.floor((Date.now()-started)/1000)}s elapsed. This attempt ends within 35 seconds.`;};
+  const progress=()=>{
+    const s=(Date.now()-started)/1000,stage=s<4?0:s<9?1:s<15?2:3;
+    $('#loading-step').textContent=`${symbol.toUpperCase()} · ${Math.floor(s)}s elapsed`;
+    const steps=$('#load-steps');steps.dataset.stage=stage;[...steps.children].forEach((li,i)=>{li.classList.toggle('done',i<stage);li.classList.toggle('active',i===stage);});
+  };
   progress();const timer=setInterval(progress,1000);
   try {
     const body=await requestJSON(`/api/company?symbol=${encodeURIComponent(symbol)}&includePeers=0`,{signal:controller.signal});
@@ -367,6 +372,7 @@ async function loadCompany(symbol,peers=[]) {
     if(controller!==loadController||e.name==='AbortError')return;
     $('#message').innerHTML=`<div class="error-box" role="alert"><strong>${esc(symbol.toUpperCase())} did not load.</strong><p>${esc(e.message)}</p><button class="button" data-symbol="${esc(symbol)}">Retry ${esc(symbol.toUpperCase())}</button></div>`;
     $('#workspace').hidden=true;
+    if(!data)showLanding();
   } finally {
     clearInterval(timer);if(controller===loadController){$('#loading').hidden=true;$('#analyze-button').disabled=false;}
   }
@@ -502,7 +508,43 @@ document.addEventListener('click',e=>{if(!e.target.closest('#search-form')){$('#
 $('#company-search').addEventListener('keydown',e=>{if(e.key==='Escape'){$('#search-results').hidden=true;e.target.setAttribute('aria-expanded','false');e.target.blur();}if(e.key==='ArrowDown'&&!$('#search-results').hidden){e.preventDefault();$('#search-results button')?.focus();}});
 $('#search-results').addEventListener('keydown',e=>{const items=[...document.querySelectorAll('#search-results button')],i=items.indexOf(document.activeElement);if(e.key==='ArrowDown'){e.preventDefault();items[Math.min(i+1,items.length-1)]?.focus();}if(e.key==='ArrowUp'){e.preventDefault();(i<=0?$('#company-search'):items[i-1]).focus();}if(e.key==='Escape'){$('#search-results').hidden=true;$('#company-search').focus();}});
 
+// ---------- Landing ----------
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let demoTimer=null,revealObserver=null;
+function countUp(el,ms=900) {
+  const to=Number(el.dataset.to),digits=(el.dataset.to.split('.')[1]||'').length;
+  if(reducedMotion){el.textContent=to.toFixed(digits);return;}
+  const t0=performance.now(),tick=now=>{const p=Math.min(1,(now-t0)/ms),e=1-(1-p)**3;el.textContent=(to*e).toFixed(digits);if(p<1&&!el.closest('[hidden]'))requestAnimationFrame(tick);};
+  requestAnimationFrame(tick);
+}
+function startDemo() {
+  const demo=$('#demo');if(!demo)return;clearInterval(demoTimer);
+  const bar=demo.querySelector('.demo-progress'),stepMs=4600;
+  const show=step=>{
+    demo.dataset.step=step;
+    bar.classList.remove('run');void bar.offsetWidth;bar.style.setProperty('--step-ms',stepMs+'ms');bar.classList.add('run');
+    if(step===3)demo.querySelectorAll('[data-panel="3"] .count').forEach(el=>{el.textContent='0.0';setTimeout(()=>countUp(el,1400),300);});
+  };
+  if(reducedMotion){demo.dataset.step=3;demo.querySelectorAll('.count').forEach(el=>countUp(el));return;}
+  let step=1;show(step);
+  demoTimer=setInterval(()=>{if(document.hidden)return;step=step%3+1;show(step);},stepMs);
+}
+function showLanding() {
+  document.body.classList.add('is-landing');$('#landing').hidden=false;$('#workspace').hidden=true;
+  document.title='ValueLens · What is a stock price betting on?';
+  startDemo();
+  if(!revealObserver&&'IntersectionObserver' in window&&!reducedMotion) {
+    revealObserver=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('in');e.target.querySelectorAll('.count').forEach(el=>countUp(el,1100));revealObserver.unobserve(e.target);}},{threshold:.15});
+    document.querySelectorAll('#landing .reveal').forEach(el=>revealObserver.observe(el));
+  } else document.querySelectorAll('#landing .reveal').forEach(el=>{el.classList.add('in');el.querySelectorAll('.count').forEach(c=>countUp(c));});
+  fetch('/validation/returns.json').then(r=>r.json()).then(v=>{if(Number.isFinite(v.meanRankIC))$('#landing-ic').innerHTML=`No demonstrated edge <small>rank IC ${num(v.meanRankIC,2)}</small>`;}).catch(()=>{});
+}
+function hideLanding() {
+  document.body.classList.remove('is-landing');$('#landing').hidden=true;clearInterval(demoTimer);
+}
+document.addEventListener('click',e=>{if(e.target.closest('#landing-search')){$('#company-search').focus();}});
+
 renderSaved();
 const requested=new URLSearchParams(location.search).get('symbol');
 if(requested)loadCompany(requested);
-else $('#message').innerHTML=`<div class="panel-body"><h1>Analyze a public company</h1><p>Search above to load its financial statements and valuation assumptions.</p><div class="error-actions">${SUGGESTED.map(([symbol,name])=>`<button class="button" data-symbol="${symbol}">${name} · ${symbol}</button>`).join('')}</div></div>`;
+else showLanding();
