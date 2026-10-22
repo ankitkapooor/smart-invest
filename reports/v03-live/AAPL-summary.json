@@ -1,0 +1,46 @@
+{
+  "testedAt": "2026-10-22T03:11:38.856Z",
+  "origin": "http://localhost:8787",
+  "symbol": "AAPL",
+  "status": "validated",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "sources": 4,
+  "businessDrivers": [
+    "iPhone product-cycle and Pro-model mix",
+    "Services monetization and mix",
+    "Mac demand and laptop mix",
+    "Greater China iPhone demand and currency translation",
+    "Hardware gross-margin mix, tariffs and component costs",
+    "Supply availability, supplier concentration and purchase commitments",
+    "Foreign exchange translation",
+    "Research and development investment"
+  ],
+  "guidance": 0,
+  "peerSymbols": [
+    "DELL",
+    "HPQ",
+    "SONY"
+  ],
+  "hFactors": 7,
+  "searchCalls": 4,
+  "errors": [],
+  "valuationErrors": [],
+  "price": 94.08695477428998,
+  "vintageHash": "439a7de53bf6638c2d386493dd338286bcc3639fa1c390a74d31c273d420553f",
+  "usage": {
+    "input_tokens": 41474,
+    "input_tokens_details": {
+      "cache_write_tokens": 11688,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4225,
+    "output_tokens_details": {
+      "reasoning_tokens": 1397
+    },
+    "total_tokens": 45699
+  },
+  "computedQuarterlyForecasts": 4,
+  "snapshotQuarterlyForecasts": 0,
+  "validationScope": "Local evidence-only contract integration; hosted run verifies final quarterly snapshot format."
+}

@@ -1,0 +1,45 @@
+{
+  "testedAt": "2026-10-22T03:18:48.054Z",
+  "origin": "https://valuelens.ankitkapoor.me",
+  "symbol": "NVDA",
+  "status": "validated",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "low",
+  "sources": 5,
+  "businessDrivers": [
+    "AI data-center demand",
+    "Compute & Networking mix",
+    "Graphics demand",
+    "Product-transition cadence",
+    "Supply and capacity conversion",
+    "Export-control and China access",
+    "AI-cloud partner utilization and counterparty performance",
+    "Unit pricing, volumes and customer concentration"
+  ],
+  "quarterlyForecasts": 4,
+  "guidance": 0,
+  "peerSymbols": [
+    "AMD",
+    "AVGO",
+    "MRVL",
+    "INTC"
+  ],
+  "hFactors": 7,
+  "searchCalls": 4,
+  "errors": [],
+  "valuationErrors": [],
+  "price": 154.7626811632024,
+  "vintageHash": "38e06ce86922a84d416021ef17b9cb0a8b3934acb5a064e5b696d22c48b90023",
+  "usage": {
+    "input_tokens": 38490,
+    "input_tokens_details": {
+      "cache_write_tokens": 12305,
+      "cached_tokens": 0
+    },
+    "output_tokens": 3890,
+    "output_tokens_details": {
+      "reasoning_tokens": 1320
+    },
+    "total_tokens": 42380
+  }
+}

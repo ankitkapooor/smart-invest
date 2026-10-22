@@ -1,0 +1,1813 @@
+{
+  "asOf": "2026-10-21",
+  "modelVersion": "0.3.0",
+  "protocol": {
+    "version": "0.3.0",
+    "registeredAt": "2026-10-21",
+    "frozenBeforeFirstQuarterlyEvaluation": true,
+    "developmentTargetEnds": "Before 2026-01-01; prior annual holdout results already inspected",
+    "evaluationTargetEnds": "2026-01-01 through 2026-10-21, only outcomes filed by cutoff",
+    "asOf": "2026-10-21",
+    "scope": "Discrete quarterly revenue and operating margin; no FCFF, share-price or investment-return accuracy claim",
+    "methods": [
+      "seasonal",
+      "damped-trend",
+      "recent-trend"
+    ],
+    "selection": "Issuer-specific rolling four-quarter aggregate revenue MAPE. At least four completed folds and 5% relative improvement to replace seasonal. Margin uses rolling aggregate margin MAE with the same gate.",
+    "releaseGate": "On 2026 outcomes, next-quarter revenue MAPE and next-four-quarter aggregate revenue MAPE must each beat seasonal; margin MAE must not worsen by more than 0.1 percentage point. At least 100 cases per horizon. Failures retain the seasonal benchmark as production default.",
+    "limitations": [
+      "Evaluation universe was used in an older annual test. Only 2026 targets are new; this is not a fresh-universe experiment.",
+      "Current companyfacts preserve filing dates but are not immutable historical data vintages.",
+      "Overlapping forecast windows and repeated companies create correlated cases.",
+      "No changes to candidates or selection thresholds after looking at 2026 outcomes without a new protocol and new future evaluation."
+    ]
+  },
+  "scope": "Discrete quarterly revenue and operating margin; no FCFF, share-price or investment-return accuracy claim",
+  "gatePassed": true,
+  "productionPolicy": "Issuer-specific challenger enabled",
+  "candidates": 154,
+  "issuersWithFolds": 135,
+  "folds": 8931,
+  "metrics": [
+    {
+      "split": "development",
+      "horizon": 1,
+      "n": 4394,
+      "issuers": 135,
+      "revenueMAPE": 0.12771411808405544,
+      "seasonalMAPE": 0.14292983478888588,
+      "marginMAEpp": 5.750395994492947,
+      "latestMarginMAEpp": 6.434125876013109,
+      "marginN": 3693,
+      "challengerSelected": 2302,
+      "intervalN": 4134,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8072085147556846
+    },
+    {
+      "split": "development",
+      "horizon": 4,
+      "n": 3957,
+      "issuers": 135,
+      "revenueMAPE": 0.11005200473355808,
+      "seasonalMAPE": 0.11788923919785176,
+      "marginMAEpp": 5.520775332940437,
+      "latestMarginMAEpp": 6.188886943671134,
+      "marginN": 3305,
+      "challengerSelected": 2107,
+      "intervalN": 3660,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.7650273224043715
+    },
+    {
+      "split": "evaluation-2026",
+      "horizon": 1,
+      "n": 292,
+      "issuers": 131,
+      "revenueMAPE": 0.0977669572828457,
+      "seasonalMAPE": 0.11720787839696462,
+      "marginMAEpp": 6.063807508634586,
+      "latestMarginMAEpp": 7.376207938613941,
+      "marginN": 248,
+      "challengerSelected": 137,
+      "intervalN": 277,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8303249097472925
+    },
+    {
+      "split": "evaluation-2026",
+      "horizon": 4,
+      "n": 288,
+      "issuers": 130,
+      "revenueMAPE": 0.07582730384588085,
+      "seasonalMAPE": 0.09349007270204875,
+      "marginMAEpp": 4.194872663506537,
+      "latestMarginMAEpp": 5.218472919416868,
+      "marginN": 243,
+      "challengerSelected": 129,
+      "intervalN": 274,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8467153284671532
+    }
+  ],
+  "bySector": [
+    {
+      "sicGroup": 13,
+      "horizon": 1,
+      "n": 8,
+      "issuers": 4,
+      "revenueMAPE": 0.12687583534525082,
+      "seasonalMAPE": 0.1253793823703913,
+      "marginMAEpp": 4.317779559851793,
+      "latestMarginMAEpp": 6.46658249310141,
+      "marginN": 4,
+      "challengerSelected": 2,
+      "intervalN": 8,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 13,
+      "horizon": 4,
+      "n": 8,
+      "issuers": 4,
+      "revenueMAPE": 0.1159356713805329,
+      "seasonalMAPE": 0.11202067013699944,
+      "marginMAEpp": 3.991693348329687,
+      "latestMarginMAEpp": 2.2840977122103197,
+      "marginN": 4,
+      "challengerSelected": 2,
+      "intervalN": 8,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 20,
+      "horizon": 1,
+      "n": 15,
+      "issuers": 7,
+      "revenueMAPE": 0.05127572354887122,
+      "seasonalMAPE": 0.0578134881418313,
+      "marginMAEpp": 15.361295835627711,
+      "latestMarginMAEpp": 19.326980147873865,
+      "marginN": 15,
+      "challengerSelected": 6,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 20,
+      "horizon": 4,
+      "n": 15,
+      "issuers": 7,
+      "revenueMAPE": 0.04738231512837161,
+      "seasonalMAPE": 0.04986437148215516,
+      "marginMAEpp": 6.857314307562899,
+      "latestMarginMAEpp": 15.555794789772252,
+      "marginN": 15,
+      "challengerSelected": 6,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.9166666666666666
+    },
+    {
+      "sicGroup": 23,
+      "horizon": 1,
+      "n": 4,
+      "issuers": 2,
+      "revenueMAPE": 0.029805725578342268,
+      "seasonalMAPE": 0.02613357915711559,
+      "marginMAEpp": 2.936777172902051,
+      "latestMarginMAEpp": 7.803856462600535,
+      "marginN": 4,
+      "challengerSelected": 3,
+      "intervalN": 4,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 23,
+      "horizon": 4,
+      "n": 4,
+      "issuers": 2,
+      "revenueMAPE": 0.036768226620696176,
+      "seasonalMAPE": 0.02696908292950584,
+      "marginMAEpp": 3.922048965240295,
+      "latestMarginMAEpp": 5.367380207426784,
+      "marginN": 4,
+      "challengerSelected": 3,
+      "intervalN": 4,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 26,
+      "horizon": 1,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.016194886496536165,
+      "seasonalMAPE": 0.016194886496536165,
+      "marginMAEpp": 2.007276453180003,
+      "latestMarginMAEpp": 4.31917956660075,
+      "marginN": 2,
+      "challengerSelected": 0,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 26,
+      "horizon": 4,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.16581276008482115,
+      "seasonalMAPE": 0.16581276008482115,
+      "marginMAEpp": 0.5828308723895934,
+      "latestMarginMAEpp": 0.9458753882876342,
+      "marginN": 2,
+      "challengerSelected": 0,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.5
+    },
+    {
+      "sicGroup": 28,
+      "horizon": 1,
+      "n": 26,
+      "issuers": 13,
+      "revenueMAPE": 0.07264792727829887,
+      "seasonalMAPE": 0.09166072904520031,
+      "marginMAEpp": 15.189366404926528,
+      "latestMarginMAEpp": 16.68887088209946,
+      "marginN": 15,
+      "challengerSelected": 15,
+      "intervalN": 26,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8461538461538461
+    },
+    {
+      "sicGroup": 28,
+      "horizon": 4,
+      "n": 26,
+      "issuers": 13,
+      "revenueMAPE": 0.06184350083082672,
+      "seasonalMAPE": 0.07628874627374085,
+      "marginMAEpp": 6.475020812852863,
+      "latestMarginMAEpp": 7.331895885074354,
+      "marginN": 15,
+      "challengerSelected": 14,
+      "intervalN": 26,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8076923076923077
+    },
+    {
+      "sicGroup": 29,
+      "horizon": 1,
+      "n": 12,
+      "issuers": 6,
+      "revenueMAPE": 0.1916242861835957,
+      "seasonalMAPE": 0.1916242861835957,
+      "marginMAEpp": 4.118534722732691,
+      "latestMarginMAEpp": 5.1598188595806125,
+      "marginN": 4,
+      "challengerSelected": 0,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8333333333333334
+    },
+    {
+      "sicGroup": 29,
+      "horizon": 4,
+      "n": 12,
+      "issuers": 6,
+      "revenueMAPE": 0.06711472200282671,
+      "seasonalMAPE": 0.06711472200282671,
+      "marginMAEpp": 5.011891196051555,
+      "latestMarginMAEpp": 4.663353981660689,
+      "marginN": 4,
+      "challengerSelected": 0,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8333333333333334
+    },
+    {
+      "sicGroup": 30,
+      "horizon": 1,
+      "n": 7,
+      "issuers": 3,
+      "revenueMAPE": 0.027357815021581394,
+      "seasonalMAPE": 0.034480178871171864,
+      "marginMAEpp": 5.152346056594503,
+      "latestMarginMAEpp": 6.886898990565241,
+      "marginN": 4,
+      "challengerSelected": 7,
+      "intervalN": 7,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 30,
+      "horizon": 4,
+      "n": 7,
+      "issuers": 3,
+      "revenueMAPE": 0.031206248586850775,
+      "seasonalMAPE": 0.03471899341870578,
+      "marginMAEpp": 7.023686565318022,
+      "latestMarginMAEpp": 22.53415559956223,
+      "marginN": 4,
+      "challengerSelected": 7,
+      "intervalN": 7,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8571428571428571
+    },
+    {
+      "sicGroup": 35,
+      "horizon": 1,
+      "n": 27,
+      "issuers": 11,
+      "revenueMAPE": 0.14914060938489562,
+      "seasonalMAPE": 0.15627249292902784,
+      "marginMAEpp": 1.7854358442072553,
+      "latestMarginMAEpp": 1.986901648482889,
+      "marginN": 20,
+      "challengerSelected": 2,
+      "intervalN": 25,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.56
+    },
+    {
+      "sicGroup": 35,
+      "horizon": 4,
+      "n": 27,
+      "issuers": 11,
+      "revenueMAPE": 0.12000464279675889,
+      "seasonalMAPE": 0.12081105868056677,
+      "marginMAEpp": 1.9825603744649078,
+      "latestMarginMAEpp": 2.6931765030691492,
+      "marginN": 20,
+      "challengerSelected": 1,
+      "intervalN": 25,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.56
+    },
+    {
+      "sicGroup": 36,
+      "horizon": 1,
+      "n": 31,
+      "issuers": 13,
+      "revenueMAPE": 0.24343669033800022,
+      "seasonalMAPE": 0.267646416234009,
+      "marginMAEpp": 7.83253051584446,
+      "latestMarginMAEpp": 7.3479173259071295,
+      "marginN": 26,
+      "challengerSelected": 14,
+      "intervalN": 31,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.5806451612903226
+    },
+    {
+      "sicGroup": 36,
+      "horizon": 4,
+      "n": 31,
+      "issuers": 13,
+      "revenueMAPE": 0.18578709283777714,
+      "seasonalMAPE": 0.2128532745092966,
+      "marginMAEpp": 10.723916992188055,
+      "latestMarginMAEpp": 10.58176350685437,
+      "marginN": 26,
+      "challengerSelected": 10,
+      "intervalN": 31,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.7096774193548387
+    },
+    {
+      "sicGroup": 37,
+      "horizon": 1,
+      "n": 20,
+      "issuers": 10,
+      "revenueMAPE": 0.10456502231518967,
+      "seasonalMAPE": 0.10338406871461543,
+      "marginMAEpp": 13.953286052427426,
+      "latestMarginMAEpp": 17.84041302126617,
+      "marginN": 20,
+      "challengerSelected": 7,
+      "intervalN": 18,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 37,
+      "horizon": 4,
+      "n": 18,
+      "issuers": 9,
+      "revenueMAPE": 0.08215906415223631,
+      "seasonalMAPE": 0.07863728500791425,
+      "marginMAEpp": 6.7364182818360225,
+      "latestMarginMAEpp": 4.857221489085979,
+      "marginN": 18,
+      "challengerSelected": 7,
+      "intervalN": 16,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 38,
+      "horizon": 1,
+      "n": 23,
+      "issuers": 9,
+      "revenueMAPE": 0.04996207485159087,
+      "seasonalMAPE": 0.0804337040401528,
+      "marginMAEpp": 3.1827215656297545,
+      "latestMarginMAEpp": 4.12201097344397,
+      "marginN": 21,
+      "challengerSelected": 14,
+      "intervalN": 23,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.7391304347826086
+    },
+    {
+      "sicGroup": 38,
+      "horizon": 4,
+      "n": 23,
+      "issuers": 9,
+      "revenueMAPE": 0.039516841761664714,
+      "seasonalMAPE": 0.08154194701613936,
+      "marginMAEpp": 1.6932229347776802,
+      "latestMarginMAEpp": 2.6575809511708814,
+      "marginN": 21,
+      "challengerSelected": 14,
+      "intervalN": 23,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.782608695652174
+    },
+    {
+      "sicGroup": 40,
+      "horizon": 1,
+      "n": 7,
+      "issuers": 3,
+      "revenueMAPE": 0.06483580065845158,
+      "seasonalMAPE": 0.06483580065845158,
+      "marginMAEpp": 2.9781377828980453,
+      "latestMarginMAEpp": 1.953876656002967,
+      "marginN": 7,
+      "challengerSelected": 0,
+      "intervalN": 7,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 40,
+      "horizon": 4,
+      "n": 7,
+      "issuers": 3,
+      "revenueMAPE": 0.02599033460406389,
+      "seasonalMAPE": 0.02599033460406389,
+      "marginMAEpp": 2.167148307397295,
+      "latestMarginMAEpp": 3.3000740394335693,
+      "marginN": 7,
+      "challengerSelected": 0,
+      "intervalN": 7,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 42,
+      "horizon": 1,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.042777691119845196,
+      "seasonalMAPE": 0.043432578860778115,
+      "marginMAEpp": 3.7235919587142967,
+      "latestMarginMAEpp": 3.2231733858441305,
+      "marginN": 2,
+      "challengerSelected": 2,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.5
+    },
+    {
+      "sicGroup": 42,
+      "horizon": 4,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.018818437884905448,
+      "seasonalMAPE": 0.016809506923369022,
+      "marginMAEpp": 0.948205602456538,
+      "latestMarginMAEpp": 0.9985451014694272,
+      "marginN": 2,
+      "challengerSelected": 2,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 45,
+      "horizon": 1,
+      "n": 12,
+      "issuers": 5,
+      "revenueMAPE": 0.12020022000790202,
+      "seasonalMAPE": 0.12562538040608584,
+      "marginMAEpp": 1.762936117054019,
+      "latestMarginMAEpp": 2.3659882137715136,
+      "marginN": 12,
+      "challengerSelected": 3,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.9166666666666666
+    },
+    {
+      "sicGroup": 45,
+      "horizon": 4,
+      "n": 12,
+      "issuers": 5,
+      "revenueMAPE": 0.07074080979847094,
+      "seasonalMAPE": 0.07081442205783446,
+      "marginMAEpp": 1.4244743160770585,
+      "latestMarginMAEpp": 3.3120750037746407,
+      "marginN": 12,
+      "challengerSelected": 2,
+      "intervalN": 12,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 48,
+      "horizon": 1,
+      "n": 13,
+      "issuers": 6,
+      "revenueMAPE": 0.034729885227249804,
+      "seasonalMAPE": 0.040760005732134855,
+      "marginMAEpp": 4.66523760673854,
+      "latestMarginMAEpp": 8.171466772718155,
+      "marginN": 13,
+      "challengerSelected": 6,
+      "intervalN": 13,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 48,
+      "horizon": 4,
+      "n": 13,
+      "issuers": 6,
+      "revenueMAPE": 0.03021600006626633,
+      "seasonalMAPE": 0.03406541145027028,
+      "marginMAEpp": 2.388611401354059,
+      "latestMarginMAEpp": 2.493796230574545,
+      "marginN": 13,
+      "challengerSelected": 6,
+      "intervalN": 13,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 49,
+      "horizon": 1,
+      "n": 8,
+      "issuers": 8,
+      "revenueMAPE": 0.07388435428931568,
+      "seasonalMAPE": 0.07969637084546304,
+      "marginMAEpp": 2.439006021155573,
+      "latestMarginMAEpp": 6.471832189816709,
+      "marginN": 7,
+      "challengerSelected": 2,
+      "intervalN": 8,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.875
+    },
+    {
+      "sicGroup": 49,
+      "horizon": 4,
+      "n": 8,
+      "issuers": 8,
+      "revenueMAPE": 0.06900652384874521,
+      "seasonalMAPE": 0.07307763030438996,
+      "marginMAEpp": 1.3795555347870165,
+      "latestMarginMAEpp": 3.0302138089599495,
+      "marginN": 7,
+      "challengerSelected": 1,
+      "intervalN": 7,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8571428571428571
+    },
+    {
+      "sicGroup": 52,
+      "horizon": 1,
+      "n": 6,
+      "issuers": 2,
+      "revenueMAPE": 0.060714833516715506,
+      "seasonalMAPE": 0.06796693039624092,
+      "marginMAEpp": 2.0673637187045926,
+      "latestMarginMAEpp": 2.680055769960463,
+      "marginN": 6,
+      "challengerSelected": 6,
+      "intervalN": 6,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8333333333333334
+    },
+    {
+      "sicGroup": 52,
+      "horizon": 4,
+      "n": 6,
+      "issuers": 2,
+      "revenueMAPE": 0.03934480142528594,
+      "seasonalMAPE": 0.04033893620209764,
+      "marginMAEpp": 0.9448992560636608,
+      "latestMarginMAEpp": 1.5357214377807715,
+      "marginN": 6,
+      "challengerSelected": 6,
+      "intervalN": 6,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 53,
+      "horizon": 1,
+      "n": 15,
+      "issuers": 5,
+      "revenueMAPE": 0.05127600867764508,
+      "seasonalMAPE": 0.06299063088735767,
+      "marginMAEpp": 1.5589075561537193,
+      "latestMarginMAEpp": 1.6349011256247608,
+      "marginN": 15,
+      "challengerSelected": 9,
+      "intervalN": 9,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.7777777777777778
+    },
+    {
+      "sicGroup": 53,
+      "horizon": 4,
+      "n": 13,
+      "issuers": 5,
+      "revenueMAPE": 0.038258491551422684,
+      "seasonalMAPE": 0.05278677427224684,
+      "marginMAEpp": 1.0259360985145614,
+      "latestMarginMAEpp": 1.0360478137369535,
+      "marginN": 13,
+      "challengerSelected": 9,
+      "intervalN": 9,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8888888888888888
+    },
+    {
+      "sicGroup": 54,
+      "horizon": 1,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.015869073234230296,
+      "seasonalMAPE": 0.017808641697228438,
+      "marginMAEpp": 0.4366392201336285,
+      "latestMarginMAEpp": 2.9743189678154263,
+      "marginN": 3,
+      "challengerSelected": 3,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 54,
+      "horizon": 4,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.01288160516334443,
+      "seasonalMAPE": 0.010115640399868378,
+      "marginMAEpp": 1.2389456439283315,
+      "latestMarginMAEpp": 1.3757873008006225,
+      "marginN": 3,
+      "challengerSelected": 3,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 56,
+      "horizon": 1,
+      "n": 6,
+      "issuers": 2,
+      "revenueMAPE": 0.06995019480348859,
+      "seasonalMAPE": 0.10191586328074337,
+      "marginMAEpp": 2.0125218560549594,
+      "latestMarginMAEpp": 2.01252185605496,
+      "marginN": 3,
+      "challengerSelected": 6,
+      "intervalN": 6,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8333333333333334
+    },
+    {
+      "sicGroup": 56,
+      "horizon": 4,
+      "n": 6,
+      "issuers": 2,
+      "revenueMAPE": 0.06477814458804908,
+      "seasonalMAPE": 0.08539979635661749,
+      "marginMAEpp": 1.1287851875667636,
+      "latestMarginMAEpp": 1.1287851875667623,
+      "marginN": 2,
+      "challengerSelected": 6,
+      "intervalN": 6,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.8333333333333334
+    },
+    {
+      "sicGroup": 57,
+      "horizon": 1,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.02116107006825259,
+      "seasonalMAPE": 0.02116107006825259,
+      "marginMAEpp": 1.804575023530371,
+      "latestMarginMAEpp": 1.4718575161619374,
+      "marginN": 3,
+      "challengerSelected": 0,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 57,
+      "horizon": 4,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.009346936412243378,
+      "seasonalMAPE": 0.009346936412243378,
+      "marginMAEpp": 0.7782956589030802,
+      "latestMarginMAEpp": 1.4497921755200114,
+      "marginN": 3,
+      "challengerSelected": 0,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 58,
+      "horizon": 1,
+      "n": 11,
+      "issuers": 5,
+      "revenueMAPE": 0.059780105288445906,
+      "seasonalMAPE": 0.07609920779397421,
+      "marginMAEpp": 1.4726322442033892,
+      "latestMarginMAEpp": 1.6988868611030001,
+      "marginN": 11,
+      "challengerSelected": 6,
+      "intervalN": 11,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.9090909090909091
+    },
+    {
+      "sicGroup": 58,
+      "horizon": 4,
+      "n": 11,
+      "issuers": 5,
+      "revenueMAPE": 0.05833430976336182,
+      "seasonalMAPE": 0.06940608335352882,
+      "marginMAEpp": 2.2629732724246123,
+      "latestMarginMAEpp": 1.4012576300074011,
+      "marginN": 11,
+      "challengerSelected": 6,
+      "intervalN": 11,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.9090909090909091
+    },
+    {
+      "sicGroup": 59,
+      "horizon": 1,
+      "n": 4,
+      "issuers": 2,
+      "revenueMAPE": 0.032816916720630945,
+      "seasonalMAPE": 0.10806492586201122,
+      "marginMAEpp": 1.6678778569843251,
+      "latestMarginMAEpp": 1.2183051742933622,
+      "marginN": 4,
+      "challengerSelected": 4,
+      "intervalN": 4,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 59,
+      "horizon": 4,
+      "n": 4,
+      "issuers": 2,
+      "revenueMAPE": 0.06412519244290107,
+      "seasonalMAPE": 0.10004097452179703,
+      "marginMAEpp": 0.702294894742164,
+      "latestMarginMAEpp": 0.8718757494526781,
+      "marginN": 4,
+      "challengerSelected": 4,
+      "intervalN": 4,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 73,
+      "horizon": 1,
+      "n": 22,
+      "issuers": 9,
+      "revenueMAPE": 0.07914555642746272,
+      "seasonalMAPE": 0.17297394963220944,
+      "marginMAEpp": 7.91308140757636,
+      "latestMarginMAEpp": 9.228124528079299,
+      "marginN": 22,
+      "challengerSelected": 17,
+      "intervalN": 20,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.85
+    },
+    {
+      "sicGroup": 73,
+      "horizon": 4,
+      "n": 22,
+      "issuers": 9,
+      "revenueMAPE": 0.06812085155016391,
+      "seasonalMAPE": 0.15531121772701303,
+      "marginMAEpp": 5.53662805354302,
+      "latestMarginMAEpp": 5.865365906791342,
+      "marginN": 22,
+      "challengerSelected": 17,
+      "intervalN": 20,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 0.85
+    },
+    {
+      "sicGroup": 78,
+      "horizon": 1,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.02506306505763482,
+      "seasonalMAPE": 0.12106030194207436,
+      "marginMAEpp": 4.40545697067457,
+      "latestMarginMAEpp": 3.3656828246629513,
+      "marginN": 3,
+      "challengerSelected": 3,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 78,
+      "horizon": 4,
+      "n": 3,
+      "issuers": 1,
+      "revenueMAPE": 0.008827570733752399,
+      "seasonalMAPE": 0.13636271701097671,
+      "marginMAEpp": 3.164849320718446,
+      "latestMarginMAEpp": 3.1648493207184436,
+      "marginN": 3,
+      "challengerSelected": 3,
+      "intervalN": 3,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 79,
+      "horizon": 1,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.06237954205029905,
+      "seasonalMAPE": 0.06237954205029905,
+      "marginMAEpp": 2.148248285441505,
+      "latestMarginMAEpp": 2.148248285441505,
+      "marginN": 2,
+      "challengerSelected": 0,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    },
+    {
+      "sicGroup": 79,
+      "horizon": 4,
+      "n": 2,
+      "issuers": 1,
+      "revenueMAPE": 0.03844768341293309,
+      "seasonalMAPE": 0.03844768341293309,
+      "marginMAEpp": 0.9663702322882814,
+      "latestMarginMAEpp": 0.96637023228828,
+      "marginN": 2,
+      "challengerSelected": 0,
+      "intervalN": 2,
+      "nominalCoverage": 0.8,
+      "observedPointCoverage": 1
+    }
+  ],
+  "pairedUncertainty": [
+    {
+      "horizon": 1,
+      "method": "Paired issuer-cluster bootstrap; 1,000 resamples; percentage-error difference seasonal minus challenger",
+      "low95": 0.012507584749290047,
+      "high95": 0.027518644005408238,
+      "issuers": 131
+    },
+    {
+      "horizon": 4,
+      "method": "Paired issuer-cluster bootstrap; 1,000 resamples; percentage-error difference seasonal minus challenger",
+      "low95": 0.00946590145475632,
+      "high95": 0.026143738334263457,
+      "issuers": 130
+    }
+  ],
+  "coverage": [
+    {
+      "symbol": "AAPL",
+      "cik": 320193,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "MSFT",
+      "cik": 789019,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "NVDA",
+      "cik": 1045810,
+      "quarters": 64,
+      "folds": 60
+    },
+    {
+      "symbol": "COST",
+      "cik": 909832,
+      "quarters": 61,
+      "folds": 33
+    },
+    {
+      "symbol": "XOM",
+      "cik": 2115436,
+      "quarters": 38,
+      "folds": 57
+    },
+    {
+      "symbol": "GOOGL",
+      "cik": 1652044,
+      "quarters": 48,
+      "folds": 50
+    },
+    {
+      "symbol": "META",
+      "cik": 1326801,
+      "quarters": 61,
+      "folds": 71
+    },
+    {
+      "symbol": "AMZN",
+      "cik": 1018724,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ORCL",
+      "cik": 1341439,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "ADBE",
+      "cik": 796343,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "CRM",
+      "cik": 1108524,
+      "quarters": 64,
+      "folds": 57
+    },
+    {
+      "symbol": "INTU",
+      "cik": 896878,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "NOW",
+      "cik": 1373715,
+      "quarters": 61,
+      "folds": 71
+    },
+    {
+      "symbol": "IBM",
+      "cik": 51143,
+      "quarters": 63,
+      "folds": 71
+    },
+    {
+      "symbol": "CSCO",
+      "cik": 858877,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "HPQ",
+      "cik": 47217,
+      "quarters": 63,
+      "folds": 73
+    },
+    {
+      "symbol": "DELL",
+      "cik": 1571996,
+      "quarters": 46,
+      "folds": 73
+    },
+    {
+      "symbol": "HPE",
+      "cik": 1645590,
+      "quarters": 46,
+      "folds": 73
+    },
+    {
+      "symbol": "AMD",
+      "cik": 2488,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "AVGO",
+      "cik": 1730168,
+      "quarters": 39,
+      "folds": 59
+    },
+    {
+      "symbol": "QCOM",
+      "cik": 804328,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "INTC",
+      "cik": 50863,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "TXN",
+      "cik": 97476,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "MU",
+      "cik": 723125,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "AMAT",
+      "cik": 6951,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "LRCX",
+      "cik": 707549,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "KLAC",
+      "cik": 319201,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ADI",
+      "cik": 6281,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "MCHP",
+      "cik": 827054,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "NXPI",
+      "cik": 1413447,
+      "quarters": 31,
+      "folds": 43
+    },
+    {
+      "symbol": "WMT",
+      "cik": 104169,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "TGT",
+      "cik": 27419,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "KR",
+      "cik": 56873,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "DG",
+      "cik": 29534,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "DLTR",
+      "cik": 935703,
+      "quarters": 63,
+      "folds": 66
+    },
+    {
+      "symbol": "HD",
+      "cik": 354950,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "LOW",
+      "cik": 60667,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "TJX",
+      "cik": 109198,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "ROST",
+      "cik": 745732,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "BBY",
+      "cik": 764478,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "MCD",
+      "cik": 63908,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "SBUX",
+      "cik": 829224,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "YUM",
+      "cik": 1041061,
+      "quarters": 62,
+      "folds": 49
+    },
+    {
+      "symbol": "CMG",
+      "cik": 1058090,
+      "quarters": 38,
+      "folds": 57
+    },
+    {
+      "symbol": "DRI",
+      "cik": 940944,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "NKE",
+      "cik": 320187,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "LULU",
+      "cik": 1397187,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "DECK",
+      "cik": 910521,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "CROX",
+      "cik": 1334036,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "VFC",
+      "cik": 103379,
+      "quarters": 64,
+      "folds": 56
+    },
+    {
+      "symbol": "PG",
+      "cik": 80424,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "CL",
+      "cik": 21665,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "KMB",
+      "cik": 55785,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "KO",
+      "cik": 21344,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "PEP",
+      "cik": 77476,
+      "quarters": 61,
+      "folds": 38
+    },
+    {
+      "symbol": "MDLZ",
+      "cik": 1103982,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "GIS",
+      "cik": 40704,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "KHC",
+      "cik": 1637459,
+      "quarters": 50,
+      "folds": 62
+    },
+    {
+      "symbol": "CPB",
+      "cik": 16732,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "HSY",
+      "cik": 47111,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "JNJ",
+      "cik": 200406,
+      "quarters": 64,
+      "folds": 75
+    },
+    {
+      "symbol": "MRK",
+      "cik": 310158,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "PFE",
+      "cik": 78003,
+      "quarters": 64,
+      "folds": 60
+    },
+    {
+      "symbol": "LLY",
+      "cik": 59478,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ABBV",
+      "cik": 1551152,
+      "quarters": 58,
+      "folds": 71
+    },
+    {
+      "symbol": "BMY",
+      "cik": 14272,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "AMGN",
+      "cik": 318154,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "GILD",
+      "cik": 882095,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "REGN",
+      "cik": 872589,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "VRTX",
+      "cik": 875320,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ABT",
+      "cik": 1800,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "MDT",
+      "cik": 1613103,
+      "quarters": 53,
+      "folds": 73
+    },
+    {
+      "symbol": "BSX",
+      "cik": 885725,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "SYK",
+      "cik": 310764,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ISRG",
+      "cik": 1035267,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "TMO",
+      "cik": 97745,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "DHR",
+      "cik": 313616,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "CVS",
+      "cik": 64803,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "UNH",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "HUM",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "CI",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "ELV",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "CAT",
+      "cik": 18230,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "DE",
+      "cik": 315189,
+      "quarters": 63,
+      "folds": 63
+    },
+    {
+      "symbol": "HON",
+      "cik": 773840,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "GE",
+      "cik": 40545,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "RTX",
+      "cik": 101829,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "BA",
+      "cik": 12927,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "LMT",
+      "cik": 936468,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "NOC",
+      "cik": 1133421,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "GD",
+      "cik": 40533,
+      "quarters": 64,
+      "folds": 57
+    },
+    {
+      "symbol": "ETN",
+      "cik": 1551182,
+      "quarters": 58,
+      "folds": 71
+    },
+    {
+      "symbol": "EMR",
+      "cik": 32604,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "ITW",
+      "cik": 49826,
+      "quarters": 62,
+      "folds": 42
+    },
+    {
+      "symbol": "MMM",
+      "cik": 66740,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "CVX",
+      "cik": 93410,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "COP",
+      "cik": 1163165,
+      "quarters": 63,
+      "folds": 71
+    },
+    {
+      "symbol": "EOG",
+      "cik": 821189,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "OXY",
+      "cik": 797468,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "SLB",
+      "cik": 87347,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "HAL",
+      "cik": 45012,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "VLO",
+      "cik": 1035002,
+      "quarters": 38,
+      "folds": 57
+    },
+    {
+      "symbol": "MPC",
+      "cik": 1510295,
+      "quarters": 64,
+      "folds": 57
+    },
+    {
+      "symbol": "PSX",
+      "cik": 1534701,
+      "quarters": 62,
+      "folds": 71
+    },
+    {
+      "symbol": "NEE",
+      "cik": 753308,
+      "quarters": 55,
+      "folds": 47
+    },
+    {
+      "symbol": "DUK",
+      "cik": 1326160,
+      "quarters": 64,
+      "folds": 47
+    },
+    {
+      "symbol": "SO",
+      "cik": 92122,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "AEP",
+      "cik": 4904,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "EXC",
+      "cik": 1109357,
+      "quarters": 63,
+      "folds": 62
+    },
+    {
+      "symbol": "XEL",
+      "cik": 72903,
+      "quarters": 46,
+      "folds": 17
+    },
+    {
+      "symbol": "ED",
+      "cik": 1047862,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "SRE",
+      "cik": 1032208,
+      "quarters": 61,
+      "folds": 69
+    },
+    {
+      "symbol": "D",
+      "cik": 715957,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "TSLA",
+      "cik": 1318605,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "GM",
+      "cik": 1467858,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "F",
+      "cik": 37996,
+      "quarters": 64,
+      "folds": 69
+    },
+    {
+      "symbol": "RIVN",
+      "cik": 1874178,
+      "quarters": 20,
+      "folds": 21
+    },
+    {
+      "symbol": "LCID",
+      "cik": 1811210,
+      "quarters": 24,
+      "folds": 18
+    },
+    {
+      "symbol": "TM",
+      "cik": 1094517,
+      "quarters": 0,
+      "folds": 0
+    },
+    {
+      "symbol": "STLA",
+      "cik": 1605484,
+      "quarters": 0,
+      "folds": 0
+    },
+    {
+      "symbol": "UPS",
+      "cik": 1090727,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "FDX",
+      "cik": 1048911,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "DAL",
+      "cik": 27904,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "UAL",
+      "cik": 100517,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "AAL",
+      "cik": 6201,
+      "quarters": 54,
+      "folds": 71
+    },
+    {
+      "symbol": "LUV",
+      "cik": 92380,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "UNP",
+      "cik": 100885,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "CSX",
+      "cik": 277948,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "NSC",
+      "cik": 702165,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "T",
+      "cik": 732717,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "VZ",
+      "cik": 732712,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "TMUS",
+      "cik": 1283699,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "CHTR",
+      "cik": 1091667,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "CMCSA",
+      "cik": 1166691,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "DIS",
+      "cik": 1744489,
+      "quarters": 35,
+      "folds": 51
+    },
+    {
+      "symbol": "NFLX",
+      "cik": 1065280,
+      "quarters": 64,
+      "folds": 73
+    },
+    {
+      "symbol": "WBD",
+      "cik": 1437107,
+      "quarters": 64,
+      "folds": 71
+    },
+    {
+      "symbol": "PARA",
+      "cik": 1826011,
+      "quarters": 14,
+      "folds": 9
+    },
+    {
+      "symbol": "PLD",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "AMT",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "JPM",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "BAC",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "WFC",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "GS",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "MS",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "C",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "AIG",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "MET",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "PRU",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "ALL",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "CB",
+      "error": "Specialized model required",
+      "folds": 0
+    },
+    {
+      "symbol": "BBBY-historical",
+      "cik": 886158,
+      "quarters": 59,
+      "folds": 45
+    },
+    {
+      "symbol": "SHLD-historical",
+      "cik": 1310067,
+      "quarters": 38,
+      "folds": 11
+    },
+    {
+      "symbol": "WBA-historical",
+      "cik": 1618921,
+      "quarters": 47,
+      "folds": 63
+    }
+  ],
+  "hashes": {
+    "src/accounting.js": "07f8c2439f723b41067cf50c725408e901b7c820dfe4bef44b01194a2299f839",
+    "public/prediction.js": "ce6bc7e428bcbe803d2b308c1ef663877770c86fb6aaf9537992475a8b21e659",
+    "scripts/forecast-protocol.json": "b07e7e7cbdcb234bb98822d938c92d6d30aedfda6c863971b3c4c143eaeead27",
+    "scripts/validate-quarterly.mjs": "23937a0f20c61326525f3816b140aab7be18987c5e77559c463955f7e813d5e4"
+  },
+  "limitations": [
+    "Evaluation universe was used in an older annual test. Only 2026 targets are new; this is not a fresh-universe experiment.",
+    "Current companyfacts preserve filing dates but are not immutable historical data vintages.",
+    "Overlapping forecast windows and repeated companies create correlated cases.",
+    "No changes to candidates or selection thresholds after looking at 2026 outcomes without a new protocol and new future evaluation."
+  ]
+}

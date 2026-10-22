@@ -1,5 +1,27 @@
 # Forecast validation contracts
 
+## Version 0.3 quarterly evaluation
+
+See `reports/2026-10-21-v03/REPORT.md`, detailed `validation.json`, the public `public/validation/quarterly.json`, and the frozen selection rules in `scripts/forecast-protocol.json`. The first quarterly run reserved 2026 outcomes, which were absent from the older annual experiment. It is a new temporal target, not a new issuer universe. No candidate/threshold tuning was done after inspecting 2026 results. To change selection, register a new protocol and collect new future outcomes.
+
+`npm run validate:quarterly` reads the cached SEC archive created by `npm run validate`. It filters each origin by first revenue filing date, reconstructs discrete quarterly flows as of that date, and scores target actuals available at their first revenue filing. Quarter 4 derives from annual minus nine months. A missing period breaks the consecutive history. Quarterly operating forecasts include loss-making origins, while FCFF valuation still refuses unsupported loss situations. This differs from v0.2's annual/profitable-origin test; the results are not a direct v0.2/v0.3 comparison.
+
+Compare next-quarter revenue and the sum of the next four quarters against the same seasonal forecast. Margins compare against the latest available quarter margin. The preregistered gate requires both revenue errors to improve, margin MAE not to worsen by more than 0.1 percentage point and at least 100 cases each. It passed. Sector results retain regressions; issuer-cluster paired bootstrap intervals account for repeated cases within an issuer (not every cross-company/macroeconomic dependence). Marginal nominal 80% ranges are checked separately at horizons 1 and 4; four-quarter aggregate point error and fourth-quarter marginal coverage are different measures.
+
+Company Forecast accuracy panels show in-history selection diagnostics and prequential historical-error ranges. These are not an independent holdout. At least 12 errors are required to publish a nominal 80% range. Published coverage is empirical, not guaranteed future coverage. Optional validated LLM guidance scenarios do not inherit these ranges and are excluded from the historical evaluation.
+
+## Prospective quarterly scoring
+
+Completed research vintages now include `forecastSnapshot.quarterly` and an optional separate `quarterlyGuidance`, with the forecast period start, four estimated fiscal ends, numerical predictions, selected model and guidance flag. To score matured operating outcomes:
+
+```sh
+node scripts/score-quarterly-vintages.mjs exports.json quarterly-outcomes.json scored.json
+```
+
+Each outcome needs `symbol`, exact `forecastHash`, `horizonQuarters` (1–4), `periodStart`, `periodEnd`, `actualsFiledAt`, `actualsSource`, `revenue` and optional `ebit`. Amounts cover the aggregate period from vintage periodStart through the selected quarter end, in USD millions. Period start must match exactly and end within eight days to accommodate estimated fiscal calendars. Outcomes filed after the scoring date or before period end are rejected. Set optional `variant` to `guidance` to score the separately frozen guidance scenario; default `statistical` scores the production default. Guidance use remains attached to each score. Unmatured forecasts are unscored, not failures. Quarterly scoring does not measure FCFF or returns.
+
+## Archived version 0.2 annual evaluation
+
 The expanded report is `reports/2026-10-21-v02/REPORT.md`; detailed per-fold outcomes and coverage are in `validation.json`. `public/validation/latest.json` contains the public metrics and all requested issuers, including coverage failures.
 
 The operating test requests 154 current/historical issuers. It excludes specialized financial/real-estate models using SEC SIC and excludes loss-making origins because the app refuses their going-concern FCFF. These exclusions are recorded before observing the target. Calibration targets precede 2023; held-out targets are 2023–2025. Inputs use filing dates at or before the original annual filing. Target actuals are read as of their first annual filing. Fiscal stubs are not annualized.
@@ -10,7 +32,7 @@ Revenue MAPE and operating-margin error are compared with frozen v0.1, flat reve
 
 CFO minus capex is not actual FCFF. No proxy FCFF accuracy or share-price agreement is called predictive accuracy. The present test has no licensed point-in-time market/credit/ERP archive or complete delisting-return history, so investment alpha and total-return accuracy are unmeasured.
 
-## Prospective LLM vintages
+## Earlier annual/return vintage format (v0.2)
 
 Completed research stores an immutable initial vintage, including issued time, filing snapshot, source references, model/research versions, original assumptions, original forecast (or blocking errors) and a SHA-256 input fingerprint. JSON exports retain it even if a user later edits assumptions. Do not use today's LLM to manufacture a historical forecast: training-data leakage cannot be prevented by merely asking it to pretend a historical date.
 

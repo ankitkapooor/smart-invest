@@ -1,0 +1,99 @@
+[
+  {
+    "symbol": "AAPL",
+    "origin": "https://valuelens.ankitkapoor.me",
+    "version": "0.3.0",
+    "ms": 2220,
+    "quarterlyHistory": 64,
+    "forecasts": 4,
+    "method": "seasonal",
+    "segments": [
+      "Service",
+      "IPhone",
+      "Mac",
+      "IPad",
+      "Wearables Homeand Accessories"
+    ],
+    "segmentStatus": "reconciled",
+    "margin": 0.32449114381267485,
+    "valuationErrors": []
+  },
+  {
+    "symbol": "MSFT",
+    "origin": "https://valuelens.ankitkapoor.me",
+    "version": "0.3.0",
+    "ms": 1157,
+    "quarterlyHistory": 64,
+    "forecasts": 4,
+    "method": "recent-trend",
+    "segments": [
+      "Productivity And Business Processes",
+      "Intelligent Cloud",
+      "More Personal Computing"
+    ],
+    "segmentStatus": "reconciled",
+    "margin": 0.467103202245384,
+    "valuationErrors": [
+      "Missing required financial input: nwc.",
+      "Missing required financial input: debt.",
+      "Missing or invalid assumption: assetBeta.",
+      "Review rate, beta, reinvestment, stress, reserve, cost, and safety assumptions."
+    ]
+  },
+  {
+    "symbol": "NVDA",
+    "origin": "https://valuelens.ankitkapoor.me",
+    "version": "0.3.0",
+    "ms": 933,
+    "quarterlyHistory": 64,
+    "forecasts": 4,
+    "method": "damped-trend",
+    "segments": [
+      "Compute And Networking Segment",
+      "Graphics Segment"
+    ],
+    "segmentStatus": "reconciled",
+    "margin": 0.6623710000935346,
+    "valuationErrors": []
+  },
+  {
+    "symbol": "COST",
+    "origin": "https://valuelens.ankitkapoor.me",
+    "version": "0.3.0",
+    "ms": 1126,
+    "quarterlyHistory": 61,
+    "forecasts": 4,
+    "method": "seasonal",
+    "segments": [
+      "United States",
+      "Canada",
+      "Other International"
+    ],
+    "segmentStatus": "reconciled",
+    "margin": 0.03970832506294203,
+    "valuationErrors": [
+      "Missing required financial input: nwc.",
+      "Missing required financial input: debt.",
+      "Missing or invalid assumption: nwc."
+    ]
+  },
+  {
+    "symbol": "XOM",
+    "origin": "https://valuelens.ankitkapoor.me",
+    "version": "0.3.0",
+    "ms": 1486,
+    "quarterlyHistory": 38,
+    "forecasts": 4,
+    "method": "seasonal",
+    "segmentStatus": "unavailable",
+    "margin": null,
+    "valuationErrors": [
+      "Missing required financial input: ebit.",
+      "Missing required financial input: nwc.",
+      "Missing required financial input: cash.",
+      "Missing or invalid assumption: margin.",
+      "Missing or invalid assumption: nwc.",
+      "Missing or invalid assumption: stressMargin."
+    ]
+  }
+]

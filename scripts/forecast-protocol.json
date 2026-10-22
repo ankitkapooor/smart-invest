@@ -1,0 +1,13 @@
+{
+  "version": "0.3.0",
+  "registeredAt": "2026-10-21",
+  "frozenBeforeFirstQuarterlyEvaluation": true,
+  "developmentTargetEnds": "Before 2026-01-01; prior annual holdout results already inspected",
+  "evaluationTargetEnds": "2026-01-01 through 2026-10-21, only outcomes filed by cutoff",
+  "asOf": "2026-10-21",
+  "scope": "Discrete quarterly revenue and operating margin; no FCFF, share-price or investment-return accuracy claim",
+  "methods": ["seasonal", "damped-trend", "recent-trend"],
+  "selection": "Issuer-specific rolling four-quarter aggregate revenue MAPE. At least four completed folds and 5% relative improvement to replace seasonal. Margin uses rolling aggregate margin MAE with the same gate.",
+  "releaseGate": "On 2026 outcomes, next-quarter revenue MAPE and next-four-quarter aggregate revenue MAPE must each beat seasonal; margin MAE must not worsen by more than 0.1 percentage point. At least 100 cases per horizon. Failures retain the seasonal benchmark as production default.",
+  "limitations": ["Evaluation universe was used in an older annual test. Only 2026 targets are new; this is not a fresh-universe experiment.", "Current companyfacts preserve filing dates but are not immutable historical data vintages.", "Overlapping forecast windows and repeated companies create correlated cases.", "No changes to candidates or selection thresholds after looking at 2026 outcomes without a new protocol and new future evaluation."]
+}

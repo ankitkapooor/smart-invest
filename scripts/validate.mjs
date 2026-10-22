@@ -2,7 +2,7 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {financials,CONTINUITY,mergePredecessor,TAGS,durationDays} from '../src/accounting.js';
-import {defaults,forecast} from '../public/model.js';
+import {defaults,forecast} from './baseline/model-v02.js';
 import {financials as oldFinancials} from './baseline/data-v01.js';
 import {defaults as oldDefaults,forecast as oldForecast} from './baseline/model-v01.js';
 const AS_OF='2026-10-21',cache='/private/tmp/valuelens-validation-v02';

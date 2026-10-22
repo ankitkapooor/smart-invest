@@ -21,12 +21,12 @@ for(let attempt=0;attempt<80&&['starting','running'].includes(job.status);attemp
 }
 const analysis=job.analysis?analyze(job.analysis,defaults(job.analysis)):null;
 const summary={testedAt:new Date().toISOString(),origin,symbol,status:job.status,model:job.model,reasoningEffort:job.reasoningEffort,
-  sources:job.report?.sources?.length,segments:job.report?.forecast?.segments?.map(s=>s.name),peerSymbols:job.analysis?.peers?.map(p=>p.symbol),
+  sources:job.report?.sources?.length,businessDrivers:job.report?.businessDrivers?.map(s=>s.name),quarterlyForecasts:job.forecastSnapshot?.quarterly?.quarters?.length,guidance:job.guidance?.accepted?.length,peerSymbols:job.analysis?.peers?.map(p=>p.symbol),
   hFactors:job.report?.risk?.hFactors?.length,searchCalls:job.researchTrace?.searchCalls,
   errors:job.errors||[],valuationErrors:analysis?.errors||[],price:analysis?.valued?.price,
   vintageHash:job.forecastSnapshot?.inputHash,usage:job.usage};
-const folder=new URL('../reports/terra-live/',import.meta.url);await mkdir(folder,{recursive:true});
+const folder=new URL('../reports/v03-live/',import.meta.url);await mkdir(folder,{recursive:true});
 await writeFile(new URL(symbol+'-report.json',folder),JSON.stringify(job,null,2));
 await writeFile(new URL(symbol+'-summary.json',folder),JSON.stringify(summary,null,2));
 console.log(JSON.stringify(summary,null,2));
-if(job.status!=='validated'||job.errors?.length||!analysis||analysis.errors.length)process.exitCode=1;
+if(job.status!=='validated'||job.errors?.length||!analysis||analysis.errors.length||job.forecastSnapshot?.quarterly?.quarters?.length!==4)process.exitCode=1;

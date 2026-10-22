@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {financials,mergePredecessor,CONTINUITY} from '../src/accounting.js';
 import {defaults,forecast,dcf,analyze} from '../public/model.js';
-import {SCHEMA,H_NAMES,validateResearch,researchInput,verifyAccounting,applyResearch,startResearch,finishResearch,ResearchStore,researchKey,RESEARCH_MODEL,resolveFilingCitations} from '../src/research.js';
+import {SCHEMA,H_NAMES,validateResearch,researchInput,verifyAccounting,applyResearch,startResearch,finishResearch,ResearchStore,researchKey,RESEARCH_MODEL,resolveFilingCitations,verifyGuidance} from '../src/research.js';
 import worker from '../src/worker.js';
 
 const day=new Date().toISOString().slice(0,10);
@@ -16,7 +16,7 @@ const data={version:'0.2.0',symbol:'TEST',name:'Test business',asOf:day,fetchedA
 const evidence={explanation:'A researched assumption using the issuer’s dated operating disclosures and explicit competitive expectations.',sourceIds:['s1']};
 function report(){return {company:'TEST',asOf:day,modelFamily:'fcff',businessDescription:'A subscription software business with usage expansion.',modelRationale:evidence,taxRate:.25,
   sources:urls.map((url,i)=>({id:'s'+(i+1),title:'SEC filing '+i,url,publishedAt:day})),
-  forecast:{segments:[{name:'Usage',weight:.7,volumeDriver:'Paid seats',priceDriver:'Revenue per seat',volumeGrowth:[.1,.09,.08,.07,.06],priceGrowth:[.02,.02,.02,.02,.02],rationale:evidence},{name:'Maintenance',weight:.3,volumeDriver:'Installed base',priceDriver:'Renewal price',volumeGrowth:[.03,.03,.03,.03,.03],priceGrowth:[.01,.01,.01,.01,.01],rationale:evidence}],margins:Array(5).fill(.2),capexRatios:Array(5).fill(.05),daRatios:Array(5).fill(.03),nwcRatios:Array(5).fill(.1),terminalMargin:.18,terminalGrowth:.02,terminalROIC:.1,investmentRationale:evidence,terminalRationale:evidence},
+  forecast:null,businessDrivers:[{name:'Subscriptions',description:'Reported subscription revenue; unit pricing is undisclosed.',observability:'reported',sourceIds:['s1']}],guidance:[],
   peers:[1,2,3].map(i=>({symbol:'P'+i,rationale:evidence})),
   risk:{revenueDecline:.2,stressMargin:.1,minCoverage:3,maxDebtEbitda:3,maturities2y:20,minimumCash:20,observedDebtYield:null,bondYearsToMaturity:null,bondObservationDate:null,bondRationale:evidence,stressRationale:evidence,liquidityRationale:evidence,hFactors:H_NAMES.map(name=>({name,score:2,...evidence}))},accountingEvidence:[],uncertainties:['The forward estimates are uncalibrated.']};}
 test('company research never receives the market quote or valuation outputs',()=>{
@@ -26,14 +26,14 @@ test('strict research contract rejects invented citations, future evidence and g
   assert.deepEqual(validateResearch(report(),data,urls),[]);
   const forged=report();forged.sources[0].url='https://invented.example/';assert.ok(validateResearch(forged,data,urls).length);
   const future=report();future.sources[0].publishedAt='2099-01-01';assert.ok(validateResearch(future,data,urls).length);
-  const weights=report();weights.forecast.segments[0].weight=.9;assert.ok(validateResearch(weights,data,urls).some(e=>e.includes('weights')));
+  const invented=report();invented.forecast={growth:.9};assert.ok(validateResearch(invented,data,urls).some(e=>e.includes('forbidden')));
   const h=report();h.risk.hFactors[0].sourceIds=['absent'];assert.ok(validateResearch(h,data,urls).length);
-  const curve=report();curve.forecast.capexRatios=[.1];assert.ok(validateResearch(curve,data,urls).some(e=>e.includes('five')));
+  const driver=report();driver.businessDrivers[0].sourceIds=['absent'];assert.ok(validateResearch(driver,data,urls).some(e=>e.includes('Business driver')));
   assert.equal(SCHEMA.additionalProperties,false);
 });
-test('business-driver aggregation compounds volume and price, and pays for terminal growth smoothly',()=>{
+test('evidence-only research cannot change the fitted growth path and terminal growth remains funded',()=>{
   const r=applyResearch(data,{status:'validated',report:report(),accounting:{accepted:[]}}),a=defaults(r),rows=forecast(r.base,a);
-  assert.ok(Math.abs(rows[0].revenue-(700*1.1*1.02+300*1.03*1.01))<1e-9);
+  assert.equal(rows[0].revenue,forecast(data.base,defaults(data))[0].revenue);assert.equal(a.driverForecast,null);
   for(const row of rows)assert.ok(Math.abs(row.fcff-(row.nopat+row.da-row.capex-row.deltaNwc))<1e-9);
   const last=rows.at(-1),v=dcf(rows,.1,a.terminalGrowth,a.terminalROIC,r.base,a);
   assert.ok(Math.abs(last.reinvestment/last.nopat-a.terminalGrowth/a.terminalROIC)<1e-12);

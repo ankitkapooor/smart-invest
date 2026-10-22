@@ -1,66 +1,48 @@
 # ValueLens
 
-A transparent valuation research app for [ankitkapoor.me](https://ankitkapoor.me). [Open ValueLens](https://valuelens.ankitkapoor.me).
+Transparent valuation research for [ankitkapoor.me](https://ankitkapoor.me). [Open ValueLens](https://valuelens.ankitkapoor.me).
 
-Version 0.2 separates reported accounting, researched assumptions, deterministic valuation and measured forecast performance.
+Version 0.3 separates reported facts, fitted operating forecasts, cited research and conditional valuation. It measures quarterly revenue/margins rather than claiming that a gap from today's stock price proves accuracy.
 
-## Run and configure research
+## Run
 
 ```sh
 npm install
 npm run dev
 ```
 
-Node 22+ is required. Put `OPENAI_API_KEY=your-key` in the ignored `.dev.vars` file and restart the dev server. Do not add it to `public/` or commit it. `.env.example` documents configuration. The research model defaults to `gpt-5.6-terra` and can be changed with `OPENAI_MODEL`.
+Node 22+. The existing OpenAI key stays in the ignored `.dev.vars` locally and the encrypted `OPENAI_API_KEY` Cloudflare Worker secret in production. Never put credentials in `public/` or commit them. Research uses `gpt-5.6-terra`, low reasoning, at most six web calls and 12,000 output tokens, with ten new reports per UTC day. Cached reports do not incur another generation. Limits bound calls, not a guaranteed dollar amount.
 
-For the hosted app, use Cloudflare Dashboard → Workers & Pages → **valuelens** → Settings → Variables and Secrets → add an encrypted secret named **OPENAI_API_KEY**. Alternatively:
+## Version 0.3
 
-```sh
-npx wrangler secret put OPENAI_API_KEY
-```
+- **Quarterly accounting:** up to 64 discrete fiscal quarters, with Q2/Q3 YTD and Q4 annual amounts differenced and source provenance retained. Filing-date filters apply before subtraction. Reporting gaps prevent calendar misalignment.
+- **Fitted forecasts:** seasonal, damped-trend and recent-trend candidates. Issuer-specific rolling comparisons select revenue and margin models. A challenger requires four completed folds and at least 5% lower selection error. The production challenger is enabled only after the preregistered aggregate evaluation gate passes. Insufficient quarterly data uses annual flat revenue.
+- **Evidence-only LLM:** numerical growth/margin/investment paths are forbidden. Research extracts disclosed/estimated/undisclosed business drivers, peers, financing evidence and explicit management guidance. Guidance is an opt-in scenario and can anchor a quarter only after literal SEC quote, issuer, period, unit and bound checks. Its performance is separately unmeasured; it does not inherit fitted prediction intervals.
+- **Reported segments:** supported inline-XBRL business/product revenue partitions must reconcile to consolidated revenue. No guessed weights. Reclassifications, custom concepts and unsupported dimensions remain visible gaps. Segment-specific operating adapters are not yet implemented; production forecasts select on consolidated issuer history.
+- **Forecast audit:** four quarterly predictions, model comparisons, historical-error ranges, source quarters, reported segments, ratio choices and remaining limitations appear in Forecast accuracy. Years 2–10 are explicitly long-run valuation scenarios.
+- **Measured uncertainty:** nominal 80% marginal revenue ranges use prequential errors, with at least 12 observations. The reserved evaluation measures coverage. These are not DCF/share-price confidence intervals.
+- **Vintages:** research stores compressed immutable inputs, numerical forecasts, verified guidance, original assumptions, model version and fingerprint. New quarterly outcomes can be scored against exact vintages.
 
-The key is used only by the server. The configured model is GPT-5.6 Terra with low reasoning effort, at most six web tool calls and 12,000 output tokens per report. Research caches include the model identifier. Unit tests cover the contract and calculations; `npm run test:live -- AAPL` explicitly runs one potentially billable hosted smoke test and saves its report under `reports/terra-live/`. A cached validated report is reused without a new generation.
-
-## What changed
-
-- Accounting: period-aligned TTM, additive depreciation/intangible amortization when an aggregate is absent, debt aggregation without current-maturity double counting, separately added finance leases, noncurrent marketable securities, dilution proxy, statement identity checks and documented predecessor continuity. Missing debt is null and blocks valuation.
-- Company research: a background OpenAI Responses request researches each supported company’s actual volume/price drivers, five-year operating/investment path, competitive fade, peers, bond yields, liquidity, maturities, stress policy and all seven h judgments. There are no five-company forecast templates. The key is required to activate this step.
-- Evidence: strict structured output, date/identity/bounds checks, observed citation URLs, and literal SEC quotation/value verification for missing accounting disclosures. A citation does not establish that a forecast is correct.
-- Valuation: current capex/margins anchor the fallback, growth/margin/net reinvestment fade together to g/ROIC, and both g=0 and g>0 have matching transitions. Forecast math, beta, WACC, rating fixed points and equity bridges remain deterministic.
-- Financing: researched peer data are reloaded, recent comparable-duration observed debt yields can replace current synthetic borrowing cost, and coverage, debt/EBITDA and liquidity constrain the debt sweep. h remains an uncalibrated policy heuristic.
-- Validation: 154 requested issuers, dated historical folds, held-out years, flat/repeat-growth benchmarks, calibrated revenue intervals and visible unsupported cases. Immutable prospective LLM vintages include model version and an input hash.
-
-## Verify
+## Verification and results
 
 ```sh
 npm run check
 npm test
+npm run validate:quarterly
 npm run deploy:check
-npm run validate
+npm run test:live -- AAPL
 ```
 
-Read [the latest validation report](reports/2026-10-21-v02/REPORT.md). Its operating forecasts are the **fallback**, not live LLM forecasts. It does not establish improved prediction or investment returns. The one-year holdout revenue MAPE is 9.6%, versus 8.1% for flat revenue. Nominal 80% interval coverage is 88.1% at one year and 77.0% at three years.
+The live test may create one paid research report and saves public evidence under `reports/v03-live/`.
 
-`scripts/sanity-check.mjs` imports frozen v0.1 modules so the original five-company audit stays reproducible. `scripts/validate.mjs` writes the expanded v0.2 report and public metrics. Run `npm run snapshot -- AAPL` to refresh the labeled example.
+The [v0.3 evaluation](reports/2026-10-21-v03/REPORT.md) covers 135 issuers and 8,931 operating forecast cases. On reserved 2026 outcomes, next-quarter revenue MAPE is **9.78% vs 11.72%** for seasonal; next-four-quarter aggregate MAPE is **7.58% vs 9.35%**. Margin MAE improves too. The selection protocol predates the first quarterly evaluation; see `scripts/forecast-protocol.json`. Individual companies/sectors can perform worse. The universe overlaps the older annual test, cases are correlated, and current SEC archives are not independently proven historical vintages. LLM guidance overlays, FCFF and stock-return performance are not measured by this test.
 
-## Coverage and remaining work
+`npm run validate:quarterly` uses the previously collected SEC archive at `/private/tmp/valuelens-validation-v02`. Run `npm run validate` to populate that cache if absent. The archived v0.2 annual test now imports frozen v0.2 model/forecast modules; the original five-company audit imports frozen v0.1. Do not present these different horizons/cohorts as a direct old/new model comparison. Full metrics, coverage, sector results, paired issuer-cluster uncertainty and hashes are in the v0.3 JSON report.
 
-Automatic FCFF valuation covers profitable nonfinancial US-GAAP SEC filers with sufficient reconciled inputs and USD quotes. SEC-listed foreign issuers, banks, insurers and REITs can receive company research and model-routing explanations; specialized valuation, IFRS/local-GAAP, ADR/currency reconciliation and non-SEC global filing adapters remain unimplemented. This is not yet universal public-company coverage.
+## Scope and remaining work
 
-Unreported balances, custom tags, material option/convertible schedules and other claims may still block a valuation. Weighted diluted-minus-basic shares are only a dilution proxy. Book debt is not market debt; full tax/NOL schedules, distressed debt beta and probability-weighted APV/distress losses remain outside this edition. LLM evidence validation is not a guarantee of factual completeness or economic reasonableness.
+Automatic FCFF valuation covers profitable nonfinancial US-GAAP SEC filers with sufficient reconciled accounting and USD quotes. Operating forecasts can exist while missing debt, cash or working capital blocks valuation. Banks, insurers, REITs, IFRS, foreign currencies, ADR reconciliation and non-SEC issuers still need specialized adapters.
 
-Public-source data may be delayed. Yahoo’s chart feed is unofficial; use a licensed point-in-time feed, including delisting returns, before asserting stock-return performance or broad redistribution rights. No live LLM accuracy claim is made before prospective results mature. See [methodology](docs/METHODOLOGY.md), [key setup and deployment](docs/DEPLOYMENT.md), and [validation contracts](docs/VALIDATION.md).
+FCFF uses reported investment ratios and a disclosed transition to terminal reinvestment g/ROIC. Maintenance/growth capex, asset-cohort depreciation, acquisition/R&D capitalization, component working capital, full cash-tax/NOL schedules and option/convertible claims remain unfinished. The diluted-share proxy is not a complete option valuation. Beta, book-debt proxies, synthetic ratings and h stress policy remain conditional modeling choices. Yahoo's market feed is unofficial. Investment-performance claims require complete point-in-time total returns and a predeclared portfolio rule; no such claim is made here.
 
-## Implementation
-
-| File | Responsibility |
-|---|---|
-| `src/accounting.js` | Normalization, source records, identities and continuity registry |
-| `src/data.js` | SEC, market sources and peer ingestion |
-| `src/research.js` | LLM contract, evidence validation, quota and immutable vintages |
-| `public/forecast.js` | Business-driver aggregation and stable-state fade |
-| `public/model.js` | FCFF, CAPM, debt, WACC, capital sweep and equity valuation |
-| `src/worker.js` | Same-origin API and server configuration |
-| `public/app.js` | Research, valuation, sources and validation workspace |
-
-The original class workbook is unchanged. User watchlists stay in browser storage. Research storage contains public-company evidence and forecasts. The global durable quota defaults to ten new reports per UTC day; cached jobs do not spend another call. Limits bound calls, not a guaranteed dollar budget; configure an OpenAI project spending limit as well.
+See [methodology](docs/METHODOLOGY.md), [validation and prospective scoring](docs/VALIDATION.md), and [deployment](docs/DEPLOYMENT.md). The original class workbook is unchanged. Watchlists stay in browser storage. Research storage contains public-company evidence and forecasts.

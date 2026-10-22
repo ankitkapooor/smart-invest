@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-22T03:21:15.499Z",
+  "config": {
+    "researchConfigured": true,
+    "researchModel": "gpt-5.6-terra",
+    "researchEffort": "low",
+    "dailyResearchLimit": 10,
+    "modelVersion": "0.3.0"
+  },
+  "secretRouteStatus": 404,
+  "secretFoundInPublicOrReports": false,
+  "exampleVersion": "0.3.0",
+  "exampleQuarters": 64
+}

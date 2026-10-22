@@ -14,6 +14,9 @@ export const TAGS={
   shortInvest:['ShortTermInvestments','MarketableSecuritiesCurrent','AvailableForSaleSecuritiesCurrent','DebtSecuritiesCurrent'],
   longInvest:['MarketableSecuritiesNoncurrent','AvailableForSaleSecuritiesNoncurrent','DebtSecuritiesNoncurrent'],
   currentAssets:['AssetsCurrent'],currentLiabilities:['LiabilitiesCurrent'],
+  receivables:['AccountsReceivableNetCurrent','AccountsNotesAndOtherReceivablesNetCurrent'],
+  inventory:['InventoryNet'],payables:['AccountsPayableCurrent'],
+  deferredRevenue:['ContractWithCustomerLiabilityCurrent','DeferredRevenueCurrent'],
   longDebt:['LongTermDebtAndFinanceLeaseObligationsNoncurrent','LongTermDebtNoncurrent','LongTermDebtAndCapitalLeaseObligations'],
   currentDebt:['LongTermDebtAndFinanceLeaseObligationsCurrent','LongTermDebtCurrent'],
   totalTermDebt:['LongTermDebtAndFinanceLeaseObligationsIncludingCurrentMaturities','LongTermDebt'],
@@ -94,6 +97,7 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
   const history=ends.map(end=>{
     const row={end,year:Number(end.slice(0,4)),provenance:{}};
     for(const key of flows){const m=metric(facts,key,{end,annual:true,cik,asOf});row[key]=m.value;if(m.records.length)row.provenance[key]=m.records;}
+    Object.assign(row,workingCapitalAt(facts,end,cik,asOf));
     return row;
   }).filter(r=>r.revenue!==null);
   if(history.length<3)throw new DataError('At least three full comparable fiscal years are required. Fiscal stubs are excluded; verify predecessor/successor identity.');
@@ -160,5 +164,53 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
   } else quality.push({severity:'review',code:'cash-identity-missing',text:'Complete cash-flow/FX reconciliation unavailable; no omitted FX amount assumed zero.'});
   quality.push({severity:'review',text:'Operating leases remain operating expenses. Debt uses carrying principal; lease interest, pensions, minority/preferred claims and restricted securities require a reconciled footnote review.'});
   if((Date.parse(asOf)-Date.parse(base.end))/864e5>200)critical('stale-financials','Financial base is over 200 days old.');
-  return {base,history,quality,reconciliations:checks,continuity:raw.continuity||null,accountingStandard:'US-GAAP',asOf};
+  Object.assign(base,{workingCapitalComponents:workingCapitalAt(facts,base.end,cik,asOf).components});
+  return {base,history,quarterly:quarterlyFinancials(raw,asOf),quality,reconciliations:checks,continuity:raw.continuity||null,accountingStandard:'US-GAAP',asOf};
+}
+
+function workingCapitalAt(facts,end,cik,asOf) {
+  const values={},components={},opt={end,cik,asOf};
+  for(const key of ['currentAssets','currentLiabilities','cash','shortInvest','combinedCurrentDebt','currentDebt','shortDebt','financeLeaseCurrent','receivables','inventory','payables','deferredRevenue'])values[key]=metric(facts,key,opt).value;
+  for(const key of ['receivables','inventory','payables','deferredRevenue'])components[key]=values[key];
+  const financing=values.combinedCurrentDebt??(Number.isFinite(values.currentDebt)&&Number.isFinite(values.shortDebt)?values.currentDebt+values.shortDebt+(values.financeLeaseCurrent??0):null);
+  const inputs=[values.currentAssets,values.currentLiabilities,values.cash,values.shortInvest,financing];
+  return {nwc:inputs.every(Number.isFinite)?values.currentAssets-values.cash-values.shortInvest-values.currentLiabilities+financing:null,components};
+}
+
+// Discrete fiscal quarters, never mislabeled YTD flows. Q4 = FY minus nine months.
+// All source records are filtered by filing date before any subtraction.
+export function quarterlyFinancials(raw,asOf=new Date().toISOString().slice(0,10)) {
+  const facts=raw.facts?.['us-gaap']||{},cik=raw.cik;
+  const available=new Map();
+  const eligible=key=>{if(!available.has(key))available.set(key,(TAGS[key]||[]).flatMap(tag=>(facts[tag]?.units?.USD||[]).filter(f=>forms.has(f.form)&&f.start&&f.end<=asOf&&f.filed<=asOf&&Number.isFinite(f.val)).map(f=>({...f,tag})))
+    .sort((a,b)=>b.filed.localeCompare(a.filed)||(TAGS[key].indexOf(a.tag)-TAGS[key].indexOf(b.tag))));return available.get(key);};
+  const revenue=eligible('revenue');
+  const ends=[...new Set(revenue.filter(f=>durationDays(f)>=60&&durationDays(f)<=380).map(f=>f.end))].sort().slice(-64);
+  const rows=[];
+  for(const end of ends) {
+    const row={end,provenance:{}};
+    for(const key of ['revenue','ebit','capex','da','cfo','interest','sbc']) {
+      const fs=eligible(key),direct=fs.find(f=>f.end===end&&durationDays(f)>=60&&durationDays(f)<=115);
+      let value=null,records=[];
+      if(direct){value=direct.val/1e6;records=[record(direct,direct.tag,cik,'USD')];if(key==='revenue')row.start=direct.start;}
+      else {
+        for(const current of fs.filter(f=>f.end===end&&durationDays(f)>115&&durationDays(f)<=380)) {
+          const prior=fs.find(f=>f.start===current.start&&f.end<end&&f.tag===current.tag&&(Date.parse(end)-Date.parse(f.end))/864e5>=60&&(Date.parse(end)-Date.parse(f.end))/864e5<=115);
+          if(!prior)continue;
+          value=(current.val-prior.val)/1e6;
+          records=[{...record(current,current.tag,cik,'USD'),operation:'add cumulative'},{...record(prior,prior.tag,cik,'USD'),operation:'subtract cumulative'}];
+          if(key==='revenue')row.start=new Date(Date.parse(prior.end)+864e5).toISOString().slice(0,10);
+          break;
+        }
+      }
+      row[key]=value;if(records.length)row.provenance[key]=records;
+    }
+    if(!(row.revenue>0)||!row.start)continue;
+    row.availableAt=row.provenance.revenue.reduce((latest,r)=>r.filed>latest?r.filed:latest,'');
+    Object.assign(row,workingCapitalAt(facts,end,cik,asOf));
+    row.margin=Number.isFinite(row.ebit)?row.ebit/row.revenue:null;
+    row.basis=row.provenance.revenue.length===1?'Reported discrete quarter':'Cumulative statements differenced into a discrete quarter';
+    rows.push(row);
+  }
+  return rows;
 }

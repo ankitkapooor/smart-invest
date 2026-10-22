@@ -1,0 +1,89 @@
+[
+  {
+    "symbol": "AAPL",
+    "version": "0.3.0",
+    "financialEnd": "2026-06-27",
+    "quarterlyHistory": 64,
+    "forecastCount": 4,
+    "revenueMethod": "seasonal",
+    "marginMethod": "median-4",
+    "segmentStatus": "unavailable",
+    "firstGrowth": 0,
+    "nearMargin": 0.32449114381267485,
+    "forecastBasis": "Quarterly model selected on issuer history",
+    "valuationErrors": []
+  },
+  {
+    "symbol": "MSFT",
+    "version": "0.3.0",
+    "financialEnd": "2026-06-30",
+    "quarterlyHistory": 64,
+    "forecastCount": 4,
+    "revenueMethod": "recent-trend",
+    "marginMethod": "median-4",
+    "segmentStatus": "reconciled",
+    "segmentCount": 3,
+    "firstGrowth": 0.18021706999975606,
+    "nearMargin": 0.467103202245384,
+    "forecastBasis": "Quarterly model selected on issuer history",
+    "valuationErrors": [
+      "Missing required financial input: nwc.",
+      "Missing required financial input: debt.",
+      "Missing or invalid assumption: assetBeta.",
+      "Review rate, beta, reinvestment, stress, reserve, cost, and safety assumptions."
+    ]
+  },
+  {
+    "symbol": "NVDA",
+    "version": "0.3.0",
+    "financialEnd": "2026-07-26",
+    "quarterlyHistory": 64,
+    "forecastCount": 4,
+    "revenueMethod": "damped-trend",
+    "marginMethod": "last",
+    "segmentStatus": "unavailable",
+    "firstGrowth": 0.3383542437473941,
+    "nearMargin": 0.6623710000935346,
+    "forecastBasis": "Quarterly model selected on issuer history",
+    "valuationErrors": []
+  },
+  {
+    "symbol": "COST",
+    "version": "0.3.0",
+    "financialEnd": "2026-08-30",
+    "quarterlyHistory": 61,
+    "forecastCount": 4,
+    "revenueMethod": "seasonal",
+    "marginMethod": "last",
+    "segmentStatus": "unavailable",
+    "firstGrowth": 0,
+    "nearMargin": 0.03970832506294203,
+    "forecastBasis": "Quarterly model selected on issuer history",
+    "valuationErrors": [
+      "Missing required financial input: nwc.",
+      "Missing required financial input: debt.",
+      "Missing or invalid assumption: nwc."
+    ]
+  },
+  {
+    "symbol": "XOM",
+    "version": "0.3.0",
+    "financialEnd": "2026-06-30",
+    "quarterlyHistory": 38,
+    "forecastCount": 4,
+    "revenueMethod": "seasonal",
+    "marginMethod": "last",
+    "segmentStatus": "reconciled",
+    "segmentCount": 3,
+    "firstGrowth": 0,
+    "nearMargin": 0,
+    "forecastBasis": "Quarterly model selected on issuer history",
+    "valuationErrors": [
+      "Missing required financial input: ebit.",
+      "Missing required financial input: nwc.",
+      "Missing required financial input: cash.",
+      "Missing or invalid assumption: nwc.",
+      "Missing or invalid assumption: stressMargin."
+    ]
+  }
+]

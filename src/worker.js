@@ -21,14 +21,14 @@ export default {
     const client=(request.headers.get('CF-Connecting-IP') || 'local')+'|'+url.pathname;
     if(rateLimited(client,url.pathname==='/api/search'?60:12)) return json({error:'Too many requests. Please wait one minute.'},429);
     try {
-      if(url.pathname==='/api/config')return json({researchConfigured:!!env.OPENAI_API_KEY,researchModel:env.OPENAI_MODEL||RESEARCH_MODEL,researchEffort:RESEARCH_EFFORT,dailyResearchLimit:Number(env.RESEARCH_DAILY_LIMIT)||10,modelVersion:'0.2.0'});
+      if(url.pathname==='/api/config')return json({researchConfigured:!!env.OPENAI_API_KEY,researchModel:env.OPENAI_MODEL||RESEARCH_MODEL,researchEffort:RESEARCH_EFFORT,dailyResearchLimit:Number(env.RESEARCH_DAILY_LIMIT)||10,modelVersion:'0.3.0'});
       if(url.pathname==='/api/research') {
         if(!env.OPENAI_API_KEY)return json({error:'Research is awaiting your server-side OPENAI_API_KEY. See the Research tab for setup.'},503);
         if(!env.RESEARCH)return json({error:'Research storage is unavailable.'},503);
         const store=env.RESEARCH.get(env.RESEARCH.idFromName('global-research-v1'));
         if(request.method==='GET') {
           const key=url.searchParams.get('key')||'';
-          if(!/^[A-Z0-9.\-]{1,12}:\d{4}-\d{2}-\d{2}:0\.2\.0:research-3:[a-zA-Z0-9._-]{1,80}$/.test(key))throw new DataError('Invalid research job key.');
+          if(!/^[A-Z0-9.\-]{1,12}:\d{4}-\d{2}-\d{2}:(?:0\.2\.0:research-3|0\.3\.0:research-4):[a-zA-Z0-9._-]{1,80}$/.test(key))throw new DataError('Invalid research job key.');
           const response=await store.fetch(new Request('https://research.internal/?key='+encodeURIComponent(key)));return json(await response.json(),response.status);
         }
         if(Number(request.headers.get('Content-Length'))>2048)throw new DataError('Research request too large.',413);

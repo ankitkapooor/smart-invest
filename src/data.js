@@ -1,5 +1,6 @@
 import {betaRegression, MODEL_VERSION} from '../public/model.js';
 import {financials,DataError,CONTINUITY,mergePredecessor} from './accounting.js';
+import {reportedSegments} from './segments.js';
 export {financials,pickFact,DataError} from './accounting.js';
 
 const SEC='https://data.sec.gov';
@@ -241,7 +242,7 @@ export async function loadCompany(symbol,env={},customPeers=[]) {
     try {html=await cachedFetch(filing.url,env,86400,'text');} catch {extracted.quality.push({severity:'critical',text:'10-K text unavailable. The seven h scores are placeholders pending filing review.'});}
   }
   const hFactors=filingEvidence('',filing?.url).map(f=>({...f,basis:'Pending LLM evidence review; score 2 is a visible policy placeholder, not an extracted risk judgment.'}));
-  extracted.quality.push({severity:'critical',code:'research-pending',text:'Company-specific forecasts, peer selection, borrowing costs and seven h judgments require validated LLM research.'});
+  extracted.quality.push({severity:'critical',code:'research-pending',text:'Business-driver evidence, peer selection, borrowing costs and seven h judgments require validated LLM research.'});
   if(!beta) extracted.quality.push({severity:'critical',text:'Fewer than 36 aligned adjusted monthly return observations; company regression beta unavailable.'});
   if(!quote) extracted.quality.push({severity:'critical',text:'Market quote unavailable. Enter a dated quote to explore the model; comparisons remain provisional.'});
   if(quote && extracted.base.shares*quote.price<5000) extracted.quality.push({severity:'critical',text:'Market equity is below $5 billion. The large-firm synthetic-rating table needs replacement or validation for this smaller issuer.'});
@@ -252,7 +253,7 @@ export async function loadCompany(symbol,env={},customPeers=[]) {
     extracted.quality.push({severity:'critical',text:'Market risk inputs are stale. Update risk-free rate and ERP before making a valuation judgment.'});
   return {version:MODEL_VERSION,symbol:entry.ticker,name:submission.name||entry.title,cik,sic,industry:submission.sicDescription,
     fetchedAt:new Date().toISOString(),currency:'USD',units:'USD millions; shares in millions',
-    ...extracted,quote,beta,peers,peerScreen:peerScreen.name,rates,filing,hFactors,
+    ...extracted,reportedSegments:reportedSegments(html,extracted.history,filing?.url),quote,beta,peers,peerScreen:peerScreen.name,rates,filing,hFactors,
     researchFilings,filingRegistry:filingRegistry.slice(0,60),research:{status:'not_started'},modelFamily:specialized?'specialized':extracted.history.length?'fcff':'unsupported',
     sources:[
       {name:'SEC company facts',url:`${SEC}/api/xbrl/companyfacts/CIK${cik}.json`,kind:'Structured financial statements'},

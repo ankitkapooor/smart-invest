@@ -1,6 +1,7 @@
 // Pure valuation mathematics. Money and shares are in millions; prices in USD.
 import {buildForecast} from './forecast.js';
-export const MODEL_VERSION = '0.2.0';
+import {operatingForecast} from './prediction.js';
+export const MODEL_VERSION = '0.3.0';
 export const RATINGS_SOURCE = 'https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html';
 // January 2026, large non-financial firms. Lower bounds inclusive, descending.
 export const RATINGS = [
@@ -50,21 +51,19 @@ export function solveDebt(debt, ebit, rf) {
 export function defaults(data) {
   const b=data.base, hist=data.history;
   const research=data.research?.status==='validated'?data.research.report:null;
-  const f=research?.forecast,risk=research?.risk,tax=research?.taxRate??.25;
-  const first=hist.at(-4) || hist[0] || {end:b.end,revenue:null}, last=hist.at(-1)||first;
-  const years=(Date.parse(last.end)-Date.parse(first.end))/(365.25*864e5);
-  const cagr=years>0 && first.revenue>0 ? (last.revenue/first.revenue)**(1/years)-1 : 0;
+  const risk=research?.risk,tax=research?.taxRate??.25;
+  const fitted=operatingForecast(data);
   const margins=hist.filter(r=>Number.isFinite(r.ebit)).map(r=>r.ebit/r.revenue);
   const operatingBeta=median(data.peers.filter(p=>p.beta && p.debt!==null && p.equity>0 && !p.quality?.some(q=>/debt|borrowing|lease/i.test(q)))
     .map(p=>unlever(p.beta.beta,p.debt,p.equity,tax)));
   const own=data.beta && b.debt!==null && data.quote?.price>0 && b.shares>0
     ? unlever(data.beta.beta,b.debt,data.quote.price*b.shares,tax) : null;
   return {
-    growth:f?f.segments.reduce((sum,s)=>sum+s.weight*((1+s.volumeGrowth[0])*(1+s.priceGrowth[0])-1),0):clamp(cagr,-.1,.2), margin:f?.terminalMargin ?? b.ebit/b.revenue, tax:research?.taxRate??.25,
-    driverForecast:f?{...f,status:'validated'}:null,
-    capex:b.capex/b.revenue, da:b.da/b.revenue,
-    nwc:b.nwc/b.revenue, terminalGrowth:f?.terminalGrowth??.025,
-    terminalROIC:f?.terminalROIC??clamp(data.rates.rf+(operatingBeta??own??1)*data.rates.erp,.06,.2),
+    growth:fitted.firstGrowth, margin:fitted.nearMargin, tax:research?.taxRate??.25,
+    operatingForecast:fitted,driverForecast:null,
+    capex:fitted.ratios.capex.value, da:fitted.ratios.da.value,
+    nwc:fitted.ratios.nwc.value, terminalGrowth:.025,
+    terminalROIC:clamp(data.rates.rf+(operatingBeta??own??1)*data.rates.erp,.06,.2),
     rf:data.rates.rf, erp:data.rates.erp, assetBeta:operatingBeta ?? own,
     betaBasis:operatingBeta!==null ? 'Median of available peer unlevered betas' : 'Company regression, unlevered; peer beta unavailable',
     stressDrop:risk?.revenueDecline??.1, stressMargin:risk?.stressMargin??Math.min(...margins),
@@ -162,7 +161,8 @@ export function analyze(data, a=defaults(data)) {
   ].map(c=>{
     const d=a.driverForecast,shift=c.growth-a.growth,marginShift=c.margin-a.margin;
     const driverForecast=d?{...d,segments:d.segments.map(s=>({...s,volumeGrowth:s.volumeGrowth.map(g=>Math.max(-.95,g+shift))})),margins:d.margins.map(m=>m+marginShift)}:null;
-    return {...c,...dcf(forecast(b,{...a,...c,driverForecast}),current.wacc,c.terminalGrowth,a.terminalROIC,b,a)};
+    const operatingForecast=a.operatingForecast?{...a.operatingForecast,nearMargin:a.operatingForecast.nearMargin+marginShift}:null;
+    return {...c,...dcf(forecast(b,{...a,...c,driverForecast,operatingForecast}),current.wacc,c.terminalGrowth,a.terminalROIC,b,a)};
   });
   const sensitivity=Array.from({length:5},(_,i)=>{
     const wacc=current.wacc+(i-2)*.01;
@@ -175,7 +175,7 @@ export function analyze(data, a=defaults(data)) {
   const quoteAge=data.quote?.asOf ? (Date.now()-Date.parse(data.quote.asOf))/864e5 : Infinity;
   const stale=quoteAge>5 || (Date.now()-Date.parse(b.end))/864e5>200;
   const selectedUsable=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0).length;
-  const incomplete=data.quality.some(q=>q.severity==='critical') || !current.consistent || selectedUsable<3 || !a.hReviewed || (data.version==='0.2.0'&&data.research?.status!=='validated') || rows.some(r=>r.capex<0);
+  const incomplete=data.quality.some(q=>q.severity==='critical') || !current.consistent || selectedUsable<3 || !a.hReviewed || (data.version&&data.research?.status!=='validated') || rows.some(r=>r.capex<0);
   const status=!valued || stale || incomplete || a.quoteOverride!==null ? 'Review required' : price<=buyBelow ? 'Below safety threshold' : price<valued.price ? 'Below modeled value' : 'Above modeled value';
   return {errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,
     equity,capital,currentWeight,marketPrice:price,buyBelow,status,stale,incomplete,recapCosts,adjustment,postRecap,

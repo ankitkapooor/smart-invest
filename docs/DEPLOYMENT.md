@@ -1,6 +1,6 @@
 # Cloudflare deployment and key setup
 
-The existing app is a Cloudflare Worker named `valuelens` at `valuelens.ankitkapoor.me`. `wrangler.jsonc` preserves that domain and adds a SQLite-backed `ResearchStore` Durable Object. Deploying v0.2 creates its namespace using migration `v1`.
+The existing app is a Cloudflare Worker named `valuelens` at `valuelens.ankitkapoor.me`. `wrangler.jsonc` preserves that domain and adds a SQLite-backed `ResearchStore` Durable Object. The existing namespace uses migration `v1`; v0.3 reuses it without a destructive migration. Large quarterly/research records are gzip-compressed before key-value storage, with a 120 KB compressed safety cap. Legacy uncompressed records remain readable. Cache identity includes model version 0.3.0 and research-4, so old LLM growth-path reports cannot populate new forecasts.
 
 ## Local key
 
