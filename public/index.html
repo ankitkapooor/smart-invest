@@ -3,52 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#183f35">
+  <meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1013" media="(prefers-color-scheme: dark)">
   <meta name="description" content="Independent company valuation with every cash flow, assumption and source in view. A project by Ankit Kapoor.">
-  <title>ValueLens · See what a company is worth</title>
+  <title>ValueLens</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>try{const t=localStorage.getItem('valuelens.theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch{}</script>
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
 </head>
 <body>
-  <aside class="sidebar">
-    <a href="/" class="brand" aria-label="ValueLens home"><span class="brand-icon">v<span>l</span></span><span>ValueLens<span class="brand-dot">.</span></span></a>
-    <div class="workspace-label">YOUR RESEARCH DESK</div>
-    <nav aria-label="Main navigation">
-      <button class="side-link active" data-view="overview"><span class="nav-icon">◫</span> Valuation workspace</button>
-      <button class="side-link" data-view="methodology"><span class="nav-icon">⌘</span> Our methodology</button>
-      <button class="side-link" data-view="sources"><span class="nav-icon">▤</span> Sources & audit trail</button>
-    </nav>
-    <div class="saved-label">SAVED COMPANIES <span id="saved-count">0</span></div>
-    <div id="saved-list" class="saved-list"><p>Your watchlist starts here.<br>Save a company to revisit it.</p></div>
-    <div class="sidebar-note"><span class="small-star">✳</span><p>A price is a number.<br><strong>Value is a set of assumptions.</strong></p><span>Make yours visible.</span></div>
-    <a class="portfolio-link" href="https://ankitkapoor.me" target="_blank" rel="noopener">An Ankit Kapoor project <span>↗</span></a>
-  </aside>
-  <div class="main-shell">
-    <header class="topbar">
-      <div class="breadcrumb">Research desk <span>/</span> <strong id="breadcrumb-name">Company valuation</strong></div>
-      <a href="https://ankitkapoor.me" target="_blank" rel="noopener" class="top-portfolio">Back to portfolio ↗</a>
-    </header>
+  <a class="skip-link" href="#view">Skip to analysis</a>
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="ValueLens home">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6"/><path d="M6 8.5h2.6L11 15.2l2.4-6.7H16L12.4 18h-2.8z"/><path d="M17 6h2v12h-2z" opacity=".55"/></svg>
+      <span>ValueLens</span>
+    </a>
+    <form id="search-form" class="search" role="search">
+      <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+      <label for="company-search" class="sr-only">Company name or ticker</label>
+      <input id="company-search" autocomplete="off" spellcheck="false" placeholder="Search company or ticker" aria-controls="search-results" aria-expanded="false">
+      <kbd class="search-kbd" aria-hidden="true">/</kbd>
+      <button class="search-submit" id="analyze-button" type="submit">Analyze</button>
+      <div id="search-results" class="search-results" hidden></div>
+    </form>
+    <div class="topbar-actions">
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Switch color theme">
+        <svg class="icon-sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.5A6.5 6.5 0 0 1 7.5 4a6.5 6.5 0 1 0 8.5 8.5z"/></svg>
+      </button>
+      <a href="https://ankitkapoor.me" target="_blank" rel="noopener" class="topbar-link">ankitkapoor.me</a>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar" aria-label="Sections">
+      <nav class="nav" aria-label="Analysis sections">
+        <div class="nav-group">
+          <div class="nav-label">Analysis</div>
+          <button class="nav-item" data-view="overview">Summary</button>
+          <button class="nav-item" data-view="predictions">Forecast</button>
+          <button class="nav-item" data-view="cashflows">Cash flows</button>
+          <button class="nav-item" data-view="capital">Capital structure</button>
+          <button class="nav-item" data-view="comps">Peers &amp; risk</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Evidence</div>
+          <button class="nav-item" data-view="research">Company research</button>
+          <button class="nav-item" data-view="sources">Sources</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Model</div>
+          <button class="nav-item" data-view="validation">Validation</button>
+          <button class="nav-item" data-view="methodology">Methodology</button>
+        </div>
+      </nav>
+      <div class="watchlist">
+        <div class="nav-label">Watchlist <span id="saved-count" class="count">0</span></div>
+        <div id="saved-list" class="saved-list"></div>
+      </div>
+      <p class="sidebar-foot">Not investment advice. Values are conditional on the assumptions shown.</p>
+    </aside>
+
     <main id="main">
-      <div class="intro"><div><div class="eyebrow">INDEPENDENT THINKING. VISIBLE MATH.</div><h1>Look beyond the stock price.</h1><p>A company’s value, built from the cash it can generate.</p></div><span class="version-badge"><i></i> RESEARCH EDITION</span></div>
-      <form id="search-form" class="search-box" role="search">
-        <span class="search-icon" aria-hidden="true">⌕</span><label for="company-search" class="sr-only">Company name or ticker</label>
-        <input id="company-search" autocomplete="off" placeholder="Search a public company or ticker…" aria-controls="search-results" aria-expanded="false">
-        <span class="search-hint">US-listed companies</span><button class="primary-button" id="analyze-button" type="submit">Analyze company <span>↗</span></button>
-        <div id="search-results" class="search-results" hidden></div>
-      </form>
-      <div class="quick-picks"><span>Start exploring</span><button data-symbol="AAPL">AAPL <span>Apple</span></button><button data-symbol="MSFT">MSFT <span>Microsoft</span></button><button data-symbol="NVDA">NVDA <span>NVIDIA</span></button><button data-symbol="COST">COST <span>Costco</span></button></div>
       <div id="message" role="status" aria-live="polite"></div>
-      <div id="loading" hidden><div class="loading-ring"></div><h2>Building a view of the business.</h2><p id="loading-step">Reading financial statements and matching public sources…</p><p class="muted">A fresh analysis can take 20–45 seconds. Cached sources are faster.</p></div>
+      <div id="loading" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <div>
+          <h2>Building the analysis</h2>
+          <p id="loading-step">Reading financial statements…</p>
+          <p class="loading-note">A fresh analysis takes 20–45 seconds. Cached sources are faster.</p>
+        </div>
+      </div>
       <section id="workspace" hidden>
         <div id="data-banner" class="data-banner"></div>
-        <div class="company-header"><div class="company-identity"><div id="company-monogram" class="company-monogram"></div><div><div class="company-name-line"><h2 id="company-name"></h2><span id="company-ticker" class="ticker"></span></div><p id="company-description"></p></div></div><div class="company-actions"><button id="save-company" class="text-button">☆ Save company</button><button id="export-json" class="outline-button">↓ Export analysis</button></div></div>
-        <div class="workspace-toolbar"><nav id="tabs" class="tabs" aria-label="Analysis sections"><button data-view="overview" class="active">Overview</button><button data-view="predictions">Forecast accuracy</button><button data-view="cashflows">Cash flows</button><button data-view="capital">Capital structure</button><button data-view="comps">Peer analysis</button><button data-view="research">Company research</button><button data-view="validation">Validation</button><button data-view="methodology">Methodology</button><button data-view="sources">Sources</button></nav><button id="assumptions-button" class="assumptions-button">☷ <span>Edit assumptions</span><i id="assumption-count" hidden></i></button></div>
+        <header class="company-header">
+          <div class="company-identity">
+            <div id="company-monogram" class="company-monogram" aria-hidden="true"></div>
+            <div>
+              <div class="company-name-line"><h1 id="company-name"></h1><span id="company-ticker" class="ticker"></span></div>
+              <p id="company-description"></p>
+            </div>
+          </div>
+          <div class="company-actions">
+            <button id="save-company" class="button ghost">Save</button>
+            <button id="export-json" class="button ghost">Export JSON</button>
+            <button id="assumptions-button" class="button">Assumptions <span id="assumption-count" class="badge" hidden></span></button>
+          </div>
+        </header>
         <div id="view" tabindex="-1"></div>
       </section>
-      <footer class="main-footer"><span><span class="footer-mark">vl.</span> Reason through the value.</span><span>Public evidence. Explicit judgment. No guaranteed returns.</span></footer>
+      <footer class="main-footer">
+        <span>ValueLens · Public SEC filings and market data. Quotes may be delayed.</span>
+        <span>No guaranteed returns. Not investment advice.</span>
+      </footer>
     </main>
   </div>
-  <dialog id="assumptions-dialog" aria-labelledby="assumptions-title"><form method="dialog" class="dialog-header"><div><div class="eyebrow">MAKE THE MODEL YOURS</div><h2 id="assumptions-title">The assumptions.</h2></div><button class="icon-button" aria-label="Close assumptions">×</button></form><div class="dialog-body"><p class="muted">Changes recalculate locally. These are hypotheses to examine, not management guidance.</p><div id="assumption-fields"></div><div id="assumption-error" role="alert"></div></div><div class="dialog-footer"><button id="reset-assumptions" class="text-button">Reset to evidence baseline</button><button id="apply-assumptions" class="primary-button">Apply assumptions ↗</button></div></dialog>
+
+  <dialog id="assumptions-dialog" aria-labelledby="assumptions-title">
+    <form method="dialog" class="dialog-header">
+      <div><h2 id="assumptions-title">Assumptions</h2><p>Changes recalculate locally. These are hypotheses to examine, not management guidance.</p></div>
+      <button class="icon-button" aria-label="Close assumptions"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button>
+    </form>
+    <div class="dialog-body"><div id="assumption-fields"></div><div id="assumption-error" role="alert"></div></div>
+    <div class="dialog-footer"><button id="reset-assumptions" class="button ghost">Reset to baseline</button><button id="apply-assumptions" class="button primary">Apply</button></div>
+  </dialog>
 </body>
 </html>
