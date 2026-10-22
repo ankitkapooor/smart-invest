@@ -1,0 +1,315 @@
+{
+  "auditedAt": "2026-10-22T04:50:43.517Z",
+  "sourceVersion": "67ae41b",
+  "scope": "Current-snapshot arithmetic and assumption audit. Not a prediction or investment-return evaluation.",
+  "rows": [
+    {
+      "symbol": "AAPL",
+      "sourceFinancialEnd": "2026-06-27",
+      "fetchedAt": "2026-10-22T04:43:54.506Z",
+      "quote": {
+        "price": 343.99,
+        "currency": "USD",
+        "asOf": "2026-10-21T20:00:01.000Z",
+        "exchange": "NMS",
+        "source": "Yahoo Finance chart (unofficial; delayed availability)",
+        "url": "https://finance.yahoo.com/quote/AAPL/"
+      },
+      "modeledPrice": 87.79446278699015,
+      "gap": -0.7447761191110494,
+      "errors": [],
+      "diagnostics": {
+        "method": "seasonal",
+        "flatBenchmark": true,
+        "reportedGrowth": 0.14242398286937896,
+        "initialGrowth": 0,
+        "terminalROIC": 0.09812848642030025,
+        "wacc": 0.09777306204061009,
+        "terminalExcessReturn": 0.0003554243796901613,
+        "yearOneCapex": 14262.880099288497,
+        "yearTenCapex": 49205.75075283687,
+        "yearTenCapexBeforeTransition": 16142.83310781681,
+        "yearTenCapexAdjustment": 33062.91764502006,
+        "recentGrowthScenario": {
+          "initialGrowth": 0.14242398286937896,
+          "price": 150.69162825519948,
+          "basis": "Illustration only: repeat the observed trailing revenue growth in year one, then use the existing fade. Unvalidated and excluded from default selection."
+        },
+        "reverse": {
+          "bounds": [
+            -0.5,
+            1
+          ],
+          "targetPrice": 343.99,
+          "wacc": 0.09777306204061009,
+          "terminalROIC": 0.09812848642030025,
+          "terminalGrowth": 0.025,
+          "heldFixed": "Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.",
+          "status": "solved",
+          "initialGrowth": 0.37866118401288984,
+          "matchedPrice": 343.9900003319809
+        },
+        "arithmetic": {
+          "cashFlowMaxResidual": 2.9103830456733704e-11,
+          "discountingResidual": 0,
+          "equityBridgeResidual": 0,
+          "sharePriceResidual": 0,
+          "passed": true
+        },
+        "scope": "Arithmetic checks establish internal consistency only. Near-term operating tests do not validate FCFF, ten-year assumptions or share prices."
+      },
+      "financialSources": [
+        {
+          "name": "SEC company facts",
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+          "kind": "Structured financial statements"
+        },
+        {
+          "name": "Latest 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+          "kind": "Filed 2025-10-31"
+        }
+      ]
+    },
+    {
+      "symbol": "MSFT",
+      "sourceFinancialEnd": "2026-06-30",
+      "fetchedAt": "2026-10-22T04:44:53.429Z",
+      "quote": {
+        "price": 532.95,
+        "currency": "USD",
+        "asOf": "2026-10-21T20:00:01.000Z",
+        "exchange": "NMS",
+        "source": "Yahoo Finance chart (unofficial; delayed availability)",
+        "url": "https://finance.yahoo.com/quote/MSFT/"
+      },
+      "modeledPrice": 251.8092865886324,
+      "gap": -0.5275179912024911,
+      "errors": [],
+      "diagnostics": {
+        "method": "recent-trend",
+        "flatBenchmark": false,
+        "reportedGrowth": 0.17788686799846665,
+        "initialGrowth": 0.18021706999975606,
+        "terminalROIC": 0.09624970886567796,
+        "wacc": 0.09569589309641817,
+        "terminalExcessReturn": 0.0005538157692597939,
+        "yearOneCapex": 136843.8088323317,
+        "yearTenCapex": 182905.44797127636,
+        "yearTenCapexBeforeTransition": 303869.1830743128,
+        "yearTenCapexAdjustment": -120963.73510303645,
+        "recentGrowthScenario": {
+          "initialGrowth": 0.17788686799846665,
+          "price": 249.46066424592289,
+          "basis": "Illustration only: repeat the observed trailing revenue growth in year one, then use the existing fade. Unvalidated and excluded from default selection."
+        },
+        "reverse": {
+          "bounds": [
+            -0.5,
+            1
+          ],
+          "targetPrice": 532.95,
+          "wacc": 0.09569589309641817,
+          "terminalROIC": 0.09624970886567796,
+          "terminalGrowth": 0.025,
+          "heldFixed": "Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.",
+          "status": "solved",
+          "initialGrowth": 0.3791100177913904,
+          "matchedPrice": 532.9500001301514
+        },
+        "arithmetic": {
+          "cashFlowMaxResidual": 5.820766091346741e-11,
+          "discountingResidual": 0,
+          "equityBridgeResidual": 0,
+          "sharePriceResidual": 0,
+          "passed": true
+        },
+        "scope": "Arithmetic checks establish internal consistency only. Near-term operating tests do not validate FCFF, ten-year assumptions or share prices."
+      },
+      "financialSources": [
+        {
+          "name": "SEC company facts",
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+          "kind": "Structured financial statements"
+        },
+        {
+          "name": "Latest 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+          "kind": "Filed 2026-07-29"
+        }
+      ]
+    },
+    {
+      "symbol": "COST",
+      "sourceFinancialEnd": "2026-08-30",
+      "fetchedAt": "2026-10-22T04:44:56.703Z",
+      "quote": {
+        "price": 998.31,
+        "currency": "USD",
+        "asOf": "2026-10-21T20:00:00.000Z",
+        "exchange": "NMS",
+        "source": "Yahoo Finance chart (unofficial; delayed availability)",
+        "url": "https://finance.yahoo.com/quote/COST/"
+      },
+      "modeledPrice": 217.69278778726505,
+      "gap": -0.781938688596463,
+      "errors": [],
+      "diagnostics": {
+        "method": "seasonal",
+        "flatBenchmark": true,
+        "reportedGrowth": 0.10143695387577889,
+        "initialGrowth": 0,
+        "terminalROIC": 0.094188369500871,
+        "wacc": 0.09384256405202976,
+        "terminalExcessReturn": 0.00034580544884124653,
+        "yearOneCapex": 6435,
+        "yearTenCapex": 6189.413951873873,
+        "yearTenCapexBeforeTransition": 7283.180558601426,
+        "yearTenCapexAdjustment": -1093.7666067275532,
+        "recentGrowthScenario": {
+          "initialGrowth": 0.10143695387577889,
+          "price": 329.60116815959987,
+          "basis": "Illustration only: repeat the observed trailing revenue growth in year one, then use the existing fade. Unvalidated and excluded from default selection."
+        },
+        "reverse": {
+          "bounds": [
+            -0.5,
+            1
+          ],
+          "targetPrice": 998.31,
+          "wacc": 0.09384256405202976,
+          "terminalROIC": 0.094188369500871,
+          "terminalGrowth": 0.025,
+          "heldFixed": "Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.",
+          "status": "solved",
+          "initialGrowth": 0.40371041074395186,
+          "matchedPrice": 998.3100000976611
+        },
+        "arithmetic": {
+          "cashFlowMaxResidual": 9.094947017729282e-13,
+          "discountingResidual": 0,
+          "equityBridgeResidual": 0,
+          "sharePriceResidual": 0,
+          "passed": true
+        },
+        "scope": "Arithmetic checks establish internal consistency only. Near-term operating tests do not validate FCFF, ten-year assumptions or share prices."
+      },
+      "financialSources": [
+        {
+          "name": "SEC company facts",
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000909832.json",
+          "kind": "Structured financial statements"
+        },
+        {
+          "name": "Latest 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm",
+          "kind": "Filed 2026-10-07"
+        }
+      ]
+    },
+    {
+      "symbol": "NVDA",
+      "sourceFinancialEnd": "2026-07-26",
+      "fetchedAt": "2026-10-22T04:44:58.628Z",
+      "quote": {
+        "price": 221.97,
+        "currency": "USD",
+        "asOf": "2026-10-21T20:00:00.000Z",
+        "exchange": "NMS",
+        "source": "Yahoo Finance chart (unofficial; delayed availability)",
+        "url": "https://finance.yahoo.com/quote/NVDA/"
+      },
+      "modeledPrice": 169.7110626022851,
+      "gap": -0.23543243410242332,
+      "errors": [],
+      "diagnostics": {
+        "method": "damped-trend",
+        "flatBenchmark": false,
+        "reportedGrowth": 0.8337529809100703,
+        "initialGrowth": 0.3383542437473941,
+        "terminalROIC": 0.1225565251360666,
+        "wacc": 0.12238590526009484,
+        "terminalExcessReturn": 0.0001706198759717642,
+        "yearOneCapex": 11345.46638918796,
+        "yearTenCapex": 167855.8192318055,
+        "yearTenCapexBeforeTransition": 42913.13308422252,
+        "yearTenCapexAdjustment": 124942.68614758298,
+        "recentGrowthScenario": {
+          "initialGrowth": 0.8337529809100703,
+          "price": 728.1609325652327,
+          "basis": "Illustration only: repeat the observed trailing revenue growth in year one, then use the existing fade. Unvalidated and excluded from default selection."
+        },
+        "reverse": {
+          "bounds": [
+            -0.5,
+            1
+          ],
+          "targetPrice": 221.97,
+          "wacc": 0.12238590526009484,
+          "terminalROIC": 0.1225565251360666,
+          "terminalGrowth": 0.025,
+          "heldFixed": "Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.",
+          "status": "solved",
+          "initialGrowth": 0.4229877635836602,
+          "matchedPrice": 221.97000005658012
+        },
+        "arithmetic": {
+          "cashFlowMaxResidual": 1.1641532182693481e-10,
+          "discountingResidual": 0,
+          "equityBridgeResidual": 0,
+          "sharePriceResidual": 0,
+          "passed": true
+        },
+        "scope": "Arithmetic checks establish internal consistency only. Near-term operating tests do not validate FCFF, ten-year assumptions or share prices."
+      },
+      "financialSources": [
+        {
+          "name": "SEC company facts",
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+          "kind": "Structured financial statements"
+        },
+        {
+          "name": "Latest 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+          "kind": "Filed 2026-02-25"
+        }
+      ]
+    },
+    {
+      "symbol": "XOM",
+      "sourceFinancialEnd": "2026-06-30",
+      "fetchedAt": "2026-10-22T04:45:01.474Z",
+      "quote": {
+        "price": 178.09,
+        "currency": "USD",
+        "asOf": "2026-10-21T20:03:15.000Z",
+        "exchange": "NYQ",
+        "source": "Yahoo Finance chart (unofficial; delayed availability)",
+        "url": "https://finance.yahoo.com/quote/XOM/"
+      },
+      "modeledPrice": null,
+      "gap": null,
+      "errors": [
+        "Missing required financial input: ebit.",
+        "Missing required financial input: nwc.",
+        "Missing required financial input: cash.",
+        "Missing or invalid assumption: margin.",
+        "Missing or invalid assumption: nwc.",
+        "Missing or invalid assumption: stressMargin."
+      ],
+      "diagnostics": null,
+      "financialSources": [
+        {
+          "name": "SEC company facts",
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0002115436.json",
+          "kind": "Structured financial statements"
+        },
+        {
+          "name": "Latest 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/34088/000003408826000045/xom-20251231.htm",
+          "kind": "Filed 2026-02-18"
+        }
+      ]
+    }
+  ]
+}

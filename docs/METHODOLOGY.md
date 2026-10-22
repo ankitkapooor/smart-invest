@@ -149,6 +149,35 @@ Require 0 ≤ g < WACC and g < ROIC; the interface also constrains g below the n
 
 For g = 0, stable net reinvestment is zero, so FCFF equals sustainable NOPAT. This assumes replacement capex offsets D&A and steady operating working capital. It does not assume assets never wear out. The zero-growth case has its own matching explicit fade to zero growth and zero net reinvestment. WACC/g sensitivities also recompute their matching fade. Show undiscounted TV, PV(TV), and terminal share of operating value.
 
+### Audit systematic gaps before interpreting a price signal
+
+The summary compares selected first-year growth with growth between the latest
+two reported four-quarter totals, when eight consecutive quarters align with
+the financial base. A seasonal selection means 0% year-on-year growth. This is
+the selected statistical benchmark, not evidence that the company has stopped
+growing. The summary also exposes terminal ROIC versus WACC and the year-ten
+capex adjustment created by the terminal-reinvestment convention. A cost-of-capital
+ROIC prior can remove most of the terminal excess-return premium for durable
+businesses. These are substantive economic assumptions, not validated stock prices.
+
+A conditional reverse DCF solves initial revenue growth within −50% to +100%,
+holding the displayed margins, WACC, tax, investment ratios, terminal ROIC,
+terminal growth, equity bridge and existing ten-year fade fixed. It scans for
+valid sign-changing brackets and reports unavailable/ambiguous results instead
+of extrapolating a solution. Invalid cash-flow paths are excluded. The result
+is one conditional combination that matches the quote; it is not a forecast of
+what the market expects. Alternative growth durations, margins and returns can
+fit the same price. Quote-derived solutions never modify forecast inputs or
+selection. A separately labeled illustration substitutes observed trailing
+growth for the first-year rate while retaining the fade; it has no independent
+forecast evaluation and never becomes the default automatically.
+
+Arithmetic diagnostics check the FCFF identity, independently reconstruct the
+discounted operating value and reconcile the equity bridge and per-share
+denominator. Analytic tests cover a level perpetuity, the ROIC=WACC terminal
+identity and recovery of a known reverse-DCF solution. Passing those checks
+does not validate growth, sustainable returns, capex or the investment decision.
+
 ## 9. Bridge enterprise value to common equity and recap value
 
 ```text

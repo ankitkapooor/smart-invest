@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {betaRegression,unlever,relever,solveDebt,ratingFor,RATINGS,forecast,dcf,analyze,defaults} from '../public/model.js';
+import {betaRegression,unlever,relever,solveDebt,ratingFor,RATINGS,forecast,dcf,analyze,defaults,reverseDCF} from '../public/model.js';
 import {financials,pickFact,monthlyReturns,filingEvidence,filingUrl} from '../src/data.js';
 import worker from '../src/worker.js';
 
@@ -37,6 +37,34 @@ test('growth consumes reinvestment and g=0 has maintenance capex, not zero capex
   assert.equal(zero.terminalReinvestment,0);assert.equal(zero.terminalFCFF,zero.terminalNopat);
   assert.ok(Math.abs(zero.terminalValue-zero.terminalNopat/.1)<1e-8);
   assert.equal(dcf(rows,.03,.03,.12,fixture.base,a),null);assert.equal(dcf(rows,.1,.12,.12,fixture.base,a),null);
+});
+test('a level perpetuity reconciles explicit cash flows plus terminal value to NOPAT divided by WACC',()=>{
+  const b={...fixture.base,nwc:0},a={...defaults(fixture),growth:0,margin:.2,tax:.25,capex:.03,da:.03,nwc:0,terminalGrowth:0,terminalROIC:.1};
+  const rows=forecast(b,a),v=dcf(rows,.1,0,.1,b,a);
+  assert.ok(rows.every(row=>Math.abs(row.fcff-150)<1e-10));
+  assert.ok(Math.abs(v.ev-1500)<1e-9,'ten-year cash flows plus terminal must equal the independently derived infinite annuity');
+});
+test('terminal ROIC equal to WACC cancels the reinvestment-adjusted growth premium for a fixed terminal NOPAT',()=>{
+  const a=defaults(fixture),rows=forecast(fixture.base,a),v=dcf(rows,.1,.025,.1,fixture.base,a);
+  assert.ok(Math.abs(v.terminalValue-v.terminalNopat/.1)<1e-9);
+});
+test('reverse DCF recovers a known growth assumption with debt, reserve, nonoperating assets and other claims',()=>{
+  const base={...fixture.base,nonOperatingInvestments:20,valuationShares:53},a={...defaults(fixture),cashReserve:15,otherClaims:25},before=structuredClone(a),known=.12345;
+  const target=dcf(forecast(base,{...a,growth:known}),.1,a.terminalGrowth,a.terminalROIC,base,a).price;
+  const solved=reverseDCF(base,a,.1,target);
+  assert.equal(solved.status,'solved');assert.ok(Math.abs(solved.initialGrowth-known)<1e-7);assert.ok(Math.abs(solved.matchedPrice-target)<target*1e-8);
+  assert.deepEqual(a,before,'a reverse solve cannot rewrite the active forecast assumptions');
+  assert.equal(reverseDCF(base,a,.1,1e12).status,'unbracketed');assert.equal(reverseDCF(base,a,.01,target).status,'unavailable');
+});
+test('the assumption audit exposes a flat benchmark despite positive trailing growth and retains price-blind cash flows',()=>{
+  const d=structuredClone(fixture);
+  d.quarterly=Array.from({length:8},(_,i)=>({end:new Date(Date.UTC(2024+Math.floor(i/4),(i%4+1)*3,0)).toISOString().slice(0,10),revenue:100*(i<4?1:1.1),ebit:20*(i<4?1:1.1)}));
+  d.base.end=d.quarterly.at(-1).end;d.base.revenue=440;d.base.ebit=88;
+  const a=defaults(d),r=analyze(d,a),other=analyze({...d,quote:{...d.quote,price:100}},a);
+  assert.equal(r.diagnostics.flatBenchmark,true);assert.ok(Math.abs(r.diagnostics.initialGrowth)<1e-10);assert.ok(Math.abs(r.diagnostics.reportedGrowth-.1)<1e-10);
+  assert.equal(r.diagnostics.arithmetic.passed,true);assert.ok(r.diagnostics.recentGrowthScenario.price>r.valued.price);
+  assert.deepEqual(r.rows,other.rows,'quote changes can alter financing weights and reverse diagnostics, never the operating forecast');
+  d.quarterly.splice(3,1);assert.equal(analyze(d,a).diagnostics.reportedGrowth,null);
 });
 test('enterprise-to-equity bridge does not subtract target debt from existing holders twice',()=>{
   const a=defaults(fixture),r=analyze(fixture,a);

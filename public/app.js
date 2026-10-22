@@ -46,18 +46,19 @@ function overview() {
   const r=result,v=r.valued,o=r.optimized;
   const [cls,label]=STATUS[r.status]||['neutral',r.status];
   const headline=Number.isFinite(r.upside)?`Modeled value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the market price`:'No price comparison is available';
-  const reason=r.status==='Review required'?'Data gaps, stale inputs, unreviewed distress factors or a manual quote prevent a reliable price comparison. Review the caveats and assumptions before relying on it.':'This compares the price with one set of assumptions. It is not a forecast of stock returns.';
+  const reason=r.status==='Review required'?'This DCF scenario has unreviewed assumptions or unresolved data. The price gap alone does not establish mispricing. The audit below shows the growth and reinvestment assumptions behind it.':'This compares the price with one set of assumptions. It is not a forecast of stock returns.';
   return `<section class="verdict">
     <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2><p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p></div>
     <div class="verdict-stats"><dl>
       <div class="verdict-stat"><dt>Market price</dt><dd>${money(r.marketPrice)}</dd></div>
       <div class="verdict-stat"><dt>Modeled value</dt><dd>${money(v?.price)}</dd></div>
-      <div class="verdict-stat"><dt>Buy below (${pct(a.marginOfSafety,0)} margin)</dt><dd>${money(r.buyBelow)}</dd></div>
-      <div class="verdict-stat"><dt>Implied upside</dt><dd class="${tone(r.upside)}">${signed(r.upside)}</dd></div>
+      <div class="verdict-stat"><dt>${r.status==='Review required'?'Scenario safety threshold':'Buy below'} (${pct(a.marginOfSafety,0)} margin)</dt><dd>${money(r.buyBelow)}</dd></div>
+      <div class="verdict-stat"><dt>Value vs. market</dt><dd class="${tone(r.upside)}">${signed(r.upside)}</dd></div>
     </dl></div></div>
     <div class="verdict-bar">${fairValueScale(r)}</div>
     <div class="panel-footer"><span>${a.quoteOverride!==null?'Manual quote entered in assumptions · review required':`Quote ${dateTime(data.quote?.asOf)}${data.quote?.exchange?' · '+esc(data.quote.exchange):''} · may be delayed`}</span><button class="link-button" id="open-error-assumptions">Edit assumptions</button></div>
   </section>
+  ${valuationAuditPanel()}
   <div class="metrics">
     ${metric('Cost of capital (WACC)',pct(r.current.wacc,2),`Cost of equity ${pct(r.current.ke)} · Cost of debt ${pct(r.current.kd)}`)}
     ${metric('Enterprise value',big(v?.ev),`Forecast ${big(v?.pvFlows)} + terminal ${big(v?.pvTerminal)}`)}
@@ -78,6 +79,21 @@ function overview() {
   </div>
   ${sensitivityPanel()}
   ${qualityPanel()}`;
+}
+
+function valuationAuditPanel() {
+  const d=result.diagnostics;if(!d)return '';
+  const reverse=d.reverse,method=({seasonal:'Seasonal benchmark',flat:'Flat annual benchmark','damped-trend':'Damped issuer trend','recent-trend':'Recent issuer trend',manual:'Manual scenario'})[d.method]||'Fitted issuer forecast';
+  const rows=[
+    {cells:['First-year revenue growth',pct(d.initialGrowth),esc(method)]},
+    {cells:['Reported trailing revenue growth',pct(d.reportedGrowth),d.reportedGrowth===null?'Eight aligned quarters unavailable':'Latest four reported quarters vs. previous four; historical observation']},
+    {cells:['Terminal ROIC / current WACC',pct(d.terminalROIC)+' / '+pct(d.wacc),Math.abs(d.terminalExcessReturn)<.005?'Near-zero terminal excess returns assumed':'Terminal excess return '+num(d.terminalExcessReturn*100,2)+' percentage points']},
+    {cells:['Year 10 capital expenditure',big(d.yearTenCapex),big(d.yearTenCapexBeforeTransition)+' spending-ratio scenario + '+big(d.yearTenCapexAdjustment)+' terminal transition']}
+  ];
+  return panel('Why this value differs from the market','Audit the assumptions before interpreting the price gap.',
+    (d.flatBenchmark?'<div class="panel-body"><div class="note-box"><strong>The selected revenue benchmark assumes 0% growth in year one.</strong> Historical selection favored repeating the latest four quarters. This is a statistical benchmark; it does not establish that the business has stopped growing.</div></div>':'')+
+    table(['Driver','Current assumption','Basis'],rows)+
+    `<div class="panel-body"><p><strong>Conditional reverse DCF:</strong> ${reverse.status==='solved'?`Matching the ${money(result.marketPrice)} quote requires <strong>${pct(reverse.initialGrowth)} first-year revenue growth</strong>, fading to ${pct(a.terminalGrowth)} in year 10, with all other assumptions held fixed.`:'No unique valid growth solution was found within the −50% to +100% initial-growth search range.'}</p><p class="stamp">This is one conditional combination of assumptions, not a market forecast. Different margins, investment returns or growth durations can support the same price.</p>${Number.isFinite(d.recentGrowthScenario?.price)?`<p>For comparison, a scenario starting with the reported ${pct(d.reportedGrowth)} trailing growth rate gives <strong>${money(d.recentGrowthScenario.price)}</strong> per share under the same fade. This illustration has not passed a forecast evaluation and does not replace the selected model.</p>`:''}<p class="stamp">Arithmetic reconciliation: ${d.arithmetic.passed?'passed':'failed'}. Quarterly revenue/margin evaluation does not establish accuracy of FCFF or share value. Terminal ROIC and the ten-year fade remain scenario assumptions.</p></div>`);
 }
 
 function fcfChart(rows) {
@@ -109,7 +125,7 @@ function qualityPanel() {
 
 function cashflows() {
   const r=result;
-  const lines=[['Revenue','revenue'],['Revenue growth','growth','pct'],['Operating margin','margin','pct'],['EBIT','ebit'],['− Unlevered cash tax','cashTax'],['Net operating profit after tax','nopat'],['+ Depreciation & amortization','da'],['− Capital expenditure (after fade)','capex'],['↳ Transition adjustment vs. researched capex','transitionAdjustment'],['− Change in operating NWC','deltaNwc'],['Free cash flow to firm','fcff']];
+  const lines=[['Revenue','revenue'],['Revenue growth','growth','pct'],['Operating margin','margin','pct'],['EBIT','ebit'],['− Unlevered cash tax','cashTax'],['Net operating profit after tax','nopat'],['+ Depreciation & amortization','da'],['− Capital expenditure (after fade)','capex'],['↳ Terminal transition vs. spending-ratio scenario','transitionAdjustment'],['− Change in operating NWC','deltaNwc'],['Free cash flow to firm','fcff']];
   const hist=data.history;
   return `${viewHeader('Cash flows','Operating performance first, financing second. Statement amounts in USD millions.','<button class="button" id="export-csv">Download CSV</button>')}
     ${panel('Historical financials','Full fiscal years; latest filed comparative facts, with period-specific source provenance.',table(['Fiscal year end',...hist.map(h=>esc(h.end))],['revenue','ebit','da','capex','cfo'].map(k=>({cells:[({revenue:'Revenue',ebit:'EBIT',da:'D&A',capex:'Capital expenditure',cfo:'Cash from operations'})[k],...hist.map(h=>num(h[k]))]}))))}

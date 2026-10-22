@@ -93,6 +93,71 @@ export function dcf(rows, wacc, g, roic, base, a, cost=0) {
     ev,equity,price:Math.max(0,equity/(base.valuationShares??base.shares)),terminalShare:pvTerminal/(pvFlows+pvTerminal),cost};
 }
 
+// A conditional reverse DCF is a diagnostic, never an input to model selection.
+// Solve only initial revenue growth, holding the displayed margins, investment
+// ratios, discount rate, stable ROIC and ten-year fade convention fixed.
+export function reverseDCF(base,a,wacc,targetPrice) {
+  const bounds=[-.5,1],priceAt=growth=>{
+    const rows=forecast(base,{...a,growth});
+    if(rows.some(r=>!Number.isFinite(r.fcff)||r.capex<0))return null;
+    const value=dcf(rows,wacc,a.terminalGrowth,a.terminalROIC,base,a)?.price;
+    return Number.isFinite(value)?value:null;
+  };
+  if(!(targetPrice>0)||!Number.isFinite(targetPrice)||!(wacc>a.terminalGrowth)||!(a.terminalROIC>a.terminalGrowth))return {status:'unavailable'};
+  const brackets=[],exact=[],prices=[];let previous=null;
+  const tolerance=Math.max(1e-8,targetPrice*1e-9);
+  for(let i=0;i<=60;i++) {
+    const growth=bounds[0]+(bounds[1]-bounds[0])*i/60,price=priceAt(growth);
+    if(price===null){previous=null;continue;}
+    prices.push(price);const error=price-targetPrice;
+    if(Math.abs(error)<=tolerance)exact.push(growth);
+    if(previous&&previous.error*error<0&&Math.abs(previous.error)>tolerance&&Math.abs(error)>tolerance)brackets.push([previous.growth,growth]);
+    previous={growth,error};
+  }
+  const common={bounds,targetPrice,wacc,terminalROIC:a.terminalROIC,terminalGrowth:a.terminalGrowth,
+    heldFixed:'Margins, capex/D&A/NWC ratios, tax, WACC, equity bridge and ten-year growth/return fade. Only initial revenue growth is solved.'};
+  if(exact.length+brackets.length!==1)return {...common,status:exact.length+brackets.length?'ambiguous':'unbracketed',priceRange:prices.length?[Math.min(...prices),Math.max(...prices)]:null};
+  let growth=exact[0];
+  if(brackets.length) {
+    let [lo,hi]=brackets[0],errorLo=priceAt(lo)-targetPrice;
+    for(let i=0;i<70;i++) {
+      const mid=(lo+hi)/2,price=priceAt(mid);if(price===null)return {...common,status:'unavailable'};
+      const error=price-targetPrice;
+      if(Math.abs(error)<=tolerance){lo=hi=mid;break;}
+      if(errorLo*error<=0)hi=mid;else{lo=mid;errorLo=error;}
+    }
+    growth=(lo+hi)/2;
+  }
+  return {...common,status:'solved',initialGrowth:growth,matchedPrice:priceAt(growth)};
+}
+
+export function valuationDiagnostics(data,a,r) {
+  if(!r.valued||!r.rows?.length)return null;
+  const b=data.base,quarters=(data.quarterly||[]).slice(-8);
+  const aligned=quarters.length===8&&quarters.at(-1).end===b.end&&quarters.every((q,i)=>q.revenue>0&&(!i||((Date.parse(q.end)-Date.parse(quarters[i-1].end))/864e5>=60&&(Date.parse(q.end)-Date.parse(quarters[i-1].end))/864e5<=120)));
+  const sum=xs=>xs.reduce((s,q)=>s+q.revenue,0);
+  const reportedGrowth=aligned?sum(quarters.slice(-4))/sum(quarters.slice(0,4))-1:null;
+  const method=a.operatingForecast?(a.operatingForecast.quarters?.length?a.operatingForecast.quarterly?.fit?.method:a.operatingForecast.annual?.fit?.method):'manual';
+  const flatBenchmark=!!a.operatingForecast&&['seasonal','flat'].includes(method)&&Math.abs(a.growth)<1e-9;
+  let recentGrowthScenario=null;
+  if(Number.isFinite(reportedGrowth)) {
+    const scenario={...a,growth:reportedGrowth},rows=forecast(b,scenario);
+    if(rows.every(row=>Number.isFinite(row.fcff)&&row.capex>=0))recentGrowthScenario={initialGrowth:reportedGrowth,price:dcf(rows,r.current.wacc,a.terminalGrowth,a.terminalROIC,b,scenario)?.price??null,
+      basis:'Illustration only: repeat the observed trailing revenue growth in year one, then use the existing fade. Unvalidated and excluded from default selection.'};
+  }
+  const cfResidual=Math.max(...r.rows.map(row=>Math.abs(row.fcff-(row.nopat+row.da-row.capex-row.deltaNwc))));
+  const independentEV=r.rows.reduce((s,row)=>s+row.fcff/(1+r.current.wacc)**row.year,0)+r.valued.terminalFCFF/(r.current.wacc-a.terminalGrowth)/(1+r.current.wacc)**r.rows.at(-1).year;
+  const bridge=r.valued.ev+Math.max(0,b.cash-a.cashReserve)+(b.nonOperatingInvestments??0)-b.debt-a.otherClaims;
+  const shareResidual=Math.abs(r.valued.price-Math.max(0,bridge/(b.valuationShares??b.shares)));
+  return {method,flatBenchmark,reportedGrowth,initialGrowth:a.growth,terminalROIC:a.terminalROIC,wacc:r.current.wacc,
+    terminalExcessReturn:a.terminalROIC-r.current.wacc,yearOneCapex:r.rows[0].capex,yearTenCapex:r.rows.at(-1).capex,
+    yearTenCapexBeforeTransition:r.rows.at(-1).rawCapex,yearTenCapexAdjustment:r.rows.at(-1).transitionAdjustment,
+    recentGrowthScenario,reverse:reverseDCF(b,a,r.current.wacc,r.marketPrice),
+    arithmetic:{cashFlowMaxResidual:cfResidual,discountingResidual:Math.abs(independentEV-r.valued.ev),equityBridgeResidual:Math.abs(bridge-r.valued.equity),sharePriceResidual:shareResidual,
+      passed:cfResidual<1e-6&&Math.abs(independentEV-r.valued.ev)<1e-6&&Math.abs(bridge-r.valued.equity)<1e-6&&shareResidual<1e-8},
+    scope:'Arithmetic checks establish internal consistency only. Near-term operating tests do not validate FCFF, ten-year assumptions or share prices.'};
+}
+
 export function analyze(data, a=defaults(data)) {
   const b=data.base, errors=[];
   if(data.modelFamily==='specialized'||data.modelFamily==='unsupported')errors.push('A specialized accounting/valuation adapter is required; company research is available in the Research tab.');
@@ -177,7 +242,9 @@ export function analyze(data, a=defaults(data)) {
   const selectedUsable=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0).length;
   const incomplete=data.quality.some(q=>q.severity==='critical') || !current.consistent || selectedUsable<3 || !a.hReviewed || (data.version&&data.research?.status!=='validated') || rows.some(r=>r.capex<0);
   const status=!valued || stale || incomplete || a.quoteOverride!==null ? 'Review required' : price<=buyBelow ? 'Below safety threshold' : price<valued.price ? 'Below modeled value' : 'Above modeled value';
-  return {errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,
+  const result={errors:[],rows,current,optimal,sweep,valued,zero,optimized,optimizedZero,cases,sensitivity,h,stressEBIT,maxInterest,
     equity,capital,currentWeight,marketPrice:price,buyBelow,status,stale,incomplete,recapCosts,adjustment,postRecap,
     upside:valued?valued.price/price-1:null,version:MODEL_VERSION};
+  result.diagnostics=valuationDiagnostics(data,a,result);
+  return result;
 }
