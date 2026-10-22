@@ -1,4 +1,5 @@
-import {searchCompanies,loadCompany,DataError} from './data.js';
+import {searchCompanies,loadCompany,loadPeerComparison,DataError} from './data.js';
+import {withDeadline} from './deadline.js';
 import {RESEARCH_MODEL,RESEARCH_EFFORT} from './research.js';
 export {ResearchStore} from './research.js';
 
@@ -38,12 +39,16 @@ export default {
         const data=await loadCompany(input.symbol,env);
         const response=await store.fetch(new Request('https://research.internal/',{method:'POST',body:JSON.stringify(data)}));return json(await response.json(),response.status);
       }
-      if(url.pathname==='/api/search') return json({companies:await searchCompanies(url.searchParams.get('q')||'',env)});
+      if(url.pathname==='/api/search') return json({companies:await withDeadline(searchCompanies(url.searchParams.get('q')||'',env),10000)});
+      if(url.pathname==='/api/peers') {
+        const peers=(url.searchParams.get('peers')||'').split(',').map(x=>x.trim().toUpperCase()).filter(Boolean);
+        return json(await withDeadline(loadPeerComparison(url.searchParams.get('symbol')||'',env,peers),28000,'Peer comparison timed out. The company analysis remains available.'));
+      }
       if(url.pathname==='/api/company') {
         const symbol=url.searchParams.get('symbol')||'';
         const peers=(url.searchParams.get('peers')||'').split(',').map(x=>x.trim().toUpperCase()).filter(Boolean);
         if(peers.length>4) throw new DataError('Choose up to four peers.');
-        return json(await loadCompany(symbol,env,peers));
+        return json(await withDeadline(loadCompany(symbol,env,peers,{includePeers:url.searchParams.get('includePeers')!=='0'}),30000,'Company data did not load within 30 seconds. Please retry.'));
       }
       return json({error:'API route not found.'},404);
     } catch(e) {

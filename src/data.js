@@ -2,6 +2,7 @@ import {betaRegression, MODEL_VERSION} from '../public/model.js';
 import {financials,DataError,CONTINUITY,mergePredecessor} from './accounting.js';
 import {reportedSegments} from './segments.js';
 import {supplementFilingFacts} from './filing-facts.js';
+import {withDeadline} from './deadline.js';
 export {financials,pickFact,DataError} from './accounting.js';
 
 const SEC='https://data.sec.gov';
@@ -22,7 +23,7 @@ export async function cachedFetch(url, env={}, ttl=3600, type='json') {
     const cache=/companyfacts|Archives\/edgar|company_tickers/.test(url)?globalThis.caches?.default:null;
     const cacheKey=new Request(url,{headers:{'Accept':type==='json'?'application/json':'text/plain'}});
     if(cache) {
-      const hit=await cache.match(cacheKey);
+      const hit=await withDeadline(cache.match(cacheKey),1000).catch(()=>null);
       if(hit) {const value=type==='json'?await hit.json():await hit.text();remember(key,value,ttl);return value;}
     }
     if(new URL(url).hostname.endsWith('sec.gov')) {
@@ -36,7 +37,7 @@ export async function cachedFetch(url, env={}, ttl=3600, type='json') {
     const body=await response.text();
     let value;
     try {value=type==='json'?JSON.parse(body):body;} catch {throw new DataError(`Unexpected data from ${new URL(url).hostname}.`,502);}
-    if(cache && body.length<20_000_000) await cache.put(cacheKey,new Response(body,{headers:{'Content-Type':type==='json'?'application/json':'text/plain','Cache-Control':`public,max-age=${ttl}`}})).catch(()=>{});
+    if(cache && body.length<20_000_000) await withDeadline(cache.put(cacheKey,new Response(body,{headers:{'Content-Type':type==='json'?'application/json':'text/plain','Cache-Control':`public,max-age=${ttl}`}})),1000).catch(()=>{});
     remember(key,value,ttl); return value;
   })();
   inFlight.set(key,task);
@@ -175,7 +176,43 @@ export function filingEvidence(html,url) {
 
 export const filingUrl=(ownerCik,accession,document)=>`https://www.sec.gov/Archives/edgar/data/${Number(ownerCik)}/${accession.replaceAll('-','')}/${document}`;
 
-export async function loadCompany(symbol,env={},customPeers=[]) {
+export function peerQuality(peers) {
+  const quality=[];
+  if(peers.filter(p=>p.beta&&p.debt!==null&&p.equity>0).length<3)quality.push({severity:'critical',code:'peer-coverage',text:'Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback.'});
+  if(peers.some(p=>p.quality?.some(q=>/currentDebt|shortDebt|long.term debt/i.test(q))))quality.push({severity:'critical',code:'peer-debt',text:'One or more candidate peers have unverified debt disclosures. Peer leverage remains provisional.'});
+  return quality;
+}
+async function collectPeers(peerScreen,catalog,market,env) {
+  const peers=[];
+  for(const ticker of peerScreen.symbols) {
+    const p=catalog.find(c=>c.ticker===ticker);if(!p)continue;
+    try {
+      const [pf,pc]=await withDeadline(Promise.all([
+        cachedFetch(`${SEC}/api/xbrl/companyfacts/CIK${String(p.cik_str).padStart(10,'0')}.json`,env,21600),
+        cachedFetch(chartUrl(ticker),env,900).catch(()=>null)
+      ]),6000,'Peer data timed out; retry the comparison.');
+      const px=quoteFrom(pc),f=financials(pf,{}),b=f.base,equity=px&&b.shares?px.price*b.shares:null;
+      peers.push({symbol:ticker,name:p.title,end:b.end,beta:regression(monthlyReturns(pc),market),price:px?.price??null,quoteDate:px?.asOf??null,quoteUrl:px?.url,
+        shares:b.shares,equity,debt:b.debt,cash:b.cash,revenue:b.revenue,ebit:b.ebit,margin:b.revenue?b.ebit/b.revenue:null,
+        ev:equity!==null&&b.debt!==null&&b.cash!==null?equity+b.debt-b.cash:null,
+        quality:f.quality.filter(x=>x.severity==='critical').map(x=>x.text),rationale:`${peerScreen.name} candidate screen. Review business mix, geography, margins and cyclicality before inclusion.`});
+    }catch(e){peers.push({symbol:ticker,name:p.title,error:e.message,beta:null,debt:null,equity:null,quality:[e.message],rationale:peerScreen.name});}
+  }
+  return peers;
+}
+export async function loadPeerComparison(symbol,env={},customPeers=[]) {
+  symbol=ALIASES[symbol.toUpperCase().trim()]||symbol.toUpperCase().trim();
+  if(!/^[A-Z0-9.\-]{1,12}$/.test(symbol)||customPeers.length>4||customPeers.some(t=>!/^[A-Z0-9.\-]{1,12}$/.test(t)))throw new DataError('Enter a valid ticker and up to four peer tickers.');
+  const catalog=Object.values(await cachedFetch(SEC_TICKERS,env,86400)),entry=catalog.find(c=>c.ticker===symbol);
+  if(!entry)throw new DataError('No SEC ticker match.',404);
+  const submission=customPeers.length?null:await cachedFetch(`${SEC}/submissions/CIK${String(entry.cik_str).padStart(10,'0')}.json`,env,21600);
+  const screen=candidatePeers(symbol,submission?.sic,customPeers);
+  const market=monthlyReturns(await cachedFetch(chartUrl('SPY'),env,21600).catch(()=>null));
+  const peers=await collectPeers(screen,catalog,market,env);
+  return {symbol,peers,peerScreen:screen.name,quality:peerQuality(peers),status:'loaded'};
+}
+
+export async function loadCompany(symbol,env={},customPeers=[],{includePeers=true}={}) {
   symbol=symbol.toUpperCase().trim();
   symbol=ALIASES[symbol]||symbol;
   if(!/^[A-Z0-9.\-]{1,12}$/.test(symbol)) throw new DataError('Enter a valid US-listed ticker.');
@@ -224,25 +261,7 @@ export async function loadCompany(symbol,env={},customPeers=[]) {
   const market=monthlyReturns(marketResult),ownReturns=monthlyReturns(chartResult);
   const beta=regression(ownReturns,market),quote=quoteFrom(chartResult);
   const peerScreen=candidatePeers(symbol,sic,customPeers);
-  const peers=[];
-  // Sequential peers keep SEC calls and request fan-out bounded; upstream responses are cached.
-  for(const ticker of peerScreen.symbols) {
-    const p=catalog.find(c=>c.ticker===ticker); if(!p) continue;
-    try {
-      const [pf,pc]=await Promise.all([
-        cachedFetch(`${SEC}/api/xbrl/companyfacts/CIK${String(p.cik_str).padStart(10,'0')}.json`,env,21600),
-        cachedFetch(chartUrl(ticker),env,900).catch(()=>null)
-      ]);
-      const px=quoteFrom(pc),f=financials(pf,{}),b=f.base;
-      const equity=px && b.shares ? px.price*b.shares : null;
-      const pb=regression(monthlyReturns(pc),market);
-      peers.push({symbol:ticker,name:p.title,end:b.end,beta:pb,price:px?.price ?? null,quoteDate:px?.asOf ?? null,quoteUrl:px?.url,
-        shares:b.shares,equity,debt:b.debt,cash:b.cash,revenue:b.revenue,ebit:b.ebit,margin:b.revenue?b.ebit/b.revenue:null,
-        ev:equity!==null && b.debt!==null && b.cash!==null ? equity+b.debt-b.cash : null,
-        quality:f.quality.filter(x=>x.severity==='critical').map(x=>x.text),
-        rationale:`${peerScreen.name} candidate screen. Review business mix, geography, margins and cyclicality before inclusion.`});
-    } catch(e) {peers.push({symbol:ticker,name:p.title,error:e.message,beta:null,debt:null,equity:null,quality:[e.message],rationale:peerScreen.name});}
-  }
+  const peers=includePeers?await collectPeers(peerScreen,catalog,market,env):[];
   let filings=submission.filings?.recent;
   if(continuity&&!filings?.form.includes('10-K')){const priorSub=await cachedFetch(`${SEC}/submissions/CIK${String(continuity.predecessor).padStart(10,'0')}.json`,env,21600);filings=priorSub.filings?.recent;}
   const researchFilings=[],filingRegistry=[];
@@ -266,14 +285,13 @@ export async function loadCompany(symbol,env={},customPeers=[]) {
   if(!beta) extracted.quality.push({severity:'critical',text:'Fewer than 36 aligned adjusted monthly return observations; company regression beta unavailable.'});
   if(!quote) extracted.quality.push({severity:'critical',text:'Market quote unavailable. Enter a dated quote to explore the model; comparisons remain provisional.'});
   if(quote && extracted.base.shares*quote.price<5000) extracted.quality.push({severity:'critical',text:'Market equity is below $5 billion. The large-firm synthetic-rating table needs replacement or validation for this smaller issuer.'});
-  if(peers.filter(p=>p.beta && p.debt!==null && p.equity>0).length<3) extracted.quality.push({severity:'critical',text:'Fewer than three peers with usable beta and leverage data. Add appropriate peers or review the beta fallback.'});
-  if(peers.some(p=>p.quality?.some(q=>/currentDebt|shortDebt|long.term debt/i.test(q)))) extracted.quality.push({severity:'critical',text:'One or more candidate peers have unverified missing debt tags. The bottom-up beta and valuation remain provisional until peer debt is reviewed.'});
+  extracted.quality.push(...(includePeers?peerQuality(peers):[{severity:'critical',code:'peer-coverage',text:'Peer comparisons are loading separately. The initial scenario uses the company regression beta where available.'}]));
   if(extracted.base.ebit!==null&&extracted.base.ebit<=0) extracted.quality.push({severity:'critical',text:'Operating losses: a turnaround model with explicit loss recovery and NOLs is required. This mechanically generated forecast is exploratory.'});
   if((Date.now()-Date.parse(rates.erpDate))/864e5>65 || (Date.now()-Date.parse(rates.rfDate))/864e5>45)
     extracted.quality.push({severity:'critical',text:'Market risk inputs are stale. Update risk-free rate and ERP before making a valuation judgment.'});
   return {version:MODEL_VERSION,symbol:entry.ticker,name:submission.name||entry.title,cik,sic,industry:submission.sicDescription,
     fetchedAt:new Date().toISOString(),currency:'USD',units:'USD millions; shares in millions',
-    ...extracted,reportedSegments:reportedSegments(html,extracted.history,filing?.url),quote,beta,peers,peerScreen:peerScreen.name,rates,filing,hFactors,
+    ...extracted,reportedSegments:reportedSegments(html,extracted.history,filing?.url),quote,beta,peers,peerScreen:peerScreen.name,peerCandidates:peerScreen.symbols,peerStatus:includePeers?'loaded':'pending',rates,filing,hFactors,
     researchFilings,filingRegistry:filingRegistry.slice(0,60),research:{status:'not_started'},modelFamily:specialized?'specialized':extracted.history.length?'fcff':'unsupported',
     sources:[
       {name:'SEC company facts',url:`${SEC}/api/xbrl/companyfacts/CIK${cik}.json`,kind:'Structured financial statements'},

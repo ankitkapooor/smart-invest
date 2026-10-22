@@ -64,4 +64,12 @@ A daily call limit is not a dollar guarantee. Configure project budget/usage lim
 
 ## Verification boundaries
 
+Company loading uses a 30-second server deadline and a 35-second browser deadline.
+The UI requests `/api/company?symbol=...&includePeers=0`, renders core data, then
+loads `/api/peers` separately. A peer outage leaves the company visible with a
+warning. Failed company loads expose a retry action and never substitute the
+saved Apple example. The browser checks deployment metadata for a newer release;
+HTML and JavaScript use cache revalidation. An already-open older page must reload
+once to receive these changes.
+
 Run `npm run test:live -- AAPL` to explicitly exercise the configured hosted model, polling, citations, researched peer loading, immutable vintage and deterministic valuation. This may create one paid report, subject to the server quota; cached validated reports are reused. Set `VALUELENS_TEST_ORIGIN=http://localhost:8787` for local testing. Results are saved under `reports/v03-live/`. A live smoke test establishes functionality, not predictive accuracy. Unit tests additionally cover rejection, missing-key gating, cache isolation by model, quota deduplication, document-path ownership and FCFF identities.

@@ -1,5 +1,6 @@
 import {operatingForecast} from './prediction.js';
 import {analyze,defaults,median,unlever,RATINGS,RATINGS_SOURCE,MODEL_VERSION} from './model.js';
+import {requestJSON} from './request.js';
 
 const $=s=>document.querySelector(s);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11,12 +12,23 @@ const date=x=>x?new Date(x.length===10?x+'T12:00:00Z':x).toLocaleDateString('en-
 const dateTime=x=>x?new Date(x).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short',timeZone:'America/Los_Angeles'}):'Unavailable';
 const signed=x=>Number.isFinite(x)?`${x>=0?'+':''}${pct(x)}`:'—';
 const link=(url,label)=>url?`<a class="ext" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:'Unavailable';
-let data=null,a=null,result=null,currentView='overview',isExample=true,changes=0,loadController=null,searchTimer=null,searchController=null;
+let data=null,a=null,result=null,currentView='overview',isExample=false,changes=0,loadController=null,searchTimer=null,searchController=null;
 let researchConfig={researchConfigured:false},researchJob=null,researchBusy=false,validationReport=null,quarterlyReport=null;
 fetch('/api/config').then(r=>r.json()).then(c=>{researchConfig=c;if(data&&currentView==='research')render();}).catch(()=>{});
 fetch('/validation/quarterly.json').then(r=>r.json()).then(v=>{quarterlyReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
 fetch('/validation/latest.json').then(r=>r.json()).then(v=>{validationReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
 let saved=[];try{saved=JSON.parse(localStorage.getItem('valuelens.saved')||'[]').filter(x=>typeof x==='string').slice(0,20);}catch{}
+let activeCommit=null;
+async function checkRelease(){
+  try{
+    const release=await requestJSON('/build.json?check='+Date.now(),{timeoutMs:5000});
+    if(!/^[a-f0-9]{40}$/.test(release.commit||''))return;
+    if(activeCommit&&activeCommit!==release.commit){const box=$('#release-status');if(box){box.hidden=false;box.innerHTML='<div class="note-box">A newer version is available. <button class="button" id="reload-app">Load latest version</button></div>';}}
+    else activeCommit=release.commit;
+  }catch{}
+}
+void checkRelease();setInterval(checkRelease,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)void checkRelease();});
 
 function panel(title,subtitle,body,tag='') {
   return `<section class="panel"><div class="panel-header"><div><h3>${title}</h3>${subtitle?`<p>${subtitle}</p>`:''}</div>${tag?`<span class="chip">${tag}</span>`:''}</div>${body}</section>`;
@@ -265,7 +277,7 @@ function render() {
   $('#company-name').textContent=data.name.replace(/,?\s*(INC\.?|CORPORATION|CORP\.?)$/i,'');
   $('#company-ticker').textContent=data.symbol;
   $('#company-description').textContent=`${data.industry||'SEC filer'} · USD · Financials through ${date(data.base.end)}`;
-  $('#data-banner').innerHTML=`<span class="tag">${isExample?'Saved example':'Live analysis'}</span><span>${isExample?'Captured':'Fetched'} ${date(data.fetchedAt)}</span><span class="sep">·</span><span>Quote ${date(data.quote?.asOf)}</span>${changes?'<span class="tag warn">Modified assumptions</span>':''}${result.incomplete?'<span class="tag warn">Provisional inputs</span>':''}<button id="refresh-live">Refresh live data</button>`;
+  $('#data-banner').innerHTML=`<span class="tag">${isExample?'Saved example':'Live analysis'}</span><span>${isExample?'Captured':'Fetched'} ${date(data.fetchedAt)}</span><span class="sep">·</span><span>Quote ${date(data.quote?.asOf)}</span>${changes?'<span class="tag warn">Modified assumptions</span>':''}${result.incomplete?'<span class="tag warn">Provisional inputs</span>':''}<span>${data.peerStatus==='pending'?'Peer comparisons loading…':data.peerStatus==='failed'?'Peer comparison unavailable':''}</span><button id="refresh-live">Refresh live data</button>`;
   const isSaved=saved.includes(data.symbol);
   $('#save-company').textContent=isSaved?'Saved':'Save';
   $('#save-company').classList.toggle('saved',isSaved);
@@ -283,18 +295,34 @@ async function loadCompany(symbol,peers=[]) {
   clearTimeout(searchTimer);searchController?.abort();
   loadController?.abort();loadController=new AbortController();const controller=loadController;
   $('#loading').hidden=false;$('#workspace').hidden=true;$('#message').textContent='';$('#search-results').hidden=true;$('#analyze-button').disabled=true;
-  const steps=['Reading SEC financial statements…','Building comparable-company return histories…','Matching debt, risk factors and market inputs…','Checking source coverage and assembling the analysis…'];
-  let i=0;$('#loading-step').textContent=steps[0];const timer=setInterval(()=>$('#loading-step').textContent=steps[Math.min(++i,steps.length-1)],6500);
+  const started=Date.now();
+  const progress=()=>{$('#loading-step').textContent=`Loading ${symbol.toUpperCase()} from public sources… ${Math.floor((Date.now()-started)/1000)}s elapsed. This attempt ends within 35 seconds.`;};
+  progress();const timer=setInterval(progress,1000);
   try {
-    const response=await fetch(`/api/company?symbol=${encodeURIComponent(symbol)}${peers.length?'&peers='+encodeURIComponent(peers.join(',')):''}`,{signal:controller.signal});
-    const body=await response.json();if(!response.ok)throw new Error(body.error+(body.details?.length?' '+body.details.join(' '):''));
+    const body=await requestJSON(`/api/company?symbol=${encodeURIComponent(symbol)}&includePeers=0`,{signal:controller.signal});
     if(controller!==loadController)return;
     data=body;researchJob=null;a=defaults(data);isExample=false;changes=0;currentView='overview';$('#search-results').hidden=true;$('#company-search').value='';$('#company-search').blur();render();
     history.replaceState(null,'',`?symbol=${encodeURIComponent(data.symbol)}`);
+    void loadPeerComparison(data.symbol,peers.length?peers:data.peerCandidates||[],controller);
   } catch(e) {
-    if(e.name!=='AbortError') {$('#message').textContent=e.message;if(data)render();}
+    if(controller!==loadController||e.name==='AbortError')return;
+    $('#message').innerHTML=`<div class="error-box" role="alert"><strong>${esc(symbol.toUpperCase())} did not load.</strong><p>${esc(e.message)}</p><button class="button" data-symbol="${esc(symbol)}">Retry ${esc(symbol.toUpperCase())}</button></div>`;
+    $('#workspace').hidden=true;
   } finally {
     clearInterval(timer);if(controller===loadController){$('#loading').hidden=true;$('#analyze-button').disabled=false;}
+  }
+}
+
+async function loadPeerComparison(symbol,peers,controller) {
+  try {
+    const comparison=await requestJSON(`/api/peers?symbol=${encodeURIComponent(symbol)}${peers.length?'&peers='+encodeURIComponent(peers.join(',')):''}`,{signal:controller.signal,timeoutMs:30000});
+    if(controller!==loadController||data?.symbol!==symbol||researchBusy||data.research?.status==='validated')return;
+    data={...data,peers:comparison.peers,peerScreen:comparison.peerScreen,peerStatus:'loaded',quality:[...data.quality.filter(q=>!['peer-coverage','peer-debt'].includes(q.code)),...comparison.quality]};
+    if(changes===0)a=defaults(data);
+    render();
+  }catch(e){
+    if(controller!==loadController||data?.symbol!==symbol||e.name==='AbortError')return;
+    data={...data,peerStatus:'failed',quality:[...data.quality.filter(q=>q.code!=='peer-coverage'),{severity:'critical',code:'peer-coverage',text:'Peer comparison unavailable: '+e.message+' Company financials remain available.'}]};render();
   }
 }
 
@@ -342,6 +370,7 @@ function download(name,content,type) {
 
 document.addEventListener('click',e=>{
   const button=e.target.closest('button');if(!button)return;
+  if(button.id==='reload-app'){location.reload();return;}
   if(button.dataset.view) {currentView=button.dataset.view;render();if(data&&!button.closest('.view-header'))window.scrollTo({top:0});return;}
   if(button.id==='theme-toggle'){const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=dark?'light':'dark';try{localStorage.setItem('valuelens.theme',document.documentElement.dataset.theme);}catch{}return;}
   if(button.dataset.symbol) {loadCompany(button.dataset.symbol);return;}
@@ -416,8 +445,6 @@ $('#company-search').addEventListener('keydown',e=>{if(e.key==='Escape'){$('#sea
 $('#search-results').addEventListener('keydown',e=>{const items=[...document.querySelectorAll('#search-results button')],i=items.indexOf(document.activeElement);if(e.key==='ArrowDown'){e.preventDefault();items[Math.min(i+1,items.length-1)]?.focus();}if(e.key==='ArrowUp'){e.preventDefault();(i<=0?$('#company-search'):items[i-1]).focus();}if(e.key==='Escape'){$('#search-results').hidden=true;$('#company-search').focus();}});
 
 renderSaved();
-try{
-  const response=await fetch('/example.json');if(!response.ok)throw new Error();data=await response.json();a=defaults(data);render();
-}catch{$('#message').textContent='Enter a company above to begin a filing-backed analysis.';}
 const requested=new URLSearchParams(location.search).get('symbol');
 if(requested)loadCompany(requested);
+else $('#message').innerHTML=`<div class="panel-body"><h1>Analyze a public company</h1><p>Search above to load its financial statements and valuation assumptions.</p><div class="error-actions">${SUGGESTED.map(([symbol,name])=>`<button class="button" data-symbol="${symbol}">${name} · ${symbol}</button>`).join('')}</div></div>`;

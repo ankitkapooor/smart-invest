@@ -66,13 +66,14 @@
     </aside>
 
     <main id="main">
+      <div id="release-status" role="status" aria-live="polite" hidden></div>
       <div id="message" role="status" aria-live="polite"></div>
       <div id="loading" hidden>
         <div class="spinner" aria-hidden="true"></div>
         <div>
           <h2>Building the analysis</h2>
           <p id="loading-step">Reading financial statements…</p>
-          <p class="loading-note">A fresh analysis takes 20–45 seconds. Cached sources are faster.</p>
+          <p class="loading-note">Company financials load first. Peer comparisons load separately. Each attempt ends within 35 seconds.</p>
         </div>
       </div>
       <section id="workspace" hidden>
