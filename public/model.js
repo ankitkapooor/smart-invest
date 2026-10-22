@@ -1,7 +1,8 @@
 // Pure valuation mathematics. Money and shares are in millions; prices in USD.
 import {buildForecast} from './forecast.js';
 import {operatingForecast} from './prediction.js';
-export const MODEL_VERSION = '0.6.0';
+import {UNCERTAINTY} from './uncertainty.js';
+export const MODEL_VERSION = '0.7.0';
 // Research evidence (LLM reports, issued vintages) is keyed separately from valuation
 // arithmetic: v0.5 changed extraction and discounting, not the research contract, so
 // validated 0.4.0 research remains reusable.
@@ -83,12 +84,26 @@ export function capexSurge(history=[],latest) {
   if(!(multiple>=2))return null;
   return {latest,normal,multiple,path:[1,2,3,4,5].map(k=>normal+(latest-normal)*.8*(5-k)/4)};
 }
-// Long-run operating margin (years 2–10, statistical case): midpoint of the TTM margin and the
-// five-year median annual margin. SEC-archive backtest on margins two to five years ahead
-// (898 origins): mean absolute error 5.69pp vs 6.18pp for the latest margin alone.
-export function longRunMargin(b,history=[]) {
-  const ttm=Number.isFinite(b.ebit)&&b.revenue>0?b.ebit/b.revenue:null;
-  const annual=history.filter(h=>Number.isFinite(h.ebit)&&h.revenue>0).slice(-5).map(h=>h.ebit/h.revenue);
+// One-off charges (impairments, restructuring, litigation). The issuer's five-year average
+// charge rate is a recurring cost; only a TTM excess above it by more than 2% of revenue is a
+// one-off year, and then charges above that average are added back. SEC archive (898
+// origins): margins two to five years ahead, mean absolute error 5.54pp vs 5.69pp; in
+// one-off years 7.99pp vs 10.57pp, with bias halved.
+export const ONE_OFF_THRESHOLD=.02;
+export function normalizedEarnings(b,history=[]) {
+  const rows=history.filter(h=>h.revenue>0&&Number.isFinite(h.ebit)).slice(-5);
+  const average=rows.length?rows.reduce((s,h)=>s+(h.unusual||0)/h.revenue,0)/rows.length:0;
+  const ttmRate=b.revenue>0?(b.unusual||0)/b.revenue:0,oneOff=Number.isFinite(b.ebit)&&ttmRate-average>ONE_OFF_THRESHOLD;
+  const adjust=oneOff?(b.unusual||0)-average*b.revenue:0;
+  return {average,ttmRate,oneOff,adjust,charges:b.unusual||0,ebit:Number.isFinite(b.ebit)?b.ebit+adjust:null,
+    margin:h=>oneOff?(h.ebit+(h.unusual||0)-average*h.revenue)/h.revenue:h.ebit/h.revenue};
+}
+// Long-run operating margin (years 2–10, statistical case): midpoint of the (normalized) TTM
+// margin and the five-year median annual margin. SEC archive: 5.54pp vs 6.18pp for the latest
+// reported margin alone.
+export function longRunMargin(b,history=[],norm=normalizedEarnings(b,history)) {
+  const ttm=Number.isFinite(norm.ebit)&&b.revenue>0?norm.ebit/b.revenue:null;
+  const annual=history.filter(h=>Number.isFinite(h.ebit)&&h.revenue>0).slice(-5).map(norm.margin);
   if(ttm===null)return null;
   return annual.length>=3?(ttm+median(annual))/2:ttm;
 }
@@ -160,16 +175,18 @@ export function defaults(data) {
   const medium=mediumTermGrowth(hist);
   // Capitalize R&D in the statistical case, where terminal ROIC is measured on the same basis.
   const rd=business?null:researchCapital(data);
+  const norm=normalizedEarnings(b,hist);
   const surge=business?null:capexSurge(hist,fitted.ratios.capex.value);
   // Cash flows start after the latest filed period; value them as of the quote date.
   const lag=data.quote?.asOf&&b.end?clamp((Date.parse(data.quote.asOf)-Date.parse(b.end))/864e5/365.25,0,.75):0;
   return {
-    growth:business?.years[0].growth??fitted.firstGrowth, margin:business?.terminal.margin??longRunMargin(b,hist)??fitted.nearMargin, tax:research?.taxRate??.25,
+    growth:business?.years[0].growth??fitted.firstGrowth, margin:business?.terminal.margin??longRunMargin(b,hist,norm)??fitted.nearMargin,
+    normalization:{oneOff:norm.oneOff,adjust:norm.adjust,charges:norm.charges,average:norm.average,ttmRate:norm.ttmRate}, tax:research?.taxRate??.25,
     operatingForecast:fitted,valuationForecast:business,driverForecast:null,
     capex:business?.years[0].capexRatio??fitted.ratios.capex.value, da:business?.years[0].daRatio??fitted.ratios.da.value,
     nwc:business?.years[0].nwcRatio??fitted.ratios.nwc.value, terminalGrowth:business?.terminal.growth??Math.max(0,Math.min(data.rates.terminalGrowth??.025,data.rates.rf-.005)),
     mediumGrowth:business?null:medium.growth,mediumGrowthBasis:medium,
-    terminalROIC:business?.terminal.roic??defaultTerminalROIC(b,tax,costOfCapital,rd),
+    terminalROIC:business?.terminal.roic??defaultTerminalROIC({...b,ebit:norm.ebit??b.ebit},tax,costOfCapital,rd),
     capexPath:surge?.path??null,capexSurge:surge,
     rdCapitalize:!!rd,rdRatio:rd?.ratio??null,rdLife:rd?.life??null,rdSchedule:rd?.schedule??null,researchCapital:rd,
     valuationLag:lag,
@@ -293,6 +310,52 @@ export function impliedGrowth(base,a,wacc,price) {
   for(let i=0;i<50;i++){const m=(lo+hi)/2,e=at(m);if(e===null)break;if(elo*e<=0)hi=m;else{lo=m;elo=e;}}
   return {status:'solved',growth:(lo+hi)/2};
 }
+// Valuation range: 1,000 seeded scenarios around the active case. Revenue (five-year
+// cumulative log error, unscaled) and long-run margin errors (standardized, rescaled by
+// √(this issuer's five-year margin s.d. × the median issuer's)) are drawn from the measured
+// distributions in uncertainty.js; their held-out 80% ranges covered 80.8% and 78.7% of
+// outcomes. Beta varies by the company's regression standard error (Blume-scaled), the ERP
+// by its historical variation, terminal growth by ±0.5 points and long-run ROIC retention
+// within 40–80% of excess. Sources are treated as independent.
+function seeded(text) {
+  let h=2166136261;for(const ch of text){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}
+  return ()=>{h+=0x6D2B79F5;let t=h;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};
+}
+const fromQuantiles=(q,u)=>{const x=u*100-1;if(x<=0)return q[0];if(x>=q.length-1)return q.at(-1);const i=Math.floor(x);return q[i]+(q[i+1]-q[i])*(x-i);};
+export function valuationRange(data,a,r,{n=1000,sources=['growth','margin','discount','terminal']}={}) {
+  if(!r.valued||!r.current||!(r.marketPrice>0))return null;
+  const b=data.base,rand=seeded(`${data.symbol}|${b.end}|${sources.join()}`),normal=()=>{const u=Math.max(1e-12,rand()),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+  const on=new Set(sources),w=r.currentWeight,ke=r.current.ke,beta=r.current.beta;
+  const betaSE=(data.beta?.standardError??.25)*LONG_RUN.blume[0]*(beta/(adjustBeta(data.beta?.beta)||beta||1));
+  const coc=a.rf+(a.assetBeta??1)*a.erp,[retLo,retHi]=UNCERTAINTY.roicRetention;
+  const margins=(data.history||[]).filter(h=>Number.isFinite(h.ebit)&&h.revenue>0).slice(-5).map(h=>h.ebit/h.revenue);
+  const mean=margins.reduce((s,x)=>s+x,0)/(margins.length||1);
+  const marginVol=Math.max(UNCERTAINTY.marginVolFloor,margins.length>=3?Math.sqrt(margins.reduce((s,x)=>s+(x-mean)**2,0)/(margins.length-1)):UNCERTAINTY.marginVolTypical);
+  const marginScale=Math.sqrt(marginVol*UNCERTAINTY.marginVolTypical);
+  const values=[];
+  for(let i=0;i<n;i++) {
+    const growthShift=on.has('growth')?-fromQuantiles(UNCERTAINTY.growthLogError,rand())/5:0;
+    const marginShift=on.has('margin')?fromQuantiles(UNCERTAINTY.marginZ,rand())*marginScale:0;
+    const keDraw=on.has('discount')?a.rf+Math.max(.2,beta+normal()*betaSE)*Math.max(.01,a.erp+normal()*UNCERTAINTY.erpStdDev):ke;
+    const wacc=r.current.wacc+(1-w)*(keDraw-ke);
+    let g=a.terminalGrowth,roic=a.terminalROIC;
+    if(on.has('terminal')) {
+      g=Math.max(0,Math.min(a.rf-.0025,a.terminalGrowth+(rand()*2-1)*UNCERTAINTY.terminalGrowthRange));
+      roic=a.valuationForecast?a.terminalROIC*(.8+.4*rand()):coc+(retLo+(retHi-retLo)*rand())/LONG_RUN.roicRetention*(a.terminalROIC-coc);
+    }
+    roic=Math.max(roic,g+.01);
+    if(!(wacc>g+.005))continue;
+    const rows=forecast(b,{...a,growthShift,marginShift,terminalGrowth:g,terminalROIC:roic});
+    if(rows.some(x=>!Number.isFinite(x.fcff)))continue;
+    const v=dcf(rows,wacc,g,roic,b,{...a,terminalGrowth:g,terminalROIC:roic});
+    if(v)values.push(v.price);
+  }
+  if(values.length<n*.5)return null;
+  values.sort((x,y)=>x-y);
+  const q=p=>values[Math.min(values.length-1,Math.floor(p*(values.length-1)))];
+  return {n:values.length,p10:q(.1),p25:q(.25),p50:q(.5),p75:q(.75),p90:q(.9),
+    probAbovePrice:values.filter(v=>v>=r.marketPrice).length/values.length,zeroShare:values.filter(v=>v<=0).length/values.length};
+}
 // The discount rate at which this forecast reproduces the market price. A diagnostic of
 // what the price implies, never an input.
 export function impliedWACC(rows,a,base,price) {
@@ -325,7 +388,12 @@ export function valuationDiagnostics(data,a,r) {
   const independentEV=r.rows.reduce((s,row)=>s+row.fcff/(1+r.current.wacc)**at(row.year),0)+r.valued.terminalFCFF/(r.current.wacc-a.terminalGrowth)/(1+r.current.wacc)**at(r.rows.at(-1).year);
   const bridge=r.valued.ev+Math.max(0,b.cash-a.cashReserve)+(b.nonOperatingInvestments??0)-b.debt-a.otherClaims;
   const shareResidual=Math.abs(r.valued.price-Math.max(0,bridge/(b.valuationShares??b.shares)));
-  return {method,flatBenchmark,reportedGrowth,initialGrowth:a.growth,terminalROIC:a.terminalROIC,wacc:r.current.wacc,
+  // Return on new investment, years 1–5: incremental NOPAT over cumulative reinvestment, on the
+  // same normalized and R&D-adjusted basis as the forecast.
+  const nopat0=Number.isFinite(b.ebit)?(b.ebit+(a.normalization?.adjust||0))*(1-a.tax)+(a.rdCapitalize?a.researchCapital?.net??0:0):null;
+  const invested=r.rows.slice(0,5).reduce((s,row)=>s+row.reinvestment,0);
+  const returnOnNewInvestment=nopat0!==null&&invested>0?(r.rows[4].nopat-nopat0)/invested:null;
+  return {method,flatBenchmark,reportedGrowth,initialGrowth:a.growth,terminalROIC:a.terminalROIC,wacc:r.current.wacc,returnOnNewInvestment,
     terminalExcessReturn:a.terminalROIC-r.current.wacc,yearOneCapex:r.rows[0].capex,yearTenCapex:r.rows.at(-1).capex,
     yearTenCapexBeforeTransition:r.rows.at(-1).rawCapex,yearTenCapexAdjustment:r.rows.at(-1).transitionAdjustment,
     recentGrowthScenario,reverse:reverseDCF(b,a,r.current.wacc,r.marketPrice),impliedWACC:impliedWACC(r.rows,a,b,r.marketPrice),
@@ -421,7 +489,8 @@ export function analyze(data, a=defaults(data)) {
   const buyBelow=valued ? valued.price*(1-a.marginOfSafety) : null;
   // Perception lenses: analysts' revenue path on the active case, and the growth the price requires.
   const consensus=consensusGrowthPath(data.consensus,b,Number.isFinite(a.mediumGrowth)?a.mediumGrowth:LONG_RUN.growthAnchor,
-    {baselineMargin:Number.isFinite(b.ebit)&&b.revenue>0?b.ebit/b.revenue:null,shares:shareChange(data.history)});
+    // Consensus EPS is typically before one-off charges, so the baseline margin is normalized.
+    {baselineMargin:Number.isFinite(b.ebit)&&b.revenue>0?(b.ebit+(a.normalization?.adjust??0))/b.revenue:null,shares:shareChange(data.history)});
   const consensusCase=consensus?{...consensus,...dcf(forecast(b,{...a,growthPath:consensus.path,marginPath:consensus.marginPath}),current.wacc,a.terminalGrowth,a.terminalROIC,b,a)}:null;
   const implied=impliedGrowth(b,a,current.wacc,price);
   const quoteAge=data.quote?.asOf ? (Date.now()-Date.parse(data.quote.asOf))/864e5 : Infinity;
@@ -434,5 +503,11 @@ export function analyze(data, a=defaults(data)) {
     capitalStructureUnavailable:hasHistoricalDA?null:'Historical D&A is not fully disclosed. EBITDA and optimal capital structure are withheld; the DCF uses the explicit researched forward D&A path.',
     upside:valued?valued.price/price-1:null,version:MODEL_VERSION};
   result.diagnostics=valuationDiagnostics(data,a,result);
+  // Ranges and what drives their width (each source alone).
+  result.range=valuationRange(data,a,result);
+  if(result.range) {
+    result.range.drivers=Object.fromEntries(['growth','margin','discount','terminal'].map(s=>{const x=valuationRange(data,a,result,{n:300,sources:[s]});return [s,x?{p10:x.p10,p90:x.p90}:null];}));
+    result.range.position=price<result.range.p10?'below':price>result.range.p90?'above':'within';
+  }
   return result;
 }

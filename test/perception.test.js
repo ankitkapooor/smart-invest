@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {forecast,dcf,defaults,researchCapital,consensusGrowthPath,impliedGrowth,rdLife,longRunMargin,shareChange,capexSurge} from '../public/model.js';
+import {forecast,dcf,defaults,researchCapital,consensusGrowthPath,impliedGrowth,rdLife,longRunMargin,shareChange,capexSurge,normalizedEarnings,valuationRange,analyze} from '../public/model.js';
 import {parseConsensus} from '../src/consensus.js';
 
 const day=new Date().toISOString().slice(0,10);
@@ -96,4 +96,23 @@ test('search folds punctuation, falls back to words, and explains private compan
   assert.deepEqual(matchCompanies(catalog,'OpenAI'),[]);
   assert.match(privateCompanyHint('OpenAI'),/privately held/);assert.match(privateCompanyHint('space x'),/SpaceX/);
   assert.equal(privateCompanyHint('Oracle'),null);
+});
+
+test('one-off charges are added back only above the five-year average plus 2% of revenue',()=>{
+  const hist=[0,.01,0,.01,0].map((u,i)=>({end:`${2021+i}-12-31`,revenue:100,ebit:20,unusual:100*u}));
+  const spike=normalizedEarnings({revenue:100,ebit:10,unusual:10},hist);
+  assert.ok(spike.oneOff);assert.ok(Math.abs(spike.adjust-(10-.4))<1e-12);assert.ok(Math.abs(spike.ebit-19.6)<1e-12);
+  const recurring=normalizedEarnings({revenue:100,ebit:18,unusual:2},hist.map(h=>({...h,unusual:2})));
+  assert.equal(recurring.oneOff,false);assert.equal(recurring.adjust,0,'a charge at the usual rate is a cost of doing business');
+});
+test('valuation ranges are deterministic, ordered and widen with each error source',()=>{
+  const d={...fixture,symbol:'TEST'},a={...defaults(d),hReviewed:true},r=analyze(d,a);
+  const one=valuationRange(d,a,r),two=valuationRange(d,a,r);
+  assert.deepEqual(one,two,'seeded by symbol and period');
+  assert.ok(one.p10<=one.p25&&one.p25<=one.p50&&one.p50<=one.p75&&one.p75<=one.p90);
+  assert.ok(one.probAbovePrice>=0&&one.probAbovePrice<=1);
+  const growthOnly=valuationRange(d,a,r,{n:300,sources:['growth']}),none=valuationRange(d,a,r,{n:50,sources:[]});
+  assert.ok(Math.abs(none.p90-none.p10)<1e-9,'with no error sources every scenario equals the point value');
+  assert.ok(Math.abs(none.p50-r.valued.price)<1e-9);assert.ok(growthOnly.p90-growthOnly.p10>0);
+  assert.ok(['below','within','above'].includes(r.range.position));
 });

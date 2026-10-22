@@ -29,12 +29,16 @@ export function buildForecast(base,a) {
     const growth=path?(year<=5?path[year-1]:path[4]*(1-fade)+a.terminalGrowth*fade)
       :business?(year<=5?point.growth+growthShift:(last.growth+growthShift)*(1-fade)+a.terminalGrowth*fade)
       :medium!==null?(year===1?a.growth:year<=5?medium:medium*(1-fade)+a.terminalGrowth*fade)
-      :a.growth+(a.terminalGrowth-a.growth)*revenueFade;revenue*=1+growth;
+      :a.growth+(a.terminalGrowth-a.growth)*revenueFade;
+    // Scenario shifts (valuation ranges): growth shifts years 1–5 and fades with the path;
+    // margin shifts apply from year 2, where the measured long-run margin error applies.
+    const growthAdj=growth+(a.growthShift||0)*(year<=5?1:1-fade);revenue*=1+growthAdj;
     const nearMargin=fitted?a.operatingForecast.nearMargin:base.ebit/base.revenue+(a.margin-base.ebit/base.revenue)*Math.min(year/5,1);
     // Statistical case: year 1 is the measured quarterly margin; years 2–10 use the
     // backtested long-run margin (a.margin).
     const margin=marginPath?marginPath[Math.min(year,5)-1]:business?(year<=5?point.margin+(a.margin-business.terminal.margin):(last.margin+a.margin-business.terminal.margin)*(1-fade)+a.margin*fade):fitted?(year===1?nearMargin:a.margin):nearMargin+(a.margin-nearMargin)*fade;
-    const ebit=revenue*margin,cashTax=Math.max(ebit,0)*a.tax,nopatReported=ebit-cashTax;
+    const marginAdj=year>=2&&a.marginShift?Math.max(-.5,Math.min(.9,margin+a.marginShift)):margin;
+    const ebit=revenue*marginAdj,cashTax=Math.max(ebit,0)*a.tax,nopatReported=ebit-cashTax;
     const rd=rdOn?revenue*a.rdRatio:0,rdAmortization=rdOn?rdHistory.slice(-a.rdLife).reduce((s,x)=>s+x,0)/a.rdLife:0;
     if(rdOn)rdHistory.push(rd);
     const netRD=rd-rdAmortization,nopat=nopatReported+netRD;
@@ -44,12 +48,12 @@ export function buildForecast(base,a) {
     const rawCapex=revenue*(business?point.capexRatio:capexPath?capexPath[Math.min(year,5)-1]:a.capex);
     const nextNwc=revenue*(business?(year<=5?point.nwcRatio:last.nwcRatio*(1-fade)+business.terminal.nwcRatio*fade):a.nwc),deltaNwc=nextNwc-nwc;nwc=nextNwc;
     const rawReinvestment=rawCapex-da+deltaNwc+netRD;
-    const steadyReinvestment=nopat*growth/a.terminalROIC;
+    const steadyReinvestment=nopat*growthAdj/a.terminalROIC;
     // Fade the economic reinvestment ratio along with growth and margin, ending
     // exactly at g/ROIC. A labeled adjustment preserves the FCFF identity.
     const reinvestment=rawReinvestment+(steadyReinvestment-rawReinvestment)*fade;
     const capex=da+reinvestment-netRD-deltaNwc;
-    rows.push({year,growth,margin,revenue,ebit,cashTax,nopat,nopatReported,rd,rdAmortization,netRD,da,capex,nwc,deltaNwc,
+    rows.push({year,growth:growthAdj,margin:marginAdj,revenue,ebit,cashTax,nopat,nopatReported,rd,rdAmortization,netRD,da,capex,nwc,deltaNwc,
       rawCapex,reinvestment,steadyReinvestment,transitionAdjustment:capex-rawCapex,
       fcff:nopat-reinvestment,drivers,forecastBasis:business?(year<=5?'Company-specific researched analyst estimate':'Fade from researched year five to the explicit stable state'):fitted?(year===1?a.operatingForecast.basis:medium!==null&&year<=5?'Medium-term rule: 25% own five-year CAGR + 75% × 5% (backtested)':'Long-run fade scenario; predictive accuracy unmeasured'):'Manual operating scenario'});
   }

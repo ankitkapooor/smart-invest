@@ -87,3 +87,8 @@ Amounts are USD millions; returns are decimal total returns. The example is a fo
 **v0.6 additions.** The long-run margin rule is backtested (section above and methodology). The analyst-consensus lens has no historical accuracy test here: point-in-time consensus history is not available, so it describes perception, not evidence. R&D capitalization leaves explicit-year cash flows unchanged by construction; its effect is on measured returns and the stable state.
 
 **Known limitations after v0.5.** Shrinking growth toward a 5% anchor is unbiased on average but lifts structurally declining businesses (Comcast's statistical case is +254% above its price). Relevering at very high debt weights produces double-digit WACCs and can value equity at zero (Charter). Issuers whose capex uses only company-specific concepts (several energy and utility companies) and multi-class issuers without any current share count (Hershey) remain blocked rather than estimated.
+
+
+## v0.7 ranges and price consistency (October 22, 2026)
+
+The return backtest now also records each valuation's 80% range. At the five origins the market price lay inside the model's own 80% range for 74%, 83%, 84%, 84%, 74% of companies: most of the gap between point values and prices is within the model's measured forecast uncertainty. Rank ICs of the point signal were 0.049, −0.136, −0.124, 0.000, 0.073 (mean −0.028; 481 valuations); the share of scenarios at or above the price had similar ICs, so neither predicts returns. Range calibration, the one-off normalization result and the rejected rules (cyclical mid-cycle margins, sales-to-capital reinvestment, volatility-scaled revenue errors) are listed in the Validation tab and methodology.

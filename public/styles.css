@@ -214,6 +214,19 @@ main { flex: 1; min-width: 0; max-width: 1280px; padding: 24px 32px 28px; }
 .fv-value, .fv-price { position: absolute; width: 0; }
 .fv-value { top: -3px; bottom: -3px; border-left: 2px solid var(--text); margin-left: -1px; }
 .fv-price { top: -5px; bottom: -5px; border-left: 2px solid var(--accent); margin-left: -1px; }
+.fv-range.band { top: 2px; height: 22px; border-radius: 4px; background: color-mix(in srgb, var(--text) 16%, transparent); opacity: 1; border: 1px solid color-mix(in srgb, var(--text) 28%, transparent); }
+.fv-median { position: absolute; width: 0; top: 2px; bottom: 2px; border-left: 1px dashed var(--text-2); }
+.fv-legend .range.band { height: 10px; width: 16px; background: color-mix(in srgb, var(--text) 16%, transparent); border: 1px solid color-mix(in srgb, var(--text) 28%, transparent); opacity: 1; vertical-align: -1px; }
+.verdict-stat dd.stat-sub { font-size: 12px; font-weight: 400; color: var(--text-3); margin-top: 2px; letter-spacing: 0; }
+.drivers { list-style: none; padding: 0; margin: 0; }
+.drivers li { display: grid; grid-template-columns: minmax(180px, 1.1fr) 2fr auto; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); margin: 0; }
+.drivers li:last-child { border-bottom: 0; }
+.driver-label b { display: block; font-size: 14px; font-weight: 500; }
+.driver-label em { display: block; font-style: normal; font-size: 12.5px; color: var(--text-3); margin-top: 1px; }
+.driver-bar { height: 10px; background: var(--surface-3); border-radius: 5px; overflow: hidden; }
+.driver-bar i { display: block; height: 100%; background: var(--chart-1); border-radius: 5px; }
+.drivers strong { font-variant-numeric: tabular-nums; font-weight: 500; font-size: 14px; min-width: 64px; text-align: right; }
+@media (max-width: 640px) { .drivers li { grid-template-columns: 1fr auto; } .driver-bar { grid-column: 1 / -1; grid-row: 2; } }
 .fv-consensus { position: absolute; width: 0; top: -2px; bottom: -2px; border-left: 2px dashed var(--chart-3); margin-left: -1px; }
 .fv-label.consensus, .fv-label.consensus b { color: var(--warn); }
 .fv-legend .consensus { background: none; border-left: 2px dashed var(--chart-3); width: 0; height: 12px; border-radius: 0; vertical-align: -2px; margin-right: 8px; }

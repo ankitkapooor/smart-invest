@@ -38,6 +38,21 @@ export const TAGS={
   cfi:['NetCashProvidedByUsedInInvestingActivities'],cff:['NetCashProvidedByUsedInFinancingActivities'],fx:['EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents','EffectOfExchangeRateOnCashAndCashEquivalents','EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations']
 };
 const forms=new Set(['10-K','10-K/A','10-Q','10-Q/A']);
+// One-off operating charges. Overlapping concepts (aggregates and components) make sums
+// double count, so each group takes the largest reported figure for the period.
+export const UNUSUAL={
+  impairment:['GoodwillAndIntangibleAssetImpairment','AssetImpairmentCharges','GoodwillImpairmentLoss','ImpairmentOfIntangibleAssetsExcludingGoodwill','ImpairmentOfLongLivedAssetsHeldForUse'],
+  restructuring:['RestructuringCharges','RestructuringAndRelatedCostIncurredCost','RestructuringCosts','SeveranceCosts1','BusinessExitCosts1'],
+  litigation:['LitigationSettlementExpense','LossContingencyLossInPeriod'],
+  combined:['RestructuringCostsAndAssetImpairmentCharges']
+};
+function unusualFor(facts,opt) {
+  const group=tags=>{let best=null;for(const t of tags){const f=pickFact(facts,[t],opt);if(f&&f.value>0&&(!best||f.value>best.value))best=f;}return best;};
+  const parts=Object.fromEntries(Object.entries(UNUSUAL).map(([k,tags])=>[k,group(tags)]));
+  const separate=(parts.impairment?.value??0)+(parts.restructuring?.value??0),combined=parts.combined?.value??0;
+  const value=Math.max(separate,combined)+(parts.litigation?.value??0);
+  return {value,records:Object.values(parts).filter(Boolean)};
+}
 // Issuers without an operating-income subtotal (e.g. integrated energy, pharma, IBM)
 // report pre-tax income. EBIT = pre-tax income + interest expense − interest income,
 // matched by period. It still contains other non-operating items and is labeled.
@@ -147,6 +162,7 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
     const row={end,year:Number(end.slice(0,4)),provenance:{}};
     for(const key of flows){const m=metric(facts,key,{end,annual:true,cik,asOf});row[key]=m.value;if(m.records.length)row.provenance[key]=m.records;}
     row.dilutedShares=metric(facts,'dilutedShares',{end,annual:true,cik,asOf,unit:'shares'}).value;
+    const u=unusualFor(facts,{end,annual:true,cik,asOf});row.unusual=u.value;if(u.records.length)row.provenance.unusual=u.records;
     Object.assign(row,workingCapitalAt(facts,end,cik,asOf));
     return row;
   }).filter(r=>r.revenue!==null);
@@ -176,6 +192,13 @@ export function financials(raw,submission={},asOf=new Date().toISOString().slice
     critical('capex-implausible','The only capital-expenditure concept found is below 25% of D&A and is likely a partial line. Total capex requires review.');
   }
   if(base.provenance.ebit?.some(r=>r.basis))quality.push({severity:'review',code:'ebit-derived',text:'No operating-income subtotal is reported. EBIT is derived from pre-tax income plus interest expense less interest income and still includes other non-operating items.'});
+  // TTM one-off charges: FY + current YTD − prior YTD (each period's largest concept per group).
+  base.unusual=annual.unusual;
+  if(q) {
+    const cur=unusualFor(facts,{end:q.end,start:q.start,cik,asOf}),candidates=revFacts.filter(f=>forms.has(f.form)&&f.filed<=asOf&&f.start&&Math.abs((Date.parse(q.end)-Date.parse(f.end))/864e5-365)<10&&Math.abs(durationDays(f)-durationDays(q))<10).sort((a,b)=>b.filed.localeCompare(a.filed));
+    const p=candidates[0],prior=p?unusualFor(facts,{end:p.end,start:p.start,cik,asOf}):{value:0};
+    base.unusual=Math.max(0,annual.unusual+cur.value-prior.value);
+  }
   const opt={end:base.end,cik,asOf};
   for(const key of ['cash','shortInvest','longInvest','currentAssets','currentLiabilities','longDebt','currentDebt','shortDebt','combinedCurrentDebt','totalTermDebt','financeLeaseCurrent','financeLeaseNoncurrent','shares','assets','liabilitiesEquity','ppe','goodwill','intangibles','equity','preferred','minority','pension']) {
     const m=metric(facts,key,{...opt,unit:key==='shares'?'shares':'USD'});base[key]=m.value;if(m.records.length)base.provenance[key]=m.records;

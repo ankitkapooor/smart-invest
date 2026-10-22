@@ -54,12 +54,14 @@ for(const o of ORIGINS) {
       hFactors:Array.from({length:7},()=>({score:2})),research:{status:'not_started'},modelFamily:'fcff'};
     let r;try{r=analyze(data,{...defaults(data),hReviewed:true});}catch{continue;}
     if(r.errors?.length||!(r.valued?.price>0))continue;
-    obs.push({symbol:is.ticker,signal:Math.log(r.valued.price/price),excess:Math.log(px.bars.get(end).adj/px.bars.get(om).adj)-Math.log(spy.bars.get(end).adj/spy.bars.get(om).adj)});
+    obs.push({symbol:is.ticker,signal:Math.log(r.valued.price/price),prob:r.range?.probAbovePrice??null,inRange:r.range?r.range.position==='within':null,excess:Math.log(px.bars.get(end).adj/px.bars.get(om).adj)-Math.log(spy.bars.get(end).adj/spy.bars.get(om).adj)});
   }
   const sorted=[...obs].sort((a,b)=>a.signal-b.signal),q=Math.floor(obs.length/5),mean=a=>a.reduce((s,x)=>s+x.excess,0)/a.length;
   const cheap=obs.filter(x=>x.signal>0),dear=obs.filter(x=>x.signal<=0);
   origins.push({origin:o.date,end,rf:o.rf,erp:o.erp,eligible,valued:obs.length,medianValueToPrice:Math.exp(median(obs.map(x=>x.signal)))-1,
-    rankIC:spearman(obs.map(x=>x.signal),obs.map(x=>x.excess)),quintileSpread:mean(sorted.slice(-q))-mean(sorted.slice(0,q)),
+    rankIC:spearman(obs.map(x=>x.signal),obs.map(x=>x.excess)),
+    rankICProbability:(o=>o.length>9?spearman(o.map(x=>x.prob),o.map(x=>x.excess)):null)(obs.filter(x=>x.prob!==null)),
+    priceWithinRange:(o=>o.length?o.filter(x=>x.inRange).length/o.length:null)(obs.filter(x=>x.inRange!==null)),quintileSpread:mean(sorted.slice(-q))-mean(sorted.slice(0,q)),
     undervaluedBeatRate:cheap.filter(x=>x.excess>0).length/cheap.length,overvaluedBeatRate:dear.filter(x=>x.excess>0).length/dear.length,nUndervalued:cheap.length,nOvervalued:dear.length});
 }
 const ics=origins.map(o=>o.rankIC);
@@ -68,5 +70,5 @@ const report={generatedAt:new Date().toISOString(),modelVersion:MODEL_VERSION,ho
   conclusion:'No demonstrated predictive power: the valuation signal did not rank forward excess returns across five origins. With about 100 issuers per origin a rank IC has a standard error near 0.1, so a small edge cannot be ruled in or out.',
   limitations:['Statistical default case only: no peers, no LLM research.','Archive issuers are current large companies (survivorship).','Overlapping three-year windows; the last two origins have shorter horizons.','Year-start Treasury and ERP inputs; unofficial Yahoo adjusted prices.']};
 writeFileSync(OUT,JSON.stringify(report,null,2)+'\n');
-for(const o of origins)console.log(`${o.origin}→${o.end}: valued ${o.valued}/${o.eligible} | median value/price ${(o.medianValueToPrice*100).toFixed(0)}% | rank IC ${o.rankIC.toFixed(3)} | quintile spread ${(o.quintileSpread*100).toFixed(1)}pp`);
+for(const o of origins)console.log(`${o.origin}→${o.end}: valued ${o.valued}/${o.eligible} | median value/price ${(o.medianValueToPrice*100).toFixed(0)}% | rank IC ${o.rankIC.toFixed(3)} | IC of P(value ≥ price) ${o.rankICProbability?.toFixed(3)} | price within 80% range ${(o.priceWithinRange*100).toFixed(0)}% | quintile spread ${(o.quintileSpread*100).toFixed(1)}pp`);
 console.log(`mean rank IC ${report.meanRankIC.toFixed(3)} → ${OUT}`);

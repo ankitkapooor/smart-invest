@@ -29,6 +29,12 @@ Five live research vintages are recorded under `reports/v04-live`. `node scripts
 
 Source checks and arithmetic checks establish functionality and internal consistency. Prospective forecast accuracy and investment-return accuracy remain unmeasured. See [live release validation](reports/v04-live/REPORT.md).
 
+## Version 0.7
+
+- **Value ranges:** 1,000 scenarios from measured forecast errors give an 80% range (held-out calibration 80.8% revenue, 78.7% margin) and the share of scenarios that justify the price; a panel shows which source drives the width. Market prices sat inside the model's 80% range for 74–84% of companies historically.
+- **One-off charges** above the five-year average are added back (margin error 7.99 vs 10.57 points in one-off years).
+- **Tested and rejected:** cyclical mid-cycle margins and sales-to-capital reinvestment did not beat existing rules; return on new investment is shown as a diagnostic.
+
 ## Version 0.6
 
 - **Three readings of every price:** the five-year revenue growth today's price requires; an analyst-consensus case (two fiscal years of revenue estimates, then convergence to the long-run rate; unofficial Yahoo source); and the fundamental case.
