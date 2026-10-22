@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {supplementFilingFacts} from '../src/filing-facts.js';
+import {supplementFilingFacts,customLineItems} from '../src/filing-facts.js';
 import {financials} from '../src/accounting.js';
 import {analyze} from '../public/model.js';
 
@@ -38,18 +38,21 @@ test('Costco uses its explicit absence disclosure for this year and counts finan
   assert.equal(n.base.provenance.shortDebt[0].tag,'Narrative:NoShortTermBorrowings');
   assert.deepEqual(analyze(input(n)).errors,[]);
 });
-test('missing, facility-only, immaterial, other-year and future disclosures remain unresolved',async()=>{
+test('weak narratives add no evidence; only the labeled balance-sheet absence rule supplies the zero',async()=>{
   const raw=await load('COST');
   for(const html of ['',costco.replace('2026','2025'),costco.replace('outstanding at','outstanding under the bank credit facilities at'),'Short-term borrowings were immaterial at the end of 2026.']){
-    const s=supplementFilingFacts(raw,html,filings.COST,'2026-10-21');
-    assert.equal(financials(s.raw,{},'2026-10-21').base.debt,null);
+    const s=supplementFilingFacts(raw,html,filings.COST,'2026-10-21'),b=financials(s.raw,{},'2026-10-21').base;
+    assert.ok(!s.notes.some(n=>n.code==='filing-shortDebt'),'facility-only, immaterial and other-year wording is not a disclosure of zero');
+    assert.equal(b.shortDebt,0);assert.match(b.provenance.shortDebt[0].tag,/^NotPresented:/);assert.ok(b.absenceInferred.includes('shortDebt'));
+    assert.equal(financials(s.raw,{},'2026-10-21',{noAbsence:['shortDebt']}).base.debt,null,'a blocked inference leaves the bridge unresolved');
   }
   assert.equal(supplementFilingFacts(raw,costco,filings.COST,'2026-09-01').raw,raw);
 });
 test('term-debt caption, wrong issuer or period and conflicting lease facts are not accepted',async()=>{
   const raw=await load('MSFT');
   const caption=supplementFilingFacts(raw,microsoft().replace('Total debt','Total long-term debt'),filings.MSFT,'2026-10-21');
-  assert.equal(financials(caption.raw,{},'2026-10-21').base.debt,null);
+  const captioned=financials(caption.raw,{},'2026-10-21').base;
+  assert.match(captioned.provenance.shortDebt[0].tag,/^NotPresented:/,'a long-term-debt caption cannot support the total-debt residual inference');
   for(const f of [{...filings.MSFT,cik:1},{...filings.MSFT,end:'2025-06-30'}]){
     const s=supplementFilingFacts(raw,microsoft(f),filings.MSFT,'2026-10-21');
     assert.equal(financials(s.raw,{},'2026-10-21').base.financeLeaseCurrent,null);
@@ -59,13 +62,25 @@ test('term-debt caption, wrong issuer or period and conflicting lease facts are 
     assert.equal(financials(s.raw,{},'2026-10-21').base.financeLeaseCurrent,null);
   }
 });
-test('reported nonzero borrowings take precedence over absence inference; wrong units and nil do not become zero',async()=>{
+test('reported nonzero borrowings take precedence over absence inference; wrong units and nil supply no value',async()=>{
   const raw=await load('COST'),base=unit+context('whole',filings.COST);
   const s=supplementFilingFacts(raw,base+number('ShortTermBorrowings','20')+costco,filings.COST,'2026-10-21');
   assert.equal(financials(s.raw,{},'2026-10-21').base.shortDebt,20);
   for(const html of [base.replace('iso4217:USD','iso4217:EUR')+number('ShortTermBorrowings','20'),base+number('ShortTermBorrowings','0','whole','xsi:nil="true"')]){
-    const s=supplementFilingFacts(raw,html,filings.COST,'2026-10-21');assert.equal(financials(s.raw,{},'2026-10-21').base.shortDebt,null);
+    const s=supplementFilingFacts(raw,html,filings.COST,'2026-10-21'),b=financials(s.raw,{},'2026-10-21').base;
+    assert.equal(b.shortDebt,0);assert.match(b.provenance.shortDebt[0].tag,/^NotPresented:/);
   }
+});
+test('company-specific balance concepts in the primary filing block a standard-concept zero',()=>{
+  const f=filings.COST,html=unit+context('whole',f)+context('dim',f,'us-gaap:OtherCurrentLiabilitiesMember');
+  const custom=(name,value,id='whole')=>`<ix:nonFraction name="${name}" unitRef="usd" contextRef="${id}" scale="6">${value}</ix:nonFraction>`;
+  assert.deepEqual(customLineItems(html+custom('cost:CurrentPortionOfBorrowings','1,000'),f,f.cik).shortDebt,['cost:CurrentPortionOfBorrowings']);
+  assert.deepEqual(customLineItems(html+custom('cost:MarketableSecuritiesCurrent','50'),f,f.cik).shortInvest,['cost:MarketableSecuritiesCurrent']);
+  for(const footnote of ['ko:DisposalGroupIncludingDiscontinuedOperationsCashCashEquivalentsAndShortTermInvestments','intu:CashAndCashEquivalentsAndAvailableForSaleSecuritiesAmortizedCostBasis','syk:AvailableforsaleSecuritiesDebtMaturitiesAfterOneThroughThreeYearsFairValue'])
+    assert.equal(customLineItems(html+custom(footnote,'100'),f,f.cik).shortInvest,undefined,footnote);
+  assert.deepEqual(customLineItems(html+custom('tmus:LongTermDebtExcludingTowerObligations','70,000'),f,f.cik).longDebt,['tmus:LongTermDebtExcludingTowerObligations']);
+  for(const ignored of [custom('cost:DebtInterestRate','5'),custom('cost:BorrowingCapacity','900'),custom('us-gaap:ShortTermBorrowings','7'),custom('cost:CommercialPaper','0'),custom('cost:CommercialPaper','70','dim')])
+    assert.deepEqual(customLineItems(html+ignored,f,f.cik),{},ignored);
 });
 test('direct lease classifications recovered inline cannot be overwritten by contradictory dimensional classifications',async()=>{
   const raw=await load('MSFT'),html=microsoft()+number('FinanceLeaseLiabilityCurrent','5,000');

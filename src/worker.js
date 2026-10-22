@@ -1,6 +1,6 @@
 import {searchCompanies,loadCompany,loadPeerComparison,DataError} from './data.js';
 import {withDeadline} from './deadline.js';
-import {MODEL_VERSION} from '../public/model.js';
+import {MODEL_VERSION,RESEARCH_COMPAT_VERSION} from '../public/model.js';
 import {attachIssuedForecast} from './forecast-seeds.js';
 import {RESEARCH_MODEL,RESEARCH_EFFORT,RESEARCH_VERSION} from './research.js';
 export {ResearchStore} from './research.js';
@@ -29,7 +29,7 @@ export default {
         const symbol=(url.searchParams.get('symbol')||'').toUpperCase(),period=url.searchParams.get('period')||'';
         if(!/^[A-Z0-9.\-]{1,12}$/.test(symbol)||!/^\d{4}-\d{2}-\d{2}$/.test(period))throw new DataError('Invalid forecast lookup.');
         if(!env.RESEARCH)return json({status:'not_started'});
-        const key=[symbol,period,MODEL_VERSION,RESEARCH_VERSION,env.OPENAI_MODEL||RESEARCH_MODEL].join(':');
+        const key=[symbol,period,RESEARCH_COMPAT_VERSION,RESEARCH_VERSION,env.OPENAI_MODEL||RESEARCH_MODEL].join(':');
         const store=env.RESEARCH.get(env.RESEARCH.idFromName('global-research-v1'));
         const response=await store.fetch(new Request('https://research.internal/?key='+encodeURIComponent(key)));
         return response.status===404?json({status:'not_started',key}):json(await response.json(),response.status);

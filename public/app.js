@@ -1,5 +1,5 @@
 import {operatingForecast} from './prediction.js';
-import {analyze,defaults,median,unlever,RATINGS,RATINGS_SOURCE,MODEL_VERSION} from './model.js';
+import {analyze,defaults,median,unlever,adjustBeta,peerAssetBeta,ownAssetBeta,LONG_RUN,RATINGS,RATINGS_SOURCE,MODEL_VERSION} from './model.js';
 import {requestJSON} from './request.js';
 
 const $=s=>document.querySelector(s);
@@ -13,10 +13,11 @@ const dateTime=x=>x?new Date(x).toLocaleString('en-US',{month:'short',day:'numer
 const signed=x=>Number.isFinite(x)?`${x>=0?'+':''}${pct(x)}`:'—';
 const link=(url,label)=>url?`<a class="ext" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:'Unavailable';
 let data=null,a=null,result=null,currentView='overview',isExample=false,changes=0,loadController=null,searchTimer=null,searchController=null;
-let researchConfig={researchConfigured:false},researchJob=null,researchBusy=false,validationReport=null,quarterlyReport=null;
+let researchConfig={researchConfigured:false},researchJob=null,researchBusy=false,validationReport=null,quarterlyReport=null,returnsReport=null;
 const configReady=requestJSON('/api/config',{timeoutMs:5000}).then(c=>{researchConfig=c;if(data)render();}).catch(()=>{});
 fetch('/validation/quarterly.json').then(r=>r.json()).then(v=>{quarterlyReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
 fetch('/validation/latest.json').then(r=>r.json()).then(v=>{validationReport=v;if(data&&currentView==='validation')render();}).catch(()=>{});
+fetch('/validation/returns.json').then(r=>r.json()).then(v=>{returnsReport=v;if(data&&['validation','overview'].includes(currentView))render();}).catch(()=>{});
 let saved=[];try{saved=JSON.parse(localStorage.getItem('valuelens.saved')||'[]').filter(x=>typeof x==='string').slice(0,20);}catch{}
 let activeCommit=null;
 async function checkRelease(){
@@ -54,13 +55,22 @@ function fairValueScale(r) {
     <div class="fv-axis">${ticks.map(t=>`<span class="${tickPlace(x(t))}" style="left:${x(t)}%">$${num(t)}</span>`).join('')}</div>
   </div><div class="fv-legend"><span><i class="pos"></i>Below buy threshold</span><span><i class="mid"></i>Between threshold and value</span><span><i class="neg"></i>Above modeled value</span>${prices.length>1?`<span><i class="range"></i>Bear–bull scenarios ${money(bear)}–${money(bull)}</span>`:''}</div>`;
 }
+function impliedRateNote(r) {
+  const i=r.diagnostics?.impliedWACC,w=r.current?.wacc;
+  if(!i||!Number.isFinite(w))return '';
+  const text=i.status==='solved'?`At today’s price, these same cash flows imply a <strong>${pct(i.wacc,1)}</strong> discount rate. The model uses <strong>${pct(w,1)}</strong> (risk-free ${pct(a.rf,2)} + β × ${pct(a.erp,2)} equity premium). ${Math.abs(i.wacc-w)<.0075?'The forecast and the market broadly agree.':i.wacc<w?'The gap is mainly how much more growth, or how much lower a return, the market is accepting.':'The market is demanding a higher return than this model, or expects weaker cash flows.'}`
+    :i.status==='below'?`Even at the lowest discount rate tested, these cash flows do not reach today’s price; the market expects materially more growth than this forecast.`
+    :i.status==='above'?`These cash flows exceed today’s price even at a 30% discount rate; check the inputs before reading this as cheapness.`:'';
+  const edge=returnsReport?` A five-origin point-in-time backtest found no demonstrated return edge for this signal (mean rank IC ${num(returnsReport.meanRankIC,2)}); see Validation.`:'';
+  return text?`<p class="verdict-copy implied-rate">${text}${edge}</p>`:'';
+}
 function overview() {
   const r=result,v=r.valued,o=r.optimized;
   const [cls,label]=STATUS[r.status]||['neutral',r.status];
   const headline=Number.isFinite(r.upside)?`Modeled value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the market price`:'No price comparison is available';
   const reason=r.status==='Review required'?'This DCF scenario has unreviewed assumptions or unresolved data. The price gap alone does not establish mispricing. The audit below shows the growth and reinvestment assumptions behind it.':'This compares the price with one set of assumptions. It is not a forecast of stock returns.';
   return `<section class="verdict">
-    <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2><p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p></div>
+    <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2><p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p>${impliedRateNote(r)}</div>
     <div class="verdict-stats"><dl>
       <div class="verdict-stat"><dt>Market price</dt><dd>${money(r.marketPrice)}</dd></div>
       <div class="verdict-stat"><dt>Modeled value</dt><dd>${money(v?.price)}</dd></div>
@@ -127,7 +137,7 @@ function sensitivityPanel() {
 function qualityPanel() {
   const items=[...data.quality,
     ...data.rates.notes.map(text=>({severity:'review',text})),
-    {severity:'review',text:'Year one covers the four reporting quarters after the latest filed quarter when supported; those quarters can include time already elapsed since the report. Valuation discounts use whole-year periods as an approximation; no unreported results are invented.'},
+    {severity:'review',text:'Year one covers the four reporting quarters after the latest filed quarter when supported; those quarters can include time already elapsed since the report. Cash flows are discounted mid-year and valued as of the quote date; no unreported results are invented.'},
     {severity:'review',text:'Investment ratios, tax assumptions and unverified balance-sheet adjustments remain provisional. Quarterly revenue/margins have an aggregate evaluation; FCFF and long-run value do not. Diluted-minus-basic weighted shares are only a dilution proxy.'},
     {severity:'review',text:(data.research?.status==='validated'?'Peers use the cited LLM selection. ':'Candidate peers are a broad industry screen. ')+'Beta uses book debt proxies and assumes negligible debt beta. Review peer leverage, cash balances, business mix and tax rates.'}
   ];
@@ -179,10 +189,10 @@ function capital() {
 
 function comps() {
   const usable=data.peers.filter(p=>p.beta&&p.debt!==null&&p.equity>0&&a.peerIncluded.includes(p.symbol));
-  const peerBeta=median(usable.map(p=>unlever(p.beta.beta,p.debt,p.equity,a.tax)));
+  const peerBeta=peerAssetBeta(data.peers,a.peerIncluded,a.tax).beta;
   return `${viewHeader('Peers &amp; risk',`${esc(data.peerScreen)}. Candidate peers are a starting screen; include only businesses whose operating risk belongs in this valuation.`)}
-    <div class="metrics">${metric('Bottom-up operating beta',num(peerBeta,2),`${usable.length} included candidates · median`,true)}${metric('Active asset beta',num(a.assetBeta,2),`${esc(a.betaBasis)}`)}${metric('Company equity beta',num(data.beta?.beta,2),`${data.beta?.n||0} monthly observations vs. SPY`)}${metric('Current relevered equity beta',num(result.current?.beta,2),`Gross D/E with a ${pct(a.tax,0)} tax assumption`)}</div>
-    ${panel('Candidate peers','Adjusted monthly returns over up to five years; complete months only; at least 36 aligned observations.',`<div class="table-scroll"><table><thead><tr>${['Use','Company','Equity β','Unlevered β','R²','Std. error','Debt $M','Market equity $M','EBIT margin','EV / EBIT'].map((h,i)=>`<th scope="col" class="${i<2?'left':''}">${h}</th>`).join('')}</tr></thead><tbody>${data.peers.map(p=>{const valid=p.beta&&p.debt!==null&&p.equity>0;return `<tr><td><label><span class="sr-only">Include ${esc(p.symbol)} in peer beta</span><input class="peer-check" type="checkbox" data-peer="${esc(p.symbol)}" ${a.peerIncluded.includes(p.symbol)?'checked':''} ${valid?'':'disabled'}></label></td><th scope="row" class="left"><span class="tag-mono">${esc(p.symbol)}</span><div class="subline">${esc(p.name)}</div></th><td>${num(p.beta?.beta,2)}</td><td>${valid?num(unlever(p.beta.beta,p.debt,p.equity,a.tax),2):'—'}</td><td>${pct(p.beta?.r2,0)}</td><td>${num(p.beta?.standardError,2)}</td><td>${num(p.debt)}</td><td>${num(p.equity)}</td><td>${pct(p.margin)}</td><td>${p.ev!==null&&p.ebit>0?num(p.ev/p.ebit,1)+'×':'—'}</td></tr>`;}).join('')}</tbody></table></div><div class="table-note">Unlevered β = equity β / [1 + (1 − tax) × gross debt / market equity]. Peer tax rates currently share the editable marginal-tax prior. Debt beta is assumed negligible; material cash and risky debt require adjustment.</div>`)}
+    <div class="metrics">${metric('Bottom-up operating beta',num(peerBeta,2),peerBeta===null?`${usable.length} usable peers; at least ${LONG_RUN.minPeers} required`:`${usable.length} included candidates · median, Blume-adjusted`,true)}${metric('Active asset beta',num(a.assetBeta,2),`${esc(a.betaBasis)}`)}${metric('Company equity beta',num(data.beta?.beta,2),`${data.beta?.n||0} monthly observations vs. SPY`)}${metric('Current relevered equity beta',num(result.current?.beta,2),`Gross D/E with a ${pct(a.tax,0)} tax assumption`)}</div>
+    ${panel('Candidate peers','Adjusted monthly returns over up to five years; complete months only; at least 36 aligned observations.',`<div class="table-scroll"><table><thead><tr>${['Use','Company','Equity β','Unlevered β','R²','Std. error','Debt $M','Market equity $M','EBIT margin','EV / EBIT'].map((h,i)=>`<th scope="col" class="${i<2?'left':''}">${h}</th>`).join('')}</tr></thead><tbody>${data.peers.map(p=>{const valid=p.beta&&p.debt!==null&&p.equity>0;return `<tr><td><label><span class="sr-only">Include ${esc(p.symbol)} in peer beta</span><input class="peer-check" type="checkbox" data-peer="${esc(p.symbol)}" ${a.peerIncluded.includes(p.symbol)?'checked':''} ${valid?'':'disabled'}></label></td><th scope="row" class="left"><span class="tag-mono">${esc(p.symbol)}</span><div class="subline">${esc(p.name)}</div></th><td>${num(p.beta?.beta,2)}</td><td>${valid?num(unlever(adjustBeta(p.beta.beta),p.debt,p.equity,a.tax),2):'—'}</td><td>${pct(p.beta?.r2,0)}</td><td>${num(p.beta?.standardError,2)}</td><td>${num(p.debt)}</td><td>${num(p.equity)}</td><td>${pct(p.margin)}</td><td>${p.ev!==null&&p.ebit>0?num(p.ev/p.ebit,1)+'×':'—'}</td></tr>`;}).join('')}</tbody></table></div><div class="table-note">Unlevered β = adjusted equity β (0.67β + 0.33) / [1 + (1 − tax) × gross debt / market equity]. Peer medians require at least three usable peers. Peer tax rates currently share the editable marginal-tax prior. Debt beta is assumed negligible; material cash and risky debt require adjustment.</div>`)}
     <div class="note-box">Peer changes update the operating beta. The company's own regression is a cross-check, not a substitute for appropriate business comparisons. All quotes are independently timestamped; financial period ends differ.</div>
     ${panel('Peer rationale','Why each company is in the candidate screen.',data.peers.map(p=>`<div class="factor"><div class="factor-head"><h4><span class="idx">${esc(p.symbol)}</span>${esc(p.name)}</h4>${p.quoteUrl?link(p.quoteUrl,'Quote source'):''}</div><p>${esc(p.rationale)}</p><p class="stamp">Period end ${esc(p.end||'unavailable')} · Quote ${date(p.quoteDate)}${p.beta?` · Regression ${esc(p.beta.from)}–${esc(p.beta.to)}`:''}</p>${(p.quality||[]).map(q=>`<div class="quality-item critical"><span class="flag">Verify</span><span>${esc(q)}</span></div>`).join('')}</div>`).join(''))}
     ${panel('Change peer set','Choose up to four US tickers. Company and peer data are fetched again.',`<div class="panel-body"><form id="peer-form" class="peer-controls"><label for="peer-tickers">Peer tickers</label><input id="peer-tickers" value="${esc(data.peers.map(p=>p.symbol).join(', '))}" placeholder="MSFT, ORCL, CRM, ADBE"><button class="button primary">Update peers</button></form></div>`)}
@@ -193,8 +203,8 @@ function comps() {
 function methodology() {
   const steps=[
     ['Collect reported financials','Match the SEC ticker and CIK. Normalize full fiscal years and TTM financials from SEC XBRL. Keep period, unit, tag, accession and filing date for every source value. Foreign accounting standards, banks and other specialized models are routed out.','TTM = latest FY + current YTD − prior YTD'],
-    ['Forecast operations','Build a cited, company-specific five-year analyst case for growth, margins, cash capex, depreciation and working capital. Fade to a separately researched stable state in years 6–10. Retain issuer-history statistical forecasts as an independent short-term benchmark.','FCFF = EBIT(1 − cash tax rate) + D&A − capex − ΔNWC'],
-    ['Estimate business risk','Use an industry-screened peer median of unlevered betas. Relever at each debt ratio. Show a company regression cross-check and expose peer quality. CAPM uses a dated 10-year USD Treasury reference and implied ERP.','Ke = Rf + βe × ERP'],
+    ['Forecast operations','Build a cited, company-specific five-year analyst case for growth, margins, cash capex, depreciation and working capital. Fade to a separately researched stable state in years 6–10. Without research, year 1 is the measured quarterly forecast and years 2–5 shrink the five-year revenue CAGR toward 5% (backtested on 977 issuer-origins).','FCFF = EBIT(1 − cash tax rate) + D&A − capex − ΔNWC'],
+    ['Estimate business risk','Use the median of at least three Blume-adjusted, unlevered peer betas (else the company’s adjusted regression). Relever at each debt ratio. Show a company regression cross-check and expose peer quality. CAPM uses a dated 10-year USD Treasury reference and implied ERP.','Ke = Rf + βe × ERP'],
     ['Stress-test financing','Average the seven h scores from the class framework. Apply a revenue shock and a stressed margin. Limit interest to stressed EBIT / h. Enumerate rating bands at each leverage point to ensure cost of debt and coverage agree.','Kd = 10-year Treasury reference + synthetic default spread'],
     ['Set the terminal value','A ten-year explicit forecast enters a stable state with a separately chosen ROIC. Reinvestment funds growth. Require g below WACC, terminal ROIC and the nominal risk-free-rate assumption. Evaluate g = 0 separately.','TV = NOPAT₁₁ × (1 − g / ROIC) / (WACC − g)'],
     ['Bridge to equity value','Discount FCFF using WACC. Add non-operating liquid assets, subtract gross debt and other claims, then divide by shares including a disclosed dilution proxy. Show scenarios, sensitivity and a user-defined safety threshold. OCS is a conditional recap value per existing share.','WACC = E/(D+E) × Ke + D/(D+E) × Kd × (1 − usable tax shield)']
@@ -237,6 +247,8 @@ function research() {
 function validation() {
   const v=quarterlyReport,old=validationReport,one=v?.metrics.find(m=>m.split==='evaluation-2026'&&m.horizon===1),four=v?.metrics.find(m=>m.split==='evaluation-2026'&&m.horizon===4);
   return `${viewHeader('Validation','Operating forecasts, company diagnostics and investment returns are evaluated separately. The figures below summarize the reserved 2026 evaluation across issuers.')}${one&&four?`<div class="metrics">${metric('Next-quarter revenue error',pct(one.revenueMAPE,2),'Seasonal benchmark '+pct(one.seasonalMAPE,2),true)}${metric('Four-quarter total revenue error',pct(four.revenueMAPE,2),'Seasonal benchmark '+pct(four.seasonalMAPE,2))}${metric('Next-quarter margin error',num(one.marginMAEpp,2)+' pp','Latest-margin benchmark '+num(one.latestMarginMAEpp,2)+' pp')}${metric('Observed revenue range coverage',pct(one.observedPointCoverage,1),'Nominal 80% · '+one.intervalN+' next-quarter cases')}</div>`:''}${v?panel('Quarterly model evaluation',v.issuersWithFolds+' issuers · '+num(v.folds)+' forecast cases · 2026 targets reserved before the first quarterly run.',table(['Target split','Quarters aggregated','Cases','Revenue MAPE','Seasonal MAPE','Margin MAE pp','Latest-margin MAE pp'],v.metrics.map(m=>({highlight:m.split==='evaluation-2026',cells:[esc(m.split),m.horizon,num(m.n),pct(m.revenueMAPE,2),pct(m.seasonalMAPE,2),num(m.marginMAEpp,2),num(m.latestMarginMAEpp,2)]})))+`<div class="panel-body"><p><strong>Release gate: ${v.gatePassed?'passed':'failed'}. ${esc(v.productionPolicy)}.</strong></p><p>Four-quarter rows compare the sum of four future fiscal quarters. These results exclude LLM guidance overlays, FCFF, terminal valuation and stock returns. Forecast lead times depend on filing dates.</p><br><ul>${v.limitations.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>${link('/validation/quarterly.json','Metrics, sector results and coverage')}</div>`):'<p class="muted">Loading evaluation…</p>'}
+  ${returnsReport?panel('Does the valuation signal predict returns?',`Point-in-time backtest: ${returnsReport.issuers} archived issuers valued with only the filings available at each origin, then compared with forward total returns in excess of SPY (${returnsReport.horizonMonths}-month horizon, shorter for recent origins). Statistical default case; no peers or research.`,table(['Origin','Valued','Median value / price','Rank IC','Cheapest − dearest quintile','“Undervalued” beat SPY','“Overvalued” beat SPY'],returnsReport.origins.map(o=>({cells:[esc(o.origin)+' → '+esc(o.end),o.valued+' / '+o.eligible,signed(o.medianValueToPrice),num(o.rankIC,3),signed(o.quintileSpread),pct(o.undervaluedBeatRate,0)+' of '+o.nUndervalued,pct(o.overvaluedBeatRate,0)+' of '+o.nOvervalued]})))+`<div class="panel-body"><p><strong>Mean rank IC ${num(returnsReport.meanRankIC,3)}. ${esc(returnsReport.conclusion)}</strong></p><ul>${returnsReport.limitations.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul><p>${link('/validation/returns.json','Backtest data')}</p></div>`):''}
+  ${panel('Medium-term revenue rule','Years 2–5 of the statistical case. Five-year cumulative revenue error on the SEC archive (137 non-financial issuers, 977 origins).',table(['Rule','Mean |log error|','Mean bias'],[{highlight:true,cells:['25% own 5-year CAGR + 75% × 5% (v0.5)','30.4%','−5.1%']},{cells:['Prior fallback: first-year rate fading to 2.5%','39.9%','−29.1%']},{cells:['Constant 5%','32.9%','−6.8%']},{cells:['Own 5-year CAGR held','41.3%','−2.5%']}])+'<div class="table-note">Out of sample (origins from 2016, held out from rule selection): 29.3% vs 44.2% for the prior fallback.</div>')}
   ${old?panel('Earlier annual fallback test','Archived v0.2 results; these do not measure the current quarterly model.',table(['Horizon / split','Cases','v0.2 revenue MAPE','Flat MAPE'],old.metrics.map(m=>({cells:[m.horizon+'y / '+esc(m.split),num(m.n),pct(m.revenueMAPE),pct(m.flatRevenueMAPE)]})))+`<div class="panel-body">${link('/validation/latest.json','Archived annual metrics')}</div>`):''}`;
 }
 function predictions() {
@@ -256,10 +268,12 @@ function valuationCasePanel() {
   const evidence=key=>{const r=c[key];return '<p>'+esc(r.explanation)+'</p><p>'+r.sourceIds.map(id=>{const source=report.sources.find(s=>s.id===id);return source?link(source.url,esc(source.title)):esc(id);}).join(' · ')+'</p>';};
   return panel('Company-specific valuation forecast','Source-checked analyst estimates · issued '+dateTime(data.research.completedAt)+' · separate from the statistical benchmark.',table(['Year','Revenue growth','EBIT margin','Cash capex / sales','D&A / sales','Operating NWC / sales'],c.years.map(y=>({cells:[y.year,pct(y.growth),pct(y.margin),pct(y.capexRatio),pct(y.daRatio),pct(y.nwcRatio)]})))+'<div class="panel-body"><h4>Growth</h4>'+evidence('growthRationale')+'<h4>Margins</h4>'+evidence('marginRationale')+'<h4>Investment</h4>'+evidence('investmentRationale')+'<h4>Stable state · growth '+pct(a.terminalGrowth)+' · ROIC '+pct(a.terminalROIC)+'</h4>'+evidence('terminalRationale')+'</div>');
 }
-function forecastPending() {
+// Without a validated company forecast, the backtested statistical case is the valuation.
+// Research can replace it when it passes source and accounting checks.
+function statisticalNotice() {
   const failed=['failed','rejected'].includes(researchJob?.status);
-  return viewHeader('Company valuation forecast',failed?'The forecast could not be completed.':'Financial statements are loaded. Building the company-specific growth, margin and investment estimates…')+
-    panel(failed?'Forecast needs attention':researchBusy?'Research in progress':'Company forecast required','The financials and statistical benchmark are available in the other tabs.',`<div class="panel-body"><p>${researchJob?.errors?.map(esc).join('<br>')||'The valuation will appear here when its cited assumptions pass source and accounting checks.'}</p><p class="muted">Research runs in the background and is cached for this financial period.</p><button class="button primary" id="run-research" ${researchBusy?'disabled':''}>${researchBusy?'Researching '+esc(data.symbol)+'…':'Build company forecast'}</button></div>`);
+  const state=researchBusy?'Company research is running; this statistical case will be replaced if it validates.':failed?'Company research could not be completed: '+(researchJob?.errors?.map(esc).join(' ')||'see Company research')+'.':researchConfig.researchConfigured?'Company research has not run for this financial period.':'Company research is not configured.';
+  return `<div class="insight"><h3>Statistical case</h3><p>Year 1 uses the measured quarterly forecast; years 2–5 shrink the five-year revenue CAGR toward 5%; long-run ROIC keeps 60% of today’s excess return (each rule backtested; see Validation). ${state}</p>${researchConfig.researchConfigured&&!researchBusy?`<p style="margin-top:10px"><button class="button" id="run-research">Build company forecast</button></p>`:''}</div>`;
 }
 async function runResearch(background=false) {
   if(researchBusy||!data)return;
@@ -308,7 +322,8 @@ function render() {
   document.querySelectorAll('.nav-item[data-view]').forEach(b=>{const on=b.dataset.view===currentView;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   const error=result.errors.length && !['methodology','sources','comps','research','validation','predictions'].includes(currentView);
   const pending=!a.valuationForecast&&changes===0&&data.modelFamily!=='specialized'&&['overview','cashflows','capital'].includes(currentView);
-  $('#view').innerHTML=pending?forecastPending():error?`<div class="error-box"><strong>The model needs complete inputs.</strong><br>${result.errors.map(esc).join('<br>')}</div><div class="error-actions"><button class="button" data-view="research">Research missing inputs</button><button class="button" id="open-error-assumptions">Review assumptions</button></div>${qualityPanel()}`:({overview,cashflows,capital,comps,methodology,sources,research,validation,predictions}[currentView]||overview)();
+  const views={overview,cashflows,capital,comps,methodology,sources,research,validation,predictions};
+  $('#view').innerHTML=error?`<div class="error-box"><strong>The model needs complete inputs.</strong><br>${result.errors.map(esc).join('<br>')}</div><div class="error-actions"><button class="button" data-view="research">Research missing inputs</button><button class="button" id="open-error-assumptions">Review assumptions</button></div>${qualityPanel()}`:(pending?statisticalNotice():'')+(views[currentView]||overview)();
   $('#workspace').hidden=false;
   renderSaved();
 }
@@ -384,7 +399,7 @@ function openAssumptions() {
 }
 function exportData() {
   if(!data)return;
-  const payload={...data,isSavedExample:isExample,assumptions:a,analysis:a.valuationForecast||changes>0?result:null,forecastStatus:a.valuationForecast?'company_case':changes>0?'manual':'pending',exportedAt:new Date().toISOString(),modelVersion:MODEL_VERSION};
+  const payload={...data,isSavedExample:isExample,assumptions:a,analysis:result,forecastStatus:a.valuationForecast?'company_case':changes>0?'manual':'statistical_case',exportedAt:new Date().toISOString(),modelVersion:MODEL_VERSION};
   download(`${data.symbol}-valuelens.json`,JSON.stringify(payload,null,2),'application/json');
 }
 function download(name,content,type) {
@@ -417,8 +432,7 @@ document.addEventListener('click',e=>{
     if([...edited].some(k=>['growth','margin','capex','da','nwc'].includes(k))){next.driverForecast=null;next.operatingForecast=null;next.valuationForecast=null;}
     if(edited.has('assetBeta'))next.betaBasis='Analyst override';
     else if(edited.has('tax') && a.betaBasis!=='Analyst override') {
-      const peers=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0);
-      next.assetBeta=median(peers.map(p=>unlever(p.beta.beta,p.debt,p.equity,next.tax))) ?? (data.beta?unlever(data.beta.beta,data.base.debt,(next.quoteOverride??data.quote?.price)*data.base.shares,next.tax):null);
+      next.assetBeta=peerAssetBeta(data.peers,a.peerIncluded,next.tax).beta ?? ownAssetBeta(data,next.tax,next.quoteOverride??data.quote?.price);
     }
     const check=analyze(data,next);
     if(check.errors.length) {$('#assumption-error').innerHTML=`<div class="error-box">${check.errors.map(esc).join('<br>')}</div>`;return;}
@@ -431,8 +445,8 @@ document.addEventListener('change',e=>{
   if(e.target.dataset.hIndex!==undefined){a.hScores[Number(e.target.dataset.hIndex)]=Number(e.target.value);a.hReviewed=false;changes++;render();}
   if(e.target.id==='h-reviewed'){a.hReviewed=e.target.checked;changes++;render();}
   if(e.target.dataset.peer){const s=e.target.dataset.peer;a.peerIncluded=e.target.checked?[...a.peerIncluded,s]:a.peerIncluded.filter(t=>t!==s);
-    const eligible=data.peers.filter(p=>a.peerIncluded.includes(p.symbol)&&p.beta&&p.debt!==null&&p.equity>0);
-    a.assetBeta=median(eligible.map(p=>unlever(p.beta.beta,p.debt,p.equity,a.tax)));a.betaBasis='Median of selected peer unlevered betas';changes++;render();}
+    const peer=peerAssetBeta(data.peers,a.peerIncluded,a.tax);
+    a.assetBeta=peer.beta??ownAssetBeta(data,a.tax);a.betaBasis=peer.beta!==null?`Median of ${peer.n} selected peer unlevered betas (Blume-adjusted)`:`Company regression, Blume-adjusted; ${peer.n} selected peers (minimum ${LONG_RUN.minPeers})`;changes++;render();}
 });
 document.addEventListener('submit',async e=>{
   if(e.target.id==='peer-form'){e.preventDefault();const p=$('#peer-tickers').value.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);if(p.length>4||!p.length){$('#message').textContent='Choose one to four peer tickers.';return;}await loadCompany(data.symbol,p);return;}

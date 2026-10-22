@@ -29,6 +29,13 @@ Five live research vintages are recorded under `reports/v04-live`. `node scripts
 
 Source checks and arithmetic checks establish functionality and internal consistency. Prospective forecast accuracy and investment-return accuracy remain unmeasured. See [live release validation](reports/v04-live/REPORT.md).
 
+## Version 0.5
+
+- **Data coverage:** standard balance-sheet lines absent from the balance-sheet filing are labeled zeros (checked against company-specific tags in the primary filing); EBIT derived from pre-tax income where no operating-income subtotal exists; D&A, cash, debt and share fallbacks; 53-week fourth quarters retained. Complete inputs on the 155-issuer archive: 13 → 125. Cover-page share counts must be current (seven issuers had been priced on 2009–2016 counts).
+- **Backtested defaults:** years 2–5 revenue growth shrinks the five-year CAGR toward 5% (five-year error 30% vs 40%, bias −5% vs −29%); terminal ROIC retains 60% of excess operating ROIC (observed 70% after eight years); Blume-adjusted betas; peer medians need three peers.
+- **Timing:** mid-year discounting valued at the quote date; terminal growth capped below the risk-free rate.
+- **Honest verdicts:** the summary shows the discount rate the price implies. A five-origin point-in-time backtest found no demonstrated return edge (mean rank IC −0.004); see [validation](docs/VALIDATION.md).
+
 ## Version 0.3 (archived statistical benchmark)
 
 - **Quarterly accounting:** up to 64 discrete fiscal quarters, with Q2/Q3 YTD and Q4 annual amounts differenced and source provenance retained. Filing-date filters apply before subtraction. Reporting gaps prevent calendar misalignment.

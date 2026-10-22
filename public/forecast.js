@@ -13,7 +13,12 @@ export function buildForecast(base,a) {
     const revenueFade=fitted?smooth((year-1)/9):fade;
     const point=business?.years[Math.min(year,5)-1],last=business?.years[4];
     const growthShift=business?a.growth-business.years[0].growth:0;
-    const growth=business?(year<=5?point.growth+growthShift:(last.growth+growthShift)*(1-fade)+a.terminalGrowth*fade):a.growth+(a.terminalGrowth-a.growth)*revenueFade;revenue*=1+growth;
+    // Statistical case: year 1 is the measured near-term forecast; years 2–5 use the
+    // backtested medium-term rule; years 6–10 fade to the stable state.
+    const medium=fitted&&Number.isFinite(a.mediumGrowth)?a.mediumGrowth:null;
+    const growth=business?(year<=5?point.growth+growthShift:(last.growth+growthShift)*(1-fade)+a.terminalGrowth*fade)
+      :medium!==null?(year===1?a.growth:year<=5?medium:medium*(1-fade)+a.terminalGrowth*fade)
+      :a.growth+(a.terminalGrowth-a.growth)*revenueFade;revenue*=1+growth;
     const nearMargin=fitted?a.operatingForecast.nearMargin:base.ebit/base.revenue+(a.margin-base.ebit/base.revenue)*Math.min(year/5,1);
     const margin=business?(year<=5?point.margin+(a.margin-business.terminal.margin):(last.margin+a.margin-business.terminal.margin)*(1-fade)+a.margin*fade):nearMargin+(a.margin-nearMargin)*fade;
     const ebit=revenue*margin,cashTax=Math.max(ebit,0)*a.tax,nopat=ebit-cashTax;
@@ -28,7 +33,7 @@ export function buildForecast(base,a) {
     const capex=da+reinvestment-deltaNwc;
     rows.push({year,growth,margin,revenue,ebit,cashTax,nopat,da,capex,nwc,deltaNwc,
       rawCapex,reinvestment,steadyReinvestment,transitionAdjustment:capex-rawCapex,
-      fcff:nopat-reinvestment,drivers,forecastBasis:business?(year<=5?'Company-specific researched analyst estimate':'Fade from researched year five to the explicit stable state'):fitted?(year===1?a.operatingForecast.basis:'Long-run fade scenario; predictive accuracy unmeasured'):'Manual operating scenario'});
+      fcff:nopat-reinvestment,drivers,forecastBasis:business?(year<=5?'Company-specific researched analyst estimate':'Fade from researched year five to the explicit stable state'):fitted?(year===1?a.operatingForecast.basis:medium!==null&&year<=5?'Medium-term rule: 25% own five-year CAGR + 75% × 5% (backtested)':'Long-run fade scenario; predictive accuracy unmeasured'):'Manual operating scenario'});
   }
   return rows;
 }

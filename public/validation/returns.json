@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-10-22T17:47:05.887Z",
+  "modelVersion": "0.5.0",
+  "horizonMonths": 36,
+  "issuers": 134,
+  "origins": [
+    {
+      "origin": "2020-12-31",
+      "end": "2023-12",
+      "rf": 0.0093,
+      "erp": 0.0472,
+      "eligible": 131,
+      "valued": 91,
+      "medianValueToPrice": -0.22329345454886462,
+      "rankIC": 0.09839146360885491,
+      "quintileSpread": 0.11615904221797081,
+      "undervaluedBeatRate": 0.48484848484848486,
+      "overvaluedBeatRate": 0.3793103448275862,
+      "nUndervalued": 33,
+      "nOvervalued": 58
+    },
+    {
+      "origin": "2021-12-31",
+      "end": "2024-12",
+      "rf": 0.0151,
+      "erp": 0.0424,
+      "eligible": 133,
+      "valued": 94,
+      "medianValueToPrice": 0.01947127629358958,
+      "rankIC": -0.08128454286023913,
+      "quintileSpread": -0.10218943344884189,
+      "undervaluedBeatRate": 0.3541666666666667,
+      "overvaluedBeatRate": 0.45652173913043476,
+      "nUndervalued": 48,
+      "nOvervalued": 46
+    },
+    {
+      "origin": "2022-12-31",
+      "end": "2025-12",
+      "rf": 0.0388,
+      "erp": 0.0594,
+      "eligible": 133,
+      "valued": 96,
+      "medianValueToPrice": -0.23300964902745658,
+      "rankIC": -0.09740911557243624,
+      "quintileSpread": -0.18668244375383683,
+      "undervaluedBeatRate": 0.16129032258064516,
+      "overvaluedBeatRate": 0.2923076923076923,
+      "nUndervalued": 31,
+      "nOvervalued": 65
+    },
+    {
+      "origin": "2023-12-31",
+      "end": "2026-09",
+      "rf": 0.0388,
+      "erp": 0.046,
+      "eligible": 133,
+      "valued": 95,
+      "medianValueToPrice": -0.1844825203310393,
+      "rankIC": 0.026063829787234042,
+      "quintileSpread": 0.20438479270208784,
+      "undervaluedBeatRate": 0.2777777777777778,
+      "overvaluedBeatRate": 0.22033898305084745,
+      "nUndervalued": 36,
+      "nOvervalued": 59
+    },
+    {
+      "origin": "2024-12-31",
+      "end": "2026-09",
+      "rf": 0.0458,
+      "erp": 0.0433,
+      "eligible": 133,
+      "valued": 101,
+      "medianValueToPrice": -0.37061027342783903,
+      "rankIC": 0.03373325567850903,
+      "quintileSpread": 0.05113806258915321,
+      "undervaluedBeatRate": 0.37037037037037035,
+      "overvaluedBeatRate": 0.33783783783783783,
+      "nUndervalued": 27,
+      "nOvervalued": 74
+    }
+  ],
+  "meanRankIC": -0.004101021871615479,
+  "conclusion": "No demonstrated predictive power: the valuation signal did not rank forward excess returns across five origins. With about 100 issuers per origin a rank IC has a standard error near 0.1, so a small edge cannot be ruled in or out.",
+  "limitations": [
+    "Statistical default case only: no peers, no LLM research.",
+    "Archive issuers are current large companies (survivorship).",
+    "Overlapping three-year windows; the last two origins have shorter horizons.",
+    "Year-start Treasury and ERP inputs; unofficial Yahoo adjusted prices."
+  ]
+}

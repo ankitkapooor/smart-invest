@@ -1,13 +1,13 @@
 import {DataError} from './accounting.js';
 import {loadCompany,cachedFetch} from './data.js';
-import {MODEL_VERSION,defaults,analyze} from '../public/model.js';
+import {MODEL_VERSION,RESEARCH_COMPAT_VERSION,defaults,analyze} from '../public/model.js';
 import {operatingForecast} from '../public/prediction.js';
 import {VALUATION_CASE_SCHEMA,validateValuationCase} from '../public/valuation-case.js';
 export const RESEARCH_VERSION='research-5';
 export const RESEARCH_MODEL='gpt-5.6-terra';
 export const RESEARCH_EFFORT='low';
 export const VALIDATION_VERSION='business-forecast-1';
-export function researchKey(data,env={}) {return [data.symbol,data.base.end,MODEL_VERSION,RESEARCH_VERSION,env.OPENAI_MODEL||RESEARCH_MODEL].join(':');}
+export function researchKey(data,env={}) {return [data.symbol,data.base.end,RESEARCH_COMPAT_VERSION,RESEARCH_VERSION,env.OPENAI_MODEL||RESEARCH_MODEL].join(':');}
 const string={type:'string'},number={type:'number'};
 const nullableNumber={type:['number','null']};
 const array=(items,minItems,maxItems)=>({type:'array',items,...(minItems===undefined?{}:{minItems}),...(maxItems===undefined?{}:{maxItems})});

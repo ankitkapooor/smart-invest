@@ -1,6 +1,7 @@
 // Fill narrowly supported gaps from the exact primary filing. Company Facts
-// omits dimensional balances and untagged statements of absence. Never turn
-// an absent concept into zero without additional, period-matched evidence.
+// omits dimensional balances, company-specific concepts and untagged statements
+// of absence. A balance inferred as zero because no standard concept is presented
+// is re-checked here against company-specific concepts in the same filing.
 import {pickFact,TAGS} from './accounting.js';
 const attrs=s=>Object.fromEntries([...s.matchAll(/([\w:-]+)\s*=\s*["']([^"']*)["']/g)].map(m=>[m[1].toLowerCase(),m[2]]));
 const text=s=>s.replace(/<[^>]*>/g,' ').replace(/&#160;|&#xA0;|&nbsp;/gi,' ').replace(/&#8211;|&#8212;|&ndash;|&mdash;/gi,'–').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
@@ -72,4 +73,33 @@ export function supplementFilingFacts(raw,html,filing,asOf=new Date().toISOStrin
     }
   }
   return {raw:{...raw,facts:{...raw.facts,'us-gaap':patched}},notes};
+}
+
+// Company-specific (non us-gaap) balance-sheet concepts that could carry a balance
+// that Company Facts omits. Any positive period-matched consolidated amount blocks
+// the corresponding zero inference.
+const CUSTOM={
+  debt:{keys:['longDebt','currentDebt','shortDebt'],name:/(Debt|Borrowing|NotesPayable|CommercialPaper|SeniorNotes|LoansPayable)/i},
+  investments:{keys:['shortInvest','longInvest'],name:/(ShortTermInvestment|MarketableSecurit|AvailableForSaleSecurit)/i}
+};
+const NOT_BALANCE=/(Securit(?!y?ies?Current|iesNoncurrent)|Receivable|Issuance|Discount|Premium|FairValue|Interest|Maturit|Proceeds|Repayment|Covenant|Capacity|Available(?!ForSale)|Facility|Weighted|Rate|Term(?:s)?$|Gain|Loss|Expense|Income)/i;
+export function customLineItems(html,filing,cik) {
+  const contexts=new Set(),found={};
+  if(!html)return found;
+  for(const m of html.matchAll(/<(?:xbrli:)?context\b([^>]*)>([\s\S]*?)<\/(?:xbrli:)?context>/gi)) {
+    const body=m[2],end=body.match(/<(?:xbrli:)?instant>([^<]+)</i)?.[1],owner=body.match(/<(?:xbrli:)?identifier\b[^>]*>([^<]+)</i)?.[1];
+    if(end===filing.end&&Number(owner)===Number(cik)&&!/explicitMember|typedMember/i.test(body))contexts.add(attrs(m[1]).id);
+  }
+  for(const m of html.matchAll(/<ix:nonFraction\b([^>]*)>([\s\S]*?)<\/ix:nonFraction>/gi)) {
+    const a=attrs(m[1]),name=a.name||'',local=name.split(':')[1]||'',value=Number(text(m[2]).replaceAll(',',''));
+    if(!contexts.has(a.contextref)||/^(us-gaap|dei|srt|ifrs-full):/.test(name)||a['xsi:nil']==='true'||!(value>0))continue;
+    for(const [group,{keys,name:pattern}] of Object.entries(CUSTOM)) {
+      // Securities footnotes (maturity buckets, cost basis, fair-value tables) and disposal
+      // groups are not the balance-sheet line; debt matches stay broad because a false zero
+      // overstates value.
+      const excluded=group==='investments'?/(Receivable|Proceeds|Gain|Loss|Income|Purchase|Sale(?!Securit)|Disposal|Discontinued|Maturit|AmortizedCost|CostBasis|FairValue|Unrealized|Allowance|Disclosure)/i:NOT_BALANCE;
+      if(pattern.test(local)&&!excluded.test(local))for(const key of keys)(found[key]??=[]).push(name);
+    }
+  }
+  return found;
 }

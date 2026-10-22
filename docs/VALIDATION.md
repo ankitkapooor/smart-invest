@@ -70,3 +70,18 @@ node scripts/score-vintages.mjs exports.json outcomes.json scored.json
 ```
 
 Amounts are USD millions; returns are decimal total returns. The example is a format illustration, not real observations. The scorer refuses missing hashes, unmatched periods and unconfirmed total-return coverage. Unmatured/missing outcomes remain explicitly unscored. For a portfolio-performance claim, pre-register the stock universe, contemporaneous signal, holding/rebalancing rules, transaction costs and treatment of bankruptcies/delistings before collecting outcomes.
+
+
+## v0.5 accuracy evidence (October 22, 2026)
+
+**Extraction coverage.** On the 155-issuer SEC archive, complete core inputs (revenue, EBIT, D&A, capex, NWC, cash, debt, shares) rose from 13 to 125 issuers after the not-presented-means-zero rule, derived EBIT, D&A/cash/debt fallbacks the 53-week-quarter fix and a recency requirement on cover-page share counts (seven issuers had been priced on 2009–2016 counts). Most remaining gaps are financial institutions (out of scope) and company-specific capex concepts. Point-in-time, the prior model valued 6–8 of 133 archived issuers at historical origins; v0.5 values 91–101.
+
+**Medium-term revenue.** Five-year cumulative revenue, 977 issuer-origins: the v0.5 rule (25% own five-year CAGR + 75% × 5%) has 30.4% mean absolute log error and −5.1% bias; the prior fallback had 39.9% and −29.1%. Origins from 2016 onward, held out from selection: 29.3% vs 44.2%.
+
+**ROIC and capex.** Excess ROIC (excluding goodwill and intangibles) over ~9% retained a median 70% after eight years. The latest capex/revenue ratio predicted next-five-year capex intensity best (26% error, −0.5% bias).
+
+**Return predictiveness (not established).** `npm run backtest:returns` values each archived non-financial issuer at five year-end origins (2020–2024) using only filings available then, the month's split-consistent price, a 60-month Blume-adjusted beta and that date's published Treasury rate and implied ERP, then ranks forward excess returns over SPY. Rank ICs were 0.098, −0.081, −0.097, 0.026 and 0.034 (mean −0.004; 477 valuations). The over/undervalued signal therefore has no demonstrated predictive power. With about 100 issuers per origin the standard error of a rank IC is near 0.1; 12-month momentum also read as noise in the same sample, so a small edge can be neither confirmed nor excluded. Results are in `public/validation/returns.json` and the Validation tab.
+
+**Rejected: price-calibrated ERP.** `scripts/calibrate-market.mjs` solves the ERP that values the median company at its price under ValueLens cash flows. On 39 current large caps it returned 1.2% (halves 0.6% and 2.0%), with ±47% out-of-sample dispersion for every terminal-growth candidate. That premium is neither economically credible nor stable, and fitting it would make verdicts echo prices. The published implied ERP is retained; the summary instead shows the discount rate the price implies.
+
+**Known limitations after v0.5.** Shrinking growth toward a 5% anchor is unbiased on average but lifts structurally declining businesses (Comcast's statistical case is +254% above its price). Relevering at very high debt weights produces double-digit WACCs and can value equity at zero (Charter). Issuers whose capex uses only company-specific concepts (several energy and utility companies) and multi-class issuers without any current share count (Hershey) remain blocked rather than estimated.

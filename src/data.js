@@ -1,7 +1,7 @@
 import {betaRegression, MODEL_VERSION} from '../public/model.js';
 import {financials,DataError,CONTINUITY,mergePredecessor} from './accounting.js';
 import {reportedSegments} from './segments.js';
-import {supplementFilingFacts} from './filing-facts.js';
+import {supplementFilingFacts,customLineItems} from './filing-facts.js';
 import {withDeadline} from './deadline.js';
 export {financials,pickFact,DataError} from './accounting.js';
 
@@ -98,7 +98,8 @@ const UNIVERSES=[
   {name:'Enterprise software',sic:[7370,7371,7372,7373,7374],symbols:['MSFT','ORCL','ADBE','CRM','INTU']},
   {name:'Devices and systems',sic:[3570,3571,3572,3576,3577,3661,3663],symbols:['AAPL','DELL','HPQ','CSCO','HPE']},
   {name:'Digital platforms',sic:[7375,7389],symbols:['GOOGL','META','PINS','RDDT','SNAP']},
-  {name:'Retail',sic:[5311,5331,5399,5411,5961,5990],symbols:['AMZN','WMT','COST','TGT','KR']},
+  {name:'Internet and cloud platforms',sic:[],symbols:['AMZN','GOOGL','META','MSFT','ORCL']},
+  {name:'Retail',sic:[5311,5331,5399,5411,5961,5990],symbols:['WMT','COST','TGT','KR','DG','BJ']},
   {name:'Consumer staples',sic:[2000,2080,2082,2086,2090,2840,2844],symbols:['PG','CL','KMB','KO','PEP']},
   {name:'Restaurants',sic:[5810,5812],symbols:['MCD','SBUX','YUM','CMG','DRI']},
   {name:'Pharmaceuticals',sic:[2833,2834,2835,2836],symbols:['JNJ','MRK','PFE','LLY','ABBV']},
@@ -108,7 +109,8 @@ const UNIVERSES=[
   {name:'Utilities',sic:[4911,4931,4923,4924],symbols:['NEE','DUK','SO','AEP','EXC']},
   {name:'Industrials',sic:[3510,3530,3531,3560,3600,3721,3724,3812],symbols:['CAT','DE','HON','GE','RTX']},
   {name:'Apparel',sic:[2300,2320,3021,3140,5651,5661],symbols:['NKE','LULU','DECK','CROX','VFC']},
-  {name:'Telecommunications',sic:[4812,4813,4899],symbols:['T','VZ','TMUS','CHTR','CMCSA']},
+  {name:'Telecommunications',sic:[4812,4813,4899],symbols:['T','VZ','TMUS']},
+  {name:'Cable and media',sic:[4841,7812,4833],symbols:['CMCSA','CHTR','DIS','WBD','FOXA']},
   {name:'Logistics',sic:[4210,4213,4512,4513,4522],symbols:['UPS','FDX','DAL','UAL','AAL']}
 ];
 function candidatePeers(symbol,sic,custom) {
@@ -244,7 +246,7 @@ export async function loadCompany(symbol,env={},customPeers=[],{includePeers=tru
   // before declaring those required inputs unavailable. Historical folds still
   // use only the Company Facts snapshot; supplemental evidence is live-only.
   const leaseTotal=raw.facts?.['us-gaap']?.FinanceLeaseLiability?.units?.USD?.some(f=>f.end===extracted.base.end&&f.filed<=extracted.asOf&&f.val>0);
-  if(extracted.base.debt===null||leaseTotal&&(extracted.base.financeLeaseCurrent===null||extracted.base.financeLeaseNoncurrent===null)) {
+  if(extracted.base.debt===null||extracted.base.absenceInferred?.length||leaseTotal&&(extracted.base.financeLeaseCurrent===null||extracted.base.financeLeaseNoncurrent===null)) {
     const recent=submission.filings?.recent;
     const ix=recent?.form.findIndex((form,i)=>['10-K','10-Q'].includes(form)&&recent.reportDate[i]===extracted.base.end);
     if(ix>=0) {
@@ -252,8 +254,18 @@ export async function loadCompany(symbol,env={},customPeers=[],{includePeers=tru
       try {
         const html=await cachedFetch(primary.url,env,86400,'text');
         const supplemented=supplementFilingFacts(raw,html,primary);
-        if(supplemented.notes.length){extracted=financials(supplemented.raw,submission);extracted.quality.push(...supplemented.notes);}
-      } catch(e) {if(!(e instanceof DataError))throw e;extracted.quality.push({severity:'critical',code:'filing-supplement-unavailable',text:'Primary-filing accounting supplement unavailable; unresolved inputs remain missing.'});}
+        if(supplemented.notes.length){raw=supplemented.raw;extracted=financials(raw,submission);extracted.quality.push(...supplemented.notes);}
+        // A zero inferred from a missing standard concept is withdrawn when the filing
+        // carries a company-specific concept for the same balance.
+        const custom=customLineItems(html,primary,cik),blocked=(extracted.base.absenceInferred||[]).filter(key=>custom[key]?.length);
+        if(blocked.length){
+          const notes=extracted.quality.filter(q=>q.code?.startsWith('filing-'));
+          extracted=financials(raw,submission,undefined,{noAbsence:blocked});extracted.quality.push(...notes);
+          extracted.quality.push({severity:'critical',code:'custom-balance',text:`Company-specific concepts (${[...new Set(blocked.flatMap(k=>custom[k]))].slice(0,4).join(', ')}) carry ${blocked.join(', ')}; standard-concept absence is not treated as zero.`,url:primary.url});
+        }
+      } catch(e) {
+        // The supplement only narrows gaps; a failed fetch leaves the Company Facts result intact.
+        extracted.quality.push({severity:'critical',code:'filing-supplement-unavailable',text:'Primary-filing accounting supplement unavailable; unresolved inputs and inferred zeros are unverified.'});}
     }
   }
   if(specialized)extracted.quality.push({severity:'critical',code:'specialized-model',text:'Financial/real-estate business: specialized valuation model required. Company research is available; enterprise FCFF is withheld.'});

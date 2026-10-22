@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {betaRegression,unlever,relever,solveDebt,ratingFor,RATINGS,forecast,dcf,analyze,defaults,reverseDCF} from '../public/model.js';
+import {betaRegression,unlever,relever,solveDebt,ratingFor,RATINGS,forecast,dcf,analyze,defaults,reverseDCF,peerAssetBeta} from '../public/model.js';
 import {financials,pickFact,monthlyReturns,filingEvidence,filingUrl} from '../src/data.js';
+import {quarterlyFinancials} from '../src/accounting.js';
 import worker from '../src/worker.js';
 
 const fixture={
@@ -39,10 +40,12 @@ test('growth consumes reinvestment and g=0 has maintenance capex, not zero capex
   assert.equal(dcf(rows,.03,.03,.12,fixture.base,a),null);assert.equal(dcf(rows,.1,.12,.12,fixture.base,a),null);
 });
 test('a level perpetuity reconciles explicit cash flows plus terminal value to NOPAT divided by WACC',()=>{
-  const b={...fixture.base,nwc:0},a={...defaults(fixture),growth:0,margin:.2,tax:.25,capex:.03,da:.03,nwc:0,terminalGrowth:0,terminalROIC:.1};
+  const b={...fixture.base,nwc:0},a={...defaults(fixture),growth:0,mediumGrowth:0,margin:.2,tax:.25,capex:.03,da:.03,nwc:0,terminalGrowth:0,terminalROIC:.1,valuationLag:0};
   const rows=forecast(b,a),v=dcf(rows,.1,0,.1,b,a);
   assert.ok(rows.every(row=>Math.abs(row.fcff-150)<1e-10));
-  assert.ok(Math.abs(v.ev-1500)<1e-9,'ten-year cash flows plus terminal must equal the independently derived infinite annuity');
+  assert.ok(Math.abs(v.ev-1500*1.1**.5)<1e-9,'mid-year flows: the infinite annuity of 150 at 10% is worth 1500 × 1.1^0.5');
+  const later=dcf(rows,.1,0,.1,b,{...a,valuationLag:.25});
+  assert.ok(Math.abs(later.ev-1500*1.1**.75)<1e-9,'a quarter elapsed since the filing brings every flow a quarter closer');
 });
 test('terminal ROIC equal to WACC cancels the reinvestment-adjusted growth premium for a fixed terminal NOPAT',()=>{
   const a=defaults(fixture),rows=forecast(fixture.base,a),v=dcf(rows,.1,.025,.1,fixture.base,a);
@@ -50,7 +53,7 @@ test('terminal ROIC equal to WACC cancels the reinvestment-adjusted growth premi
 });
 test('reverse DCF recovers a known growth assumption with debt, reserve, nonoperating assets and other claims',()=>{
   const base={...fixture.base,nonOperatingInvestments:20,valuationShares:53},a={...defaults(fixture),cashReserve:15,otherClaims:25},before=structuredClone(a),known=.12345;
-  const target=dcf(forecast(base,{...a,growth:known}),.1,a.terminalGrowth,a.terminalROIC,base,a).price;
+  const target=dcf(forecast(base,{...a,growth:known,mediumGrowth:a.mediumGrowth+known-a.growth}),.1,a.terminalGrowth,a.terminalROIC,base,a).price;
   const solved=reverseDCF(base,a,.1,target);
   assert.equal(solved.status,'solved');assert.ok(Math.abs(solved.initialGrowth-known)<1e-7);assert.ok(Math.abs(solved.matchedPrice-target)<target*1e-8);
   assert.deepEqual(a,before,'a reverse solve cannot rewrite the active forecast assumptions');
@@ -121,9 +124,60 @@ test('TTM sums annual plus YTD less comparable YTD, aligned by period not fiscal
   const r=financials(raw,{},'2026-10-21');assert.ok(Math.abs(r.base.revenue-.0011)<1e-12);assert.equal(r.base.end,'2026-06-30');assert.equal(r.base.provenance.revenue.length,3);
   assert.equal(r.base.longDebt,null); // annual balance never silently fills a quarterly instant
 });
-test('missing debt tags block the bridge instead of becoming zero',()=>{
+test('a borrowing line absent from the balance-sheet filing is a labeled zero; a blocked inference leaves the bridge unresolved',()=>{
   const raw=factsFixture();delete raw.facts['us-gaap'].ShortTermBorrowings;
-  const r=financials(raw,{},'2026-10-21');assert.equal(r.base.shortDebt,null);assert.equal(r.base.debt,null);assert.ok(r.quality.some(q=>q.severity==='critical'&&q.code==='missing-shortDebt'));
+  const r=financials(raw,{},'2026-10-21');
+  assert.equal(r.base.shortDebt,0);assert.ok(Math.abs(r.base.debt-.00017)<1e-12);assert.match(r.base.provenance.shortDebt[0].tag,/^NotPresented:/);
+  assert.ok(r.quality.some(q=>q.code==='absence-zero'&&q.severity==='review'));
+  const blocked=financials(raw,{},'2026-10-21',{noAbsence:['shortDebt']});
+  assert.equal(blocked.base.shortDebt,null);assert.equal(blocked.base.debt,null);assert.ok(blocked.quality.some(q=>q.severity==='critical'&&q.code==='missing-shortDebt'));
+  const presentedElsewhere=factsFixture();Object.assign(presentedElsewhere.facts['us-gaap'].ShortTermBorrowings.units.USD[0],{accn:'another-filing',end:'2024-12-31'});
+  assert.equal(financials(presentedElsewhere,{},'2026-10-21').base.shortDebt,0,'a concept used only by another filing is not presented on this balance sheet');
+});
+test('issuers without an operating-income subtotal get EBIT from pre-tax income plus net interest, labeled',()=>{
+  const build=(withIncome,shiftInterest)=>{
+    const raw=factsFixture(),f=raw.facts['us-gaap'],ebit=f.OperatingIncomeLoss;delete f.OperatingIncomeLoss;
+    const flow=values=>({units:{USD:values.map((val,i)=>({...ebit.units.USD[i],val}))}});
+    f.IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest=flow([150,170,190]);
+    f.InterestExpense=flow([12,14,16]);if(withIncome)f.InvestmentIncomeInterest=flow([2,4,6]);
+    if(shiftInterest)f.InterestExpense.units.USD[2].start='2025-02-01';
+    return raw;
+  };
+  const r=financials(build(true,false),{},'2026-10-21');
+  assert.deepEqual(r.history.map(h=>Math.round(h.ebit*1e6)),[160,180,200]);
+  assert.equal(r.base.provenance.ebit[0].tag,'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest');
+  assert.ok(r.quality.some(q=>q.code==='ebit-derived'));
+  assert.equal(financials(build(false,true),{},'2026-10-21').history.at(-1).ebit,null,'an interest line presented in the filing for another period cannot be assumed zero');
+});
+test('depreciation alone is total D&A only when the filing presents no amortization line',()=>{
+  const build=amortization=>{
+    const raw=factsFixture(),f=raw.facts['us-gaap'];f.Depreciation=f.DepreciationDepletionAndAmortization;delete f.DepreciationDepletionAndAmortization;
+    if(amortization)f.AmortizationOfIntangibleAssets={units:{USD:[{val:1,start:'2024-01-01',end:'2024-12-31',filed:'2026-02-15',form:'10-K',accn:'0000000001-26-000001'}]}};
+    return raw;
+  };
+  assert.ok(Math.abs(financials(build(false),{},'2026-10-21').base.da-.00003)<1e-12);
+  assert.equal(financials(build(true),{},'2026-10-21').base.da,null,'an amortization line presented for another period means D&A is incomplete');
+});
+test('a cover-page share count from another era is not used; latest-quarter weighted shares are',()=>{
+  const raw=factsFixture(),f=raw.facts['us-gaap'];delete f.CommonStockSharesOutstanding;
+  raw.facts.dei={EntityCommonStockSharesOutstanding:{units:{shares:[{val:20,end:'2009-12-31',filed:'2010-02-23',form:'10-K',accn:'old'}]}}};
+  f.WeightedAverageNumberOfSharesOutstandingBasic={units:{shares:[{val:37,start:'2025-10-01',end:'2025-12-31',filed:'2026-02-15',form:'10-K',accn:'0000000001-26-000001'}]}};
+  const r=financials(raw,{},'2026-10-21');
+  assert.ok(Math.abs(r.base.shares-.000037)<1e-12);assert.ok(r.quality.some(q=>q.code==='shares-weighted'));
+  raw.facts.dei.EntityCommonStockSharesOutstanding.units.shares.push({val:40,end:'2026-02-01',filed:'2026-02-15',form:'10-K',accn:'0000000001-26-000001'});
+  assert.ok(Math.abs(financials(raw,{},'2026-10-21').base.shares-.00004)<1e-12,'a cover-page count dated after the period end is the preferred fallback');
+});
+test('peer medians exclude broken share counts and distressed leverage, and need three peers',()=>{
+  const peers=[{symbol:'A',beta:{beta:1},debt:100,equity:1000},{symbol:'B',beta:{beta:1.2},debt:100,equity:1000},{symbol:'C',beta:{beta:.8},debt:6606,equity:.0001},{symbol:'D',beta:{beta:.7},debt:94000,equity:15000}];
+  assert.equal(peerAssetBeta(peers,null,.25).beta,null,'only two credible peers');
+  assert.equal(peerAssetBeta([...peers,{symbol:'E',beta:{beta:1.1},debt:0,equity:2000}],null,.25).n,3);
+});
+test('a 17-week fourth quarter in a 53-week year is differenced, not dropped',()=>{
+  const raw={cik:1,facts:{'us-gaap':{Revenues:{units:{USD:[
+    {val:300,start:'2022-08-29',end:'2023-05-07',filed:'2023-06-01',form:'10-Q',accn:'q3'},
+    {val:520,start:'2022-08-29',end:'2023-09-03',filed:'2023-10-10',form:'10-K',accn:'k'}]}}}}};
+  const q=quarterlyFinancials(raw,'2026-10-21');
+  assert.equal(q.length,1);assert.equal(q[0].end,'2023-09-03');assert.ok(Math.abs(q[0].revenue-.00022)<1e-12);
 });
 test('return normalization drops partial months and never uses unadjusted closes',()=>{
   const timestamps=['2026-01-01','2026-02-01','2026-03-01','2026-04-01'].map(s=>Date.parse(s)/1000);
