@@ -67,3 +67,9 @@ test('reported nonzero borrowings take precedence over absence inference; wrong 
     const s=supplementFilingFacts(raw,html,filings.COST,'2026-10-21');assert.equal(financials(s.raw,{},'2026-10-21').base.shortDebt,null);
   }
 });
+test('direct lease classifications recovered inline cannot be overwritten by contradictory dimensional classifications',async()=>{
+  const raw=await load('MSFT'),html=microsoft()+number('FinanceLeaseLiabilityCurrent','5,000');
+  const s=supplementFilingFacts(raw,html,filings.MSFT,'2026-10-21'),b=financials(s.raw,{},'2026-10-21').base;
+  assert.equal(b.financeLeaseCurrent,5000);
+  assert.equal(b.financeLeaseNoncurrent,null,'conflicting split cannot be partly accepted');
+});

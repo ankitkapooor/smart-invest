@@ -32,7 +32,7 @@ export function supplementFilingFacts(raw,html,filing,asOf=new Date().toISOStrin
   }
   const patched={...facts};
   const opt={end:filing.end,cik:raw.cik,asOf};
-  const fact=key=>pickFact(facts,TAGS[key],opt);
+  const fact=key=>pickFact(patched,TAGS[key],opt);
   function add(key,value,basis,sourceTag,dimension) {
     if(!Number.isFinite(value)||fact(key))return;
     const tag=TAGS[key][0],existing=facts[tag];

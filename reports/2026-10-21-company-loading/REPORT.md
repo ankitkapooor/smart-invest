@@ -39,7 +39,7 @@ lease payments nor commercial-paper investments are substituted for debt.
 
 `COSTCO` and `MICROSOFT` also resolve to their listed tickers. Live-source loader
 checks for MSFT, COSTCO and AAPL produced no model errors before release. Apple
-required no supplement. Five added regression tests cover both actual companies,
+required no supplement. Six added regression tests cover both actual companies,
 future/wrong-period evidence, scope, currency, conflicting facts, incomplete lease
 reconciliation, absence wording and precedence of reported nonzero borrowings.
 
