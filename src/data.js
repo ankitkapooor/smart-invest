@@ -1,12 +1,14 @@
 import {betaRegression, MODEL_VERSION} from '../public/model.js';
 import {financials,DataError,CONTINUITY,mergePredecessor} from './accounting.js';
 import {reportedSegments} from './segments.js';
+import {supplementFilingFacts} from './filing-facts.js';
 export {financials,pickFact,DataError} from './accounting.js';
 
 const SEC='https://data.sec.gov';
 const SEC_TICKERS='https://www.sec.gov/files/company_tickers.json';
 const ERP_URL='https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm';
 const memory=new Map(), inFlight=new Map();
+const ALIASES={GOOGLE:'GOOGL',FACEBOOK:'META',BERKSHIRE:'BRK-B',COSTCO:'COST',MICROSOFT:'MSFT'};
 let secQueue=Promise.resolve();
 
 export async function cachedFetch(url, env={}, ttl=3600, type='json') {
@@ -52,7 +54,7 @@ export async function searchCompanies(query,env) {
   if(!query || query.length>100) return [];
   const catalog=Object.values(await cachedFetch(SEC_TICKERS,env,86400));
   const q=query.toUpperCase().trim();
-  const alias=({GOOGLE:'GOOGL',FACEBOOK:'META',BERKSHIRE:'BRK-B'})[q];
+  const alias=ALIASES[q];
   const normalize=name=>name.toUpperCase().replace(/[,\s]+(INC\.?|CORP\.?|CORPORATION|LTD\.?)$/,'').trim();
   const rank=c=>c.ticker===q?0:c.ticker===alias?1:normalize(c.title)===q?2:c.ticker.startsWith(q)?3:c.title.toUpperCase().startsWith(q)?4:5;
   return catalog.filter(c=>c.ticker===q || c.ticker===alias || c.ticker.startsWith(q) || c.title.toUpperCase().includes(q))
@@ -175,6 +177,7 @@ export const filingUrl=(ownerCik,accession,document)=>`https://www.sec.gov/Archi
 
 export async function loadCompany(symbol,env={},customPeers=[]) {
   symbol=symbol.toUpperCase().trim();
+  symbol=ALIASES[symbol]||symbol;
   if(!/^[A-Z0-9.\-]{1,12}$/.test(symbol)) throw new DataError('Enter a valid US-listed ticker.');
   if(customPeers.some(t=>!/^[A-Z0-9.\-]{1,12}$/.test(t))) throw new DataError('Peer tickers must contain only letters, numbers, periods or hyphens.');
   const catalog=Object.values(await cachedFetch(SEC_TICKERS,env,86400));
@@ -198,6 +201,23 @@ export async function loadCompany(symbol,env={},customPeers=[]) {
   try{extracted=financials(raw,submission);}catch(e){
     if(!(e instanceof DataError))throw e;
     extracted={base:{end:submission.filings?.recent?.reportDate?.[0]||null,basis:'Unsupported normalization',provenance:{},...Object.fromEntries(['revenue','ebit','da','capex','cfo','nwc','cash','debt','shares','longInvest','shortDebt','shortInvest','currentDebt'].map(k=>[k,null]))},history:[],quality:[{severity:'critical',code:'coverage',text:e.message}],reconciliations:[]};
+  }
+  // Structured Company Facts drops dimensional lease splits and narrative
+  // zero-borrowing disclosures. Consult the exact base-period primary filing
+  // before declaring those required inputs unavailable. Historical folds still
+  // use only the Company Facts snapshot; supplemental evidence is live-only.
+  const leaseTotal=raw.facts?.['us-gaap']?.FinanceLeaseLiability?.units?.USD?.some(f=>f.end===extracted.base.end&&f.filed<=extracted.asOf&&f.val>0);
+  if(extracted.base.debt===null||leaseTotal&&(extracted.base.financeLeaseCurrent===null||extracted.base.financeLeaseNoncurrent===null)) {
+    const recent=submission.filings?.recent;
+    const ix=recent?.form.findIndex((form,i)=>['10-K','10-Q'].includes(form)&&recent.reportDate[i]===extracted.base.end);
+    if(ix>=0) {
+      const primary={cik:Number(cik),form:recent.form[ix],end:recent.reportDate[ix],date:recent.filingDate[ix],accession:recent.accessionNumber[ix],url:filingUrl(cik,recent.accessionNumber[ix],recent.primaryDocument[ix])};
+      try {
+        const html=await cachedFetch(primary.url,env,86400,'text');
+        const supplemented=supplementFilingFacts(raw,html,primary);
+        if(supplemented.notes.length){extracted=financials(supplemented.raw,submission);extracted.quality.push(...supplemented.notes);}
+      } catch(e) {if(!(e instanceof DataError))throw e;extracted.quality.push({severity:'critical',code:'filing-supplement-unavailable',text:'Primary-filing accounting supplement unavailable; unresolved inputs remain missing.'});}
+    }
   }
   if(specialized)extracted.quality.push({severity:'critical',code:'specialized-model',text:'Financial/real-estate business: specialized valuation model required. Company research is available; enterprise FCFF is withheld.'});
   raw=null;

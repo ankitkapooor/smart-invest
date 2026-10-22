@@ -189,7 +189,7 @@ function methodology() {
 
 function sources() {
   const rows=[];
-  for(const [metric,items] of Object.entries(data.base.provenance)) items.forEach((f,i)=>rows.push({cells:[`${esc(metric)}${f.operation?' · '+esc(f.operation):''}`,num(f.value,3),esc(f.end),esc(f.filed),esc(f.form),`<span class="tag-mono" title="${esc(f.tag)}">${esc(f.tag)}</span>`,link(f.url,'Filing')]}));
+  for(const [metric,items] of Object.entries(data.base.provenance)) items.forEach((f,i)=>rows.push({cells:[`${esc(metric)}${f.operation?' · '+esc(f.operation):''}${f.basis?'<div class="subline">'+esc(f.basis)+'</div>':''}`,num(f.value,3),esc(f.end),esc(f.filed),esc(f.form),`<span class="tag-mono" title="${esc(f.tag)}">${esc(f.tag)}</span>`,link(f.url,'Filing')]}));
   return `${viewHeader('Sources',`Fetched ${date(data.fetchedAt)}. Financial base: ${esc(data.base.basis)}, ending ${esc(data.base.end)}. Quote: ${date(data.quote?.asOf)}. Values in USD millions unless the row is shares.`)}
     ${panel('Public sources','Financials and market inputs carry their own reporting dates.',data.sources.map(s=>`<div class="source-row"><div><strong>${esc(s.name)}</strong><p>${esc(s.kind)}</p></div>${link(s.url,'Open source')}</div>`).join(''))}
     ${panel('Financial input ledger','TTM rows combine FY + YTD − prior YTD. Instant balances use the TTM end date.',table(['Input / component','Value ($M / M shares)','Period end','Filed','Form','XBRL tag','Source'],rows))}

@@ -36,8 +36,9 @@ export const TAGS={
 const forms=new Set(['10-K','10-K/A','10-Q','10-Q/A']);
 export const durationDays=f=>(Date.parse(f.end)-Date.parse(f.start))/864e5;
 function record(f,tag,cik,unit) {
-  return {value:f.val/1e6,raw:f.val,unit,tag,start:f.start||null,end:f.end,filed:f.filed,form:f.form,accession:f.accn,cik:f.sourceCik||cik,
-    url:`https://www.sec.gov/Archives/edgar/data/${Number(f.sourceCik||cik)}/${f.accn.replaceAll('-','')}/`};
+  return {value:f.val/1e6,raw:f.val,unit,tag:f.sourceTag||tag,start:f.start||null,end:f.end,filed:f.filed,form:f.form,accession:f.accn,cik:f.sourceCik||cik,
+    ...(f.basis?{basis:f.basis,dimension:f.dimension||null}:{}),
+    url:f.sourceUrl||`https://www.sec.gov/Archives/edgar/data/${Number(f.sourceCik||cik)}/${f.accn.replaceAll('-','')}/`};
 }
 export function pickFact(facts,names,{end,annual=false,start,unit='USD',cik,asOf=new Date().toISOString().slice(0,10)}={}) {
   for(const tag of names) {
