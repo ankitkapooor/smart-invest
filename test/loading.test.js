@@ -16,6 +16,12 @@ test('HTML service failures produce a useful retry message; cancellation is dist
   controller.abort();await assert.rejects(pending,e=>e.name==='AbortError');
   assert.deepEqual(await requestJSON('/company',{fetcher:async()=>Response.json({symbol:'TEST'})}),{symbol:'TEST'});
 });
+test('transient gateway failures retry once within the same deadline; research writes are not retried',async()=>{
+  let calls=0;
+  const result=await requestJSON('/company',{fetcher:async()=>++calls===1?new Response('<html>Temporary gateway failure</html>',{status:503}):Response.json({symbol:'TEST'})});
+  assert.equal(result.symbol,'TEST');assert.equal(calls,2);
+  calls=0;await assert.rejects(requestJSON('/research',{method:'POST',body:{symbol:'TEST'},fetcher:async()=>{calls++;return new Response('Unavailable',{status:503});}}));assert.equal(calls,1);
+});
 test('the server deadline returns an actionable 504 instead of waiting for a hung cache/source',async()=>{
   await assert.rejects(withDeadline(new Promise(()=>{}),10),e=>e.status===504&&/timed out/.test(e.message));
 });

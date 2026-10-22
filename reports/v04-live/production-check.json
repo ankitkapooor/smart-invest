@@ -1,0 +1,83 @@
+{
+  "testedAt": "2026-10-22T16:41:35.492Z",
+  "commit": "306c225bb8eb4df4425b2d0777703137260b265f",
+  "config": {
+    "researchConfigured": true,
+    "researchModel": "gpt-5.6-terra",
+    "researchEffort": "low",
+    "dailyResearchLimit": 10,
+    "modelVersion": "0.4.0"
+  },
+  "companies": [
+    {
+      "symbol": "AAPL",
+      "coreMs": 568,
+      "elapsedMs": 891,
+      "price": 134.97529824655538,
+      "marketQuote": 345.665,
+      "forecastGrowth": 0.075,
+      "terminalROIC": 0.35,
+      "method": "business-case",
+      "arithmetic": true,
+      "errors": [],
+      "ocsAvailable": true,
+      "model": "gpt-5.6-terra"
+    },
+    {
+      "symbol": "MSFT",
+      "coreMs": 675,
+      "elapsedMs": 1059,
+      "price": 304.45232522029477,
+      "marketQuote": 525.245,
+      "forecastGrowth": 0.16,
+      "terminalROIC": 0.22,
+      "method": "business-case",
+      "arithmetic": true,
+      "errors": [],
+      "ocsAvailable": true,
+      "model": "gpt-5.6-terra"
+    },
+    {
+      "symbol": "COST",
+      "coreMs": 485,
+      "elapsedMs": 932,
+      "price": 498.3963732987177,
+      "marketQuote": 1011.71,
+      "forecastGrowth": 0.08,
+      "terminalROIC": 0.18,
+      "method": "business-case",
+      "arithmetic": true,
+      "errors": [],
+      "ocsAvailable": true,
+      "model": "gpt-5.6-terra"
+    },
+    {
+      "symbol": "NVDA",
+      "coreMs": 425,
+      "elapsedMs": 876,
+      "price": 116.22852374779757,
+      "marketQuote": 213.044,
+      "forecastGrowth": 0.4,
+      "terminalROIC": 0.5,
+      "method": "business-case",
+      "arithmetic": true,
+      "errors": [],
+      "ocsAvailable": true,
+      "model": "gpt-5.6-terra"
+    },
+    {
+      "symbol": "GOOGL",
+      "coreMs": 141,
+      "elapsedMs": 447,
+      "price": 177.33594667040927,
+      "marketQuote": 327,
+      "forecastGrowth": 0.2,
+      "terminalROIC": 0.25,
+      "method": "business-case",
+      "arithmetic": true,
+      "errors": [],
+      "ocsAvailable": false,
+      "model": "gpt-5.6-terra"
+    }
+  ]
+}

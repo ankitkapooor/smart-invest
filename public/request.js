@@ -7,8 +7,15 @@ export async function requestJSON(url,{signal,timeoutMs=35000,fetcher=fetch,meth
   signal?.addEventListener('abort',abort,{once:true});
   try {
     const task=(async()=>{
-      const response=await fetcher(url,{method,signal:controller.signal,headers:{Accept:'application/json',...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
-      const text=await response.text();let payload;
+      const options={method,signal:controller.signal,headers:{Accept:'application/json',...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})};
+      let response,text;
+      // One transient gateway failure must not force a manual reload. Both
+      // attempts share the original deadline; paid POSTs are never retried here.
+      for(let attempt=0;attempt<2;attempt++){
+        response=await fetcher(url,options);text=await response.text();
+        if(method!=='GET'||attempt===1||![502,503,504].includes(response.status)||controller.signal.aborted)break;
+      }
+      let payload;
       try{payload=JSON.parse(text);}catch{throw Error(response.ok?'The data service returned an unreadable response. Please retry.':`The data service is temporarily unavailable (HTTP ${response.status}). Please retry.`);}
       if(!response.ok)throw Error(payload.error||`The data service returned HTTP ${response.status}. Please retry.`);
       if(!payload||typeof payload!=='object')throw Error('The data service returned an incomplete response. Please retry.');
