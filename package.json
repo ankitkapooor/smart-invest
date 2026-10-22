@@ -13,8 +13,14 @@
     "validate:quarterly": "node scripts/validate-quarterly.mjs",
     "snapshot": "node scripts/snapshot.mjs",
     "deploy": "wrangler deploy",
-    "deploy:check": "wrangler deploy --dry-run"
+    "deploy:check": "wrangler deploy --dry-run",
+    "build:ci": "npm run check && npm test && node scripts/build-metadata.mjs",
+    "deploy:verify": "node scripts/verify-deployment.mjs"
   },
-  "devDependencies": { "wrangler": "^4.0.0" },
-  "engines": { "node": ">=22" }
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

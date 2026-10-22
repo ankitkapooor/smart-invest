@@ -25,14 +25,36 @@ This prompts for the secret without placing it in a command argument. A local `.
 
 Refresh the site, open **Company research**, then select **Research [ticker]**. `/api/config` exposes only a configured boolean, model identifier and daily call ceiling. If the model is not accessible to your OpenAI project, change `OPENAI_MODEL` to an available Responses model supporting web search, background mode and structured outputs, then redeploy. A missing/rejected key produces an explicit error.
 
-## Publish and check
+## Automatic production deployment
+
+A Git push updates the live site only after **Cloudflare Workers Builds** is connected to the existing `valuelens` Worker. Manual Wrangler uploads do not establish a Git connection. Configure the existing Worker, not a second Pages project:
+
+| Setting | Value |
+|---|---|
+| Git repository | `ankitkapooor/smart-invest` |
+| Production branch | `main` |
+| Root directory | Repository root (`/`) |
+| Build command | `npm run build:ci` |
+| Deploy command | `npm run deploy && npm run deploy:verify` |
+| Nonproduction automatic builds | Disabled unless a separate preview setup is intended |
+| Node runtime | 22, pinned by `.node-version` |
+
+Cloudflare installs the locked dependencies, then `build:ci` runs syntax checks and all offline tests. A failure prevents the deployment command from running. The final build step writes `public/build.json` with the checked-out Git commit, package version and build timestamp. This generated artifact is ignored by Git; credentials and environment values are never copied into it.
+
+`deploy:verify` reads the live page, `/build.json` and `/api/config`. It waits for the exact Git commit to become active, checks the version and verifies that the existing server-side research secret is still configured. It never starts paid research. A failed verification makes the Cloudflare build fail visibly; it does not automatically roll back an already activated version. Use the Cloudflare deployment history for rollback if needed.
+
+Once the connection is enabled, the normal release is simply **commit and push to main**. Check the build status in Cloudflare or the repository's Cloudflare check run. You do not need to run `npm run deploy` locally. Build setup is account configuration and is not created by committing these helper scripts alone.
+
+For an intentional manual recovery deployment:
 
 ```sh
-npm run check
-npm test
-npm run deploy:check
+npm ci
+npm run build:ci
 npm run deploy
+npm run deploy:verify
 ```
+
+Official references: [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), [build configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
 
 Wrangler uses the existing authorized Cloudflare OAuth login. The production app does not require any private portfolio data. Its public APIs do not accept arbitrary LLM prompts. Research uses same-origin POST, bounded inputs, one persisted quota reservation per company/period/version, a global daily ceiling (default 10), at most six web-search tool calls per report, and bounded output tokens. Failed/rejected jobs can be retried after five minutes, subject to the quota. Research that is not polled expires after twenty minutes on the next poll; OpenAI background storage may have its own retention policy.
 
@@ -42,4 +64,4 @@ A daily call limit is not a dollar guarantee. Configure project budget/usage lim
 
 ## Verification boundaries
 
-Run `npm run test:live -- AAPL` to explicitly exercise the configured hosted model, polling, citations, researched peer loading, immutable vintage and deterministic valuation. This may create one paid report, subject to the server quota; cached validated reports are reused. Set `VALUELENS_TEST_ORIGIN=http://localhost:8787` for local testing. Results are saved under `reports/terra-live/`. A live smoke test establishes functionality, not predictive accuracy. Unit tests additionally cover rejection, missing-key gating, cache isolation by model, quota deduplication, document-path ownership and FCFF identities.
+Run `npm run test:live -- AAPL` to explicitly exercise the configured hosted model, polling, citations, researched peer loading, immutable vintage and deterministic valuation. This may create one paid report, subject to the server quota; cached validated reports are reused. Set `VALUELENS_TEST_ORIGIN=http://localhost:8787` for local testing. Results are saved under `reports/v03-live/`. A live smoke test establishes functionality, not predictive accuracy. Unit tests additionally cover rejection, missing-key gating, cache isolation by model, quota deduplication, document-path ownership and FCFF identities.

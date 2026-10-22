@@ -6,3 +6,6 @@ node_modules/
 .DS_Store
 coverage/
 test-output/
+
+# Generated per deployment; the build machine embeds its checked-out commit.
+/public/build.json

@@ -13,6 +13,12 @@ npm run dev
 
 Node 22+. The existing OpenAI key stays in the ignored `.dev.vars` locally and the encrypted `OPENAI_API_KEY` Cloudflare Worker secret in production. Never put credentials in `public/` or commit them. Research uses `gpt-5.6-terra`, low reasoning, at most six web calls and 12,000 output tokens, with ten new reports per UTC day. Cached reports do not incur another generation. Limits bound calls, not a guaranteed dollar amount.
 
+## Deployments
+
+Production is the existing Cloudflare Worker `valuelens`. Its Git integration must connect `ankitkapooor/smart-invest`, production branch `main`, with build command `npm run build:ci` and deploy command `npm run deploy && npm run deploy:verify`. Once connected, pushing to `main` runs the checks and updates the website automatically. See [deployment setup](docs/DEPLOYMENT.md).
+
+The public `/build.json` endpoint identifies the exact deployed commit. Build and post-deploy verification never invoke paid LLM research. `.node-version` pins CI to Node 22; the OpenAI secret stays on the Worker.
+
 ## Version 0.3
 
 - **Quarterly accounting:** up to 64 discrete fiscal quarters, with Q2/Q3 YTD and Q4 annual amounts differenced and source provenance retained. Filing-date filters apply before subtraction. Reporting gaps prevent calendar misalignment.
