@@ -72,6 +72,17 @@ export function mediumTermGrowth(history=[]) {
   }
   return {growth:LONG_RUN.growthAnchor,cagr:null,span:0};
 }
+// Capex surge (statistical case): when capex intensity is at least 2× its five-year median
+// (a build-out), it fades linearly to that median by year 5, keeping 80% of the surge in
+// year 1. SEC archive: surges of 3× or more kept ~80% after one year and ~30% after three;
+// below 2× the latest ratio predicted best and is kept.
+export function capexSurge(history=[],latest) {
+  const ratios=history.filter(h=>h.capex>0&&h.revenue>0).slice(-6,-1).map(h=>h.capex/h.revenue);
+  if(ratios.length<3||!(latest>0))return null;
+  const normal=median(ratios),multiple=latest/normal;
+  if(!(multiple>=2))return null;
+  return {latest,normal,multiple,path:[1,2,3,4,5].map(k=>normal+(latest-normal)*.8*(5-k)/4)};
+}
 // Long-run operating margin (years 2–10, statistical case): midpoint of the TTM margin and the
 // five-year median annual margin. SEC-archive backtest on margins two to five years ahead
 // (898 origins): mean absolute error 5.69pp vs 6.18pp for the latest margin alone.
@@ -149,6 +160,7 @@ export function defaults(data) {
   const medium=mediumTermGrowth(hist);
   // Capitalize R&D in the statistical case, where terminal ROIC is measured on the same basis.
   const rd=business?null:researchCapital(data);
+  const surge=business?null:capexSurge(hist,fitted.ratios.capex.value);
   // Cash flows start after the latest filed period; value them as of the quote date.
   const lag=data.quote?.asOf&&b.end?clamp((Date.parse(data.quote.asOf)-Date.parse(b.end))/864e5/365.25,0,.75):0;
   return {
@@ -158,6 +170,7 @@ export function defaults(data) {
     nwc:business?.years[0].nwcRatio??fitted.ratios.nwc.value, terminalGrowth:business?.terminal.growth??Math.max(0,Math.min(data.rates.terminalGrowth??.025,data.rates.rf-.005)),
     mediumGrowth:business?null:medium.growth,mediumGrowthBasis:medium,
     terminalROIC:business?.terminal.roic??defaultTerminalROIC(b,tax,costOfCapital,rd),
+    capexPath:surge?.path??null,capexSurge:surge,
     rdCapitalize:!!rd,rdRatio:rd?.ratio??null,rdLife:rd?.life??null,rdSchedule:rd?.schedule??null,researchCapital:rd,
     valuationLag:lag,
     rf:data.rates.rf, erp:data.rates.erp, assetBeta:operatingBeta ?? own,

@@ -52,16 +52,40 @@ function remember(key,value,ttl) {
   memory.set(key,{value,expires:Date.now()+ttl*1000});
 }
 
-export async function searchCompanies(query,env) {
-  if(!query || query.length>100) return [];
-  const catalog=Object.values(await cachedFetch(SEC_TICKERS,env,86400));
+// Well-known private companies: no SEC filings or public share price to analyze.
+export const PRIVATE_COMPANIES={OPENAI:'OpenAI',ANTHROPIC:'Anthropic',SPACEX:'SpaceX',STRIPE:'Stripe',DATABRICKS:'Databricks',BYTEDANCE:'ByteDance',TIKTOK:'TikTok (ByteDance)',XAI:'xAI',SHEIN:'Shein','EPIC GAMES':'Epic Games',CANVA:'Canva',REVOLUT:'Revolut','SCALE AI':'Scale AI',PERPLEXITY:'Perplexity',MISTRAL:'Mistral AI',ANDURIL:'Anduril',RAMP:'Ramp',FANATICS:'Fanatics',CHATGPT:'OpenAI'};
+const SEARCH_STOP=new Set(['INC','CORP','CORPORATION','COMPANY','CO','LTD','PLC','HOLDINGS','HOLDING','GROUP','THE','AND','&','SYSTEMS','TECHNOLOGIES','TECHNOLOGY','INTERNATIONAL','INCORPORATED','LIMITED','CLASS','A','B']);
+const searchWords=s=>s.toUpperCase().replace(/[^A-Z0-9& ]+/g,' ').split(/\s+/).filter(w=>w&&!SEARCH_STOP.has(w));
+export function matchCompanies(catalog,query) {
   const q=query.toUpperCase().trim();
+  if(!q)return [];
   const alias=ALIASES[q];
   const normalize=name=>name.toUpperCase().replace(/[,\s]+(INC\.?|CORP\.?|CORPORATION|LTD\.?)$/,'').trim();
   const rank=c=>c.ticker===q?0:c.ticker===alias?1:normalize(c.title)===q?2:c.ticker.startsWith(q)?3:c.title.toUpperCase().startsWith(q)?4:5;
-  return catalog.filter(c=>c.ticker===q || c.ticker===alias || c.ticker.startsWith(q) || c.title.toUpperCase().includes(q))
-    .sort((a,b)=>rank(a)-rank(b)||a.title.localeCompare(b.title)).slice(0,12)
-    .map(c=>({symbol:c.ticker,name:c.title,cik:c.cik_str}));
+  // Compare names with punctuation folded to spaces ("coca-cola" ↔ "COCA COLA CO").
+  const fold=s=>s.toUpperCase().replace(/[^A-Z0-9&]+/g,' ').replace(/\s+/g,' ').trim(),qf=fold(q);
+  let hits=catalog.filter(c=>c.ticker===q || c.ticker===alias || c.ticker.startsWith(q) || (qf&&fold(c.title).includes(qf)));
+  if(!hits.length) {
+    // Word-level fallback: "Adobe Systems" or "Alphabet Google" still find the registrant.
+    // Every significant query word must start a word in the name, except trailing extras
+    // after the first match ("Adobe Systems" → ADOBE INC.).
+    const qw=searchWords(q);
+    if(qw.length) {
+      const scored=catalog.map(c=>{const tw=searchWords(c.title);const n=qw.filter(w=>tw.some(t=>t.startsWith(w))).length;return {c,n,first:tw.some(t=>t.startsWith(qw[0]))};}).filter(x=>x.first&&x.n>0);
+      const best=Math.max(0,...scored.map(x=>x.n));
+      hits=scored.filter(x=>x.n===best).map(x=>x.c);
+    }
+  }
+  return hits.sort((a,b)=>rank(a)-rank(b)||a.title.length-b.title.length||a.title.localeCompare(b.title)).slice(0,12).map(c=>({symbol:c.ticker,name:c.title,cik:c.cik_str}));
+}
+export function privateCompanyHint(query) {
+  const q=query.toUpperCase().replace(/[^A-Z0-9 ]+/g,' ').replace(/\s+/g,' ').trim(),name=PRIVATE_COMPANIES[q]||PRIVATE_COMPANIES[q.replace(/ /g,'')];
+  return name?`${name} is privately held: it has no SEC filings and no public share price, so there is nothing to value from public data. ValueLens covers US-listed companies that file with the SEC.`:null;
+}
+export async function searchCompanies(query,env) {
+  if(!query || query.length>100) return [];
+  const catalog=Object.values(await cachedFetch(SEC_TICKERS,env,86400));
+  return matchCompanies(catalog,query);
 }
 
 export function monthlyReturns(chart,now=new Date()) {

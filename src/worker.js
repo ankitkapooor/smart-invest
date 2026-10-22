@@ -1,4 +1,4 @@
-import {searchCompanies,loadCompany,loadPeerComparison,DataError} from './data.js';
+import {searchCompanies,privateCompanyHint,loadCompany,loadPeerComparison,DataError} from './data.js';
 import {withDeadline} from './deadline.js';
 import {MODEL_VERSION,RESEARCH_COMPAT_VERSION} from '../public/model.js';
 import {attachIssuedForecast} from './forecast-seeds.js';
@@ -50,7 +50,10 @@ export default {
         const data=await withDeadline(loadCompany(input.symbol,env,[],{includePeers:false}),30000);
         const response=await store.fetch(new Request('https://research.internal/',{method:'POST',body:JSON.stringify(data)}));return json(await response.json(),response.status);
       }
-      if(url.pathname==='/api/search') return json({companies:await withDeadline(searchCompanies(url.searchParams.get('q')||'',env),10000)});
+      if(url.pathname==='/api/search') {
+        const q=url.searchParams.get('q')||'',companies=await withDeadline(searchCompanies(q,env),10000);
+        return json({companies,hint:privateCompanyHint(q)});
+      }
       if(url.pathname==='/api/peers') {
         const peers=(url.searchParams.get('peers')||'').split(',').map(x=>x.trim().toUpperCase()).filter(Boolean);
         return json(await withDeadline(loadPeerComparison(url.searchParams.get('symbol')||'',env,peers),28000,'Peer comparison timed out. The company analysis remains available.'));

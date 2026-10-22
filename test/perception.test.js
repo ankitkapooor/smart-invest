@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {forecast,dcf,defaults,researchCapital,consensusGrowthPath,impliedGrowth,rdLife,longRunMargin,shareChange} from '../public/model.js';
+import {forecast,dcf,defaults,researchCapital,consensusGrowthPath,impliedGrowth,rdLife,longRunMargin,shareChange,capexSurge} from '../public/model.js';
 import {parseConsensus} from '../src/consensus.js';
 
 const day=new Date().toISOString().slice(0,10);
@@ -76,4 +76,24 @@ test('consensus EPS growth implies margins net of buybacks, bounded and then hel
   assert.ok(Math.max(...wild.marginPath)<=.32+1e-12,'bounded at 1.6× the measured margin');
   assert.equal(consensusGrowthPath({years:c.years.map(({epsGrowth,...y})=>y)},base,.05,{baselineMargin:.2}).marginPath,null);
   assert.ok(Math.abs(shareChange([{dilutedShares:110},{dilutedShares:105},{dilutedShares:100}])-((100/110)**.5-1))<1e-12);
+});
+
+test('a capex surge of 2× or more fades from 80% retained in year 1 to the five-year median by year 5',()=>{
+  const hist=[.05,.10,.17,.13,.37,.8].map((r,i)=>({end:`${2021+i}-05-31`,revenue:100,capex:100*r}));
+  const s=capexSurge(hist,.826);
+  assert.ok(Math.abs(s.normal-.13)<1e-12);assert.ok(s.multiple>6);
+  assert.ok(Math.abs(s.path[0]-(.13+.8*(.826-.13)))<1e-12);assert.ok(Math.abs(s.path[4]-.13)<1e-12);
+  assert.equal(capexSurge(hist,.2),null,'below 2× the latest ratio is kept');
+  const a={...defaults(fixture),capexPath:s.path},rows=forecast(fixture.base,a);
+  assert.ok(Math.abs(rows[0].rawCapex-rows[0].revenue*s.path[0])<1e-9);assert.ok(Math.abs(rows[4].rawCapex-rows[4].revenue*s.normal)<1e-9);
+});
+test('search folds punctuation, falls back to words, and explains private companies',async()=>{
+  const {matchCompanies,privateCompanyHint}=await import('../src/data.js');
+  const catalog=[{ticker:'ADBE',title:'ADOBE INC.',cik_str:1},{ticker:'KO',title:'COCA COLA CO',cik_str:2},{ticker:'COKE',title:'Coca-Cola Consolidated, Inc.',cik_str:3},{ticker:'ORCL',title:'ORACLE CORP',cik_str:4}];
+  assert.deepEqual(matchCompanies(catalog,'Adobe Systems').map(c=>c.symbol),['ADBE']);
+  assert.ok(matchCompanies(catalog,'coca-cola').some(c=>c.symbol==='KO'));
+  assert.deepEqual(matchCompanies(catalog,'orcl').map(c=>c.symbol),['ORCL']);
+  assert.deepEqual(matchCompanies(catalog,'OpenAI'),[]);
+  assert.match(privateCompanyHint('OpenAI'),/privately held/);assert.match(privateCompanyHint('space x'),/SpaceX/);
+  assert.equal(privateCompanyHint('Oracle'),null);
 });

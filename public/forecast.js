@@ -39,7 +39,9 @@ export function buildForecast(base,a) {
     if(rdOn)rdHistory.push(rd);
     const netRD=rd-rdAmortization,nopat=nopatReported+netRD;
     const da=revenue*(business?(year<=5?point.daRatio:last.daRatio*(1-fade)+business.terminal.daRatio*fade):a.da);
-    const rawCapex=revenue*(business?point.capexRatio:a.capex);
+    // A capex surge (statistical case) fades to its five-year median by year 5.
+    const capexPath=!business&&Array.isArray(a.capexPath)&&a.capexPath.length===5?a.capexPath:null;
+    const rawCapex=revenue*(business?point.capexRatio:capexPath?capexPath[Math.min(year,5)-1]:a.capex);
     const nextNwc=revenue*(business?(year<=5?point.nwcRatio:last.nwcRatio*(1-fade)+business.terminal.nwcRatio*fade):a.nwc),deltaNwc=nextNwc-nwc;nwc=nextNwc;
     const rawReinvestment=rawCapex-da+deltaNwc+netRD;
     const steadyReinvestment=nopat*growth/a.terminalROIC;

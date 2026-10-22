@@ -71,8 +71,8 @@ function lensesPanel() {
   const fundamental=r.rows.slice(0,5).map(x=>x.growth),basis=a.valuationForecast?'Cited company research (years 1–5)':'Measured quarterly forecast, then backtested base rate';
   const rows=[
     ig?.status==='solved'?{cells:['Market-implied','The constant growth today’s price requires at the model’s discount rate and fundamental margins',path(Array(5).fill(ig.growth)),pct(r.rows[4].margin),money(r.marketPrice),'—']}:{cells:['Market-implied',ig?.status==='ambiguous'?'More than one growth rate fits the price':'No growth rate between −30% and +80% fits the price','—','—',money(r.marketPrice),'—']},
-    c?{cells:['Analyst consensus',`${c.analysts} analysts’ revenue estimates for fiscal ${c.fiscalYears.map(y=>y.end.slice(0,4)).join(' and ')}, converging to ${pct(c.anchor)} by year 5${c.marginPath?`; their earnings estimates imply an operating margin of ${pct(c.marginPath[1])} (from ${pct(c.baselineMargin)}${c.shares?`, net of ${pct(Math.abs(c.shares))} annual share ${c.shares<0?'buybacks':'dilution'}`:''})`:'; margins as measured (no earnings estimates)'}`,path(c.path),pct(c.marginPath?.[4]??r.rows[4].margin),money(c.price),signed(c.price/r.marketPrice-1)]}:{cells:['Analyst consensus','Unavailable for this company','—','—','—','—']},
-    {highlight:true,cells:['Fundamental',basis+(a.rdCapitalize?'; R&D capitalized':''),path(fundamental),pct(r.rows[4].margin),money(r.valued?.price),signed(r.upside)]}
+    c?{cells:['Analyst consensus',`${c.analysts} analysts’ revenue estimates for fiscal ${c.fiscalYears.map(y=>y.end.slice(0,4)).join(' and ')}, converging to ${pct(c.anchor)} by year 5${c.marginPath?`; their earnings estimates imply an operating margin of ${pct(c.marginPath[1])} (from ${pct(c.baselineMargin)}${c.shares?`, net of ${pct(Math.abs(c.shares))} annual share ${c.shares<0?'buybacks':'dilution'}`:''})`:'; margins as measured (no earnings estimates)'}`,path(c.path),pct(c.marginPath?.[4]??r.rows[4].margin),c.equity<=0?'Below zero':money(c.price),c.equity<=0?'equity < 0':signed(c.price/r.marketPrice-1)]}:{cells:['Analyst consensus','Unavailable for this company','—','—','—','—']},
+    {highlight:true,cells:['Fundamental',basis+(a.rdCapitalize?'; R&D capitalized':'')+(a.capexSurge?`; capex surge (${pct(a.capexSurge.latest,0)} of revenue, ${num(a.capexSurge.multiple,1)}× its five-year median) fades to ${pct(a.capexSurge.normal,0)} by year 5`:''),path(fundamental),pct(r.rows[4].margin),r.valued?.equity<=0?'Below zero':money(r.valued?.price),r.valued?.equity<=0?'equity < 0':signed(r.upside)]}
   ];
   return panel('Three readings of the price','Same investment ratios, discount rate and stable state. The lenses differ in revenue growth (and, for consensus, analysts’ implied margins). Years 6–10 fade to terminal growth.',table(['Lens','Basis','Revenue growth, years 1–5','Margin, year 5','Value / share','vs. price'],rows,'lenses')+`<div class="table-note">${c?esc(data.consensus.source)+'. ':''}Consensus beyond two fiscal years is not published; the path converges to the long-run rate. The fundamental case is the one whose rules were backtested; see Validation.</div>`);
 }
@@ -82,16 +82,17 @@ function overview() {
   const ig=r.impliedGrowth,c=r.consensusCase,hist=a.mediumGrowthBasis,baseRate=Number.isFinite(a.mediumGrowth)?a.mediumGrowth:LONG_RUN.growthAnchor;
   const headline=ig?.status==='solved'?`Today’s price implies ${pct(ig.growth)} annual revenue growth for five years`:Number.isFinite(r.upside)?`Fundamental value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the market price`:'No price comparison is available';
   const readings=[c?`analysts expect ${pct(c.path[0])} and ${pct(c.path[1])} over the next two years (${c.analysts} analysts)`:null,Number.isFinite(hist?.cagr)?`the company grew ${pct(hist.cagr)} a year over the past ${hist.span} years`:null,`comparable companies sustain about ${pct(baseRate)} (backtested base rate)`].filter(Boolean);
-  const gaps=[Number.isFinite(r.upside)?`fundamental value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the price`:null,Number.isFinite(c?.price)?`the analyst consensus case is ${pct(Math.abs(c.price/r.marketPrice-1))} ${c.price<r.marketPrice?'below':'above'}`:null].filter(Boolean);
+  const negative=v&&v.equity<=0;
+  const gaps=[negative?`the fundamental case leaves no value for shareholders (debt of ${big(data.base.debt)} exceeds the ${big(v.ev)} value of operations)`:Number.isFinite(r.upside)?`fundamental value is ${pct(Math.abs(r.upside))} ${r.upside<0?'below':'above'} the price`:null,Number.isFinite(c?.price)?`the analyst consensus case is ${pct(Math.abs(c.price/r.marketPrice-1))} ${c.price<r.marketPrice?'below':'above'}`:null].filter(Boolean);
   const perception=`<p class="verdict-copy readings">For comparison, ${readings.join('; ')}. At the model’s discount rate, ${gaps.join(' and ')}.</p>`;
   const reason=r.status==='Review required'?'This DCF scenario has unreviewed assumptions or unresolved data. The price gap alone does not establish mispricing. The audit below shows the growth and reinvestment assumptions behind it.':'This compares the price with one set of assumptions. It is not a forecast of stock returns.';
   return `<section class="verdict">
     <div class="verdict-top"><div><span class="status ${cls}">${label}</span><h2>${headline}</h2>${perception}<p class="verdict-copy">${reason} Business quality, concentration, liquidity needs and your horizon still matter.</p>${impliedRateNote(r)}</div>
     <div class="verdict-stats"><dl>
       <div class="verdict-stat"><dt>Market price</dt><dd>${money(r.marketPrice)}</dd></div>
-      <div class="verdict-stat"><dt>Consensus case</dt><dd>${money(c?.price)}</dd></div>
-      <div class="verdict-stat"><dt>Fundamental value</dt><dd>${money(v?.price)}</dd></div>
-      <div class="verdict-stat"><dt>Fundamental vs. market</dt><dd class="${tone(r.upside)}">${signed(r.upside)}</dd></div>
+      <div class="verdict-stat"><dt>Consensus case</dt><dd>${c&&c.equity<=0?'Below zero':money(c?.price)}</dd></div>
+      <div class="verdict-stat"><dt>Fundamental value</dt><dd>${negative?'Below zero':money(v?.price)}</dd></div>
+      <div class="verdict-stat"><dt>Fundamental vs. market</dt><dd class="${negative?'negative':tone(r.upside)}">${negative?'Equity < 0':signed(r.upside)}</dd></div>
     </dl></div></div>
     <div class="verdict-bar">${fairValueScale(r)}</div>
     <div class="panel-footer"><span>${a.quoteOverride!==null?'Manual quote entered in assumptions · review required':`Quote ${dateTime(data.quote?.asOf)}${data.quote?.exchange?' · '+esc(data.quote.exchange):''} · may be delayed`}</span><button class="link-button" id="open-error-assumptions">Edit assumptions</button></div>
@@ -491,7 +492,7 @@ async function search(query,showError=false) {
       if(exact){await loadCompany(exact.symbol);return;}
       if(body.companies.length===1){await loadCompany(body.companies[0].symbol);return;}
     }
-    $('#search-results').innerHTML=body.companies.length?body.companies.map(c=>`<button type="button" data-symbol="${esc(c.symbol)}"><strong>${esc(c.symbol)}</strong><span>${esc(c.name)}</span></button>`).join(''):'<p class="empty">No SEC-listed match. Try a ticker or another company name.</p>';
+    $('#search-results').innerHTML=(body.hint&&body.companies.length?`<p class="empty hint">${esc(body.hint)}</p>`:'')+(body.companies.length?body.companies.map(c=>`<button type="button" data-symbol="${esc(c.symbol)}"><strong>${esc(c.symbol)}</strong><span>${esc(c.name)}</span></button>`).join(''):`<p class="empty">${esc(body.hint||'No SEC-listed match. ValueLens covers US-listed companies that file with the SEC; private companies and most foreign listings have no filings to analyze. Try a ticker or the registered company name.')}</p>`);
     $('#search-results').hidden=false;$('#company-search').setAttribute('aria-expanded','true');
   }catch(e){if(showError&&e.name!=='AbortError')$('#message').textContent=e.message;}
 }

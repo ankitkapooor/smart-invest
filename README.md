@@ -35,7 +35,9 @@ Source checks and arithmetic checks establish functionality and internal consist
 - **R&D as investment:** capitalized over industry lives with spike capping; explicit cash flows unchanged, returns measured on all invested capital.
 - **Analyst margins:** the consensus case carries the margins analysts' EPS estimates imply (net of the issuer's buyback or dilution trend).
 - **Long-run margin rule:** years 2–10 use the midpoint of TTM and five-year median margins (backtested), so one weak quarter no longer persists forever.
-- **Return backtest re-run:** mean rank IC −0.022; still no demonstrated return edge.
+- **Capex surges** (≥2× the five-year median, e.g. Oracle's AI build-out) fade to normal by year 5, per the archive's surge history; negative equity is explained rather than shown as −100%.
+- **Search** folds punctuation, matches by words ("Adobe Systems" → ADBE) and explains well-known private companies (e.g. OpenAI).
+- **Return backtest re-run:** mean rank IC −0.017; still no demonstrated return edge.
 
 ## Version 0.5
 
